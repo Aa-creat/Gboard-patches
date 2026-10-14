@@ -1,3 +1,13 @@
+## [3.13.0-dev.1](https://github.com/jasonwu1994/Gboard-patches/compare/v3.12.1-dev.1...v3.13.0-dev.1) (2026-10-14)
+
+### ✨ New Features
+
+* **Gboard:** add the `Swipe Down to Dismiss Keyboard` patch, allowing you to dismiss the keyboard by swiping down from the suggestion strip or toolbar.
+
+### ✨ 新功能
+
+* **Gboard:** 新增 `Swipe Down to Dismiss Keyboard` Patch，支援從建議列或工具列向下滑動以關閉鍵盤。
+
 ## [3.12.1-dev.1](https://github.com/jasonwu1994/Gboard-patches/compare/v3.12.0...v3.12.1-dev.1) (2026-10-13)
 
 ### 🐛 Bug Fixes
