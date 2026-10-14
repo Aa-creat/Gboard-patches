@@ -1,3 +1,13 @@
+## [3.13.0-dev.2](https://github.com/jasonwu1994/Gboard-patches/compare/v3.13.0-dev.1...v3.13.0-dev.2) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix the `Swipe Down to Dismiss Keyboard` patch to prevent accidental dismissal during toolbar icon sorting and candidate drag-to-delete.
+
+### 🐛 修復
+
+* **Gboard:** 修復 `Swipe Down to Dismiss Keyboard` Patch，避免在排序工具列圖示及拖曳候選字刪除時誤觸關閉鍵盤。
+
 ## [3.13.0-dev.1](https://github.com/jasonwu1994/Gboard-patches/compare/v3.12.1-dev.1...v3.13.0-dev.1) (2026-10-14)
 
 ### ✨ New Features

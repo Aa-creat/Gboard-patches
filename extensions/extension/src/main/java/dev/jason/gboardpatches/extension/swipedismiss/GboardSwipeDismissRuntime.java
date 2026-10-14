@@ -40,7 +40,8 @@ public final class GboardSwipeDismissRuntime {
             }
             boolean admitted = holder.isShown() && isHeaderStart(holder, event)
                     && enabled(holder.getContext());
-            gesture.begin(admitted, event.getPointerId(0), event.getRawX(), event.getRawY());
+            gesture.begin(admitted, event.getPointerId(0), event.getRawX(), event.getRawY(),
+                    event.getDownTime());
             return false;
         }
         if (gesture == null) {
@@ -74,9 +75,11 @@ public final class GboardSwipeDismissRuntime {
             return false;
         }
         float density = holder.getResources().getDisplayMetrics().density;
-        float touchSlop = ViewConfiguration.get(holder.getContext()).getScaledTouchSlop();
+        ViewConfiguration vc = ViewConfiguration.get(holder.getContext());
+        float touchSlop = vc.getScaledTouchSlop();
+        long longPressTimeout = ViewConfiguration.getLongPressTimeout();
         if (!gesture.move(event.getPointerId(pointerIndex), event.getRawX(), event.getRawY(),
-                density, touchSlop)) {
+                density, touchSlop, event.getEventTime(), longPressTimeout)) {
             return false;
         }
         MotionEvent cancel = MotionEvent.obtain(event);
