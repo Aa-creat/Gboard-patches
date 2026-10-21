@@ -1092,30 +1092,6 @@
       ]
     },
     {
-      "feature_id": "lan_ftp_server",
-      "public_patch_name": "FTP Server",
-      "feature_marker": "dev.jason.gboardpatches.feature.lan_ftp_server",
-      "target_family_ids": [],
-      "migration_scope": "version-neutral-extension",
-      "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/lanftp/GboardLanFtpFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/lanftp/GboardLanFtpManifestPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/packagerename/GboardPackageRenameResourcePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/resources/lan-ftp-res/drawable/ic_lan_ftp_tile.xml"
-      ],
-      "contributions": [
-        {
-          "contribution_id": "lan_ftp_server.resources",
-          "anchor_family_id": "resource_only",
-          "phase": "resource",
-          "order": 300,
-          "required_bindings": [],
-          "runtime_calls": []
-        }
-      ]
-    },
-    {
       "feature_id": "latin_globe_key_ignore_interval",
       "public_patch_name": "Latin Globe Key Ignore Interval",
       "feature_marker": "dev.jason.gboardpatches.feature.latin_globe_key_ignore_interval",
@@ -1521,46 +1497,6 @@
           ],
           "runtime_calls": [
             "BLUETOOTH_MICROPHONE_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE"
-          ]
-        }
-      ]
-    },
-    {
-      "feature_id": "web_clipboard",
-      "public_patch_name": "Web Clipboard",
-      "feature_marker": "dev.jason.gboardpatches.feature.web_clipboard",
-      "target_family_ids": [
-        "webclipboard"
-      ],
-      "migration_scope": "version-sensitive",
-      "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/webclipboard/GboardWebClipboardAssetsPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/webclipboard/GboardWebClipboardCapturePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/webclipboard/GboardWebClipboardFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/webclipboard/GboardWebClipboardManifestPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/resources/web-clipboard-assets/assets/geist-cyrillic-ext-wght-normal-DjL33-gN.woff2",
-        "patches/src/main/resources/web-clipboard-assets/assets/geist-cyrillic-wght-normal-BEAKL7Jp.woff2",
-        "patches/src/main/resources/web-clipboard-assets/assets/geist-latin-ext-wght-normal-DC-KSUi6.woff2",
-        "patches/src/main/resources/web-clipboard-assets/assets/geist-latin-wght-normal-BgDaEnEv.woff2",
-        "patches/src/main/resources/web-clipboard-assets/assets/geist-vietnamese-wght-normal-6IgcOCM7.woff2",
-        "patches/src/main/resources/web-clipboard-assets/assets/index-CrrbJfwz.js",
-        "patches/src/main/resources/web-clipboard-assets/assets/index-j-45Yer8.css",
-        "patches/src/main/resources/web-clipboard-assets/favicon.svg",
-        "patches/src/main/resources/web-clipboard-assets/icons.svg",
-        "patches/src/main/resources/web-clipboard-assets/index.html",
-        "patches/src/main/resources/web-clipboard-assets/index.txt",
-        "patches/src/main/resources/web-clipboard-res/drawable/ic_web_clipboard_tile.xml"
-      ],
-      "contributions": [
-        {
-          "contribution_id": "web_clipboard.bytecode",
-          "anchor_family_id": "dedicated_bytecode",
-          "phase": "dedicated",
-          "order": 1600,
-          "required_bindings": [],
-          "runtime_calls": [
-            "WEB_CLIPBOARD_CAPTURE_BOOTSTRAP_AFTER_LATIN_IME_ON_CREATE"
           ]
         }
       ]

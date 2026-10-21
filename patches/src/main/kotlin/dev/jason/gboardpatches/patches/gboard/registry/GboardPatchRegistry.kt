@@ -42,10 +42,6 @@ import dev.jason.gboardpatches.patches.gboard.features.customtheme.gboardCustomT
 import dev.jason.gboardpatches.patches.gboard.features.customtheme.gboardCustomThemeOfficialImportPatch
 import dev.jason.gboardpatches.patches.gboard.features.emojisize.gboardEmojiSizeFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.emojisize.gboardEmojiSizeFlagValuePatch
-import dev.jason.gboardpatches.patches.gboard.features.webclipboard.gboardWebClipboardAssetsPatch
-import dev.jason.gboardpatches.patches.gboard.features.webclipboard.gboardWebClipboardCapturePatch
-import dev.jason.gboardpatches.patches.gboard.features.webclipboard.gboardWebClipboardFeatureMarkerPatch
-import dev.jason.gboardpatches.patches.gboard.features.webclipboard.gboardWebClipboardManifestPatch
 import dev.jason.gboardpatches.patches.gboard.features.websearch.gboardFloatingWebSearchFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.websearch.gboardFloatingWebSearchManifestPatch
 import dev.jason.gboardpatches.patches.gboard.features.englishqwerty.gboardEnglishUppercaseToggleFeatureMarkerPatch
@@ -58,8 +54,6 @@ import dev.jason.gboardpatches.patches.gboard.features.featureflags.gboardInline
 import dev.jason.gboardpatches.patches.gboard.features.featureflags.gboardKeyShapeSelectionFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.featureflags.gboardKeyShapeSelectionFlagValuePatch
 import dev.jason.gboardpatches.patches.gboard.features.flowmode.gboardFlowModeFeatureMarkerPatch
-import dev.jason.gboardpatches.patches.gboard.features.lanftp.gboardLanFtpFeatureMarkerPatch
-import dev.jason.gboardpatches.patches.gboard.features.lanftp.gboardLanFtpManifestPatch
 import dev.jason.gboardpatches.patches.gboard.features.latinglobe.gboardLatinGlobeKeyIgnoreIntervalBytecodePatch
 import dev.jason.gboardpatches.patches.gboard.features.latinglobe.gboardLatinGlobeKeyIgnoreIntervalFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.longpressquickactions.gboardLongPressQuickActionsFeatureMarkerPatch
@@ -637,41 +631,6 @@ val gboardClipboardContentLimitPatch = gboardPublicResourcePatch(
 }
 
 @Suppress("unused")
-val gboardWebClipboardPatch = gboardPublicResourcePatch(
-    featureId = "web_clipboard",
-    name = "Web Clipboard",
-    description = "新增手機自架的 Web Clipboard，支援瀏覽器同步、配對碼與快速設定開關\nAdd the phone-hosted Web Clipboard with browser sync, pairing, and a Quick Settings Tile.",
-    default = true
-) {
-    compatibleWith(COMPATIBILITY_GBOARD)
-
-    dependsOn(
-        gboardPatchesSettingsPatch,
-        gboardWebClipboardFeatureMarkerPatch,
-        gboardWebClipboardManifestPatch,
-        gboardWebClipboardAssetsPatch,
-        gboardWebClipboardCapturePatch
-    )
-}
-
-@Suppress("unused")
-val gboardLanFtpServerPatch = gboardPublicResourcePatch(
-    featureId = "lan_ftp_server",
-    name = "FTP Server",
-    description = "新增區域網路 FTP 伺服器，支援檔案瀏覽、傳輸與下載續傳\n" +
-        "Add a LAN FTP server with file browsing, transfers, and download resume.",
-    default = true,
-) {
-    compatibleWith(COMPATIBILITY_GBOARD)
-
-    dependsOn(
-        gboardPatchesSettingsPatch,
-        gboardLanFtpFeatureMarkerPatch,
-        gboardLanFtpManifestPatch,
-    )
-}
-
-@Suppress("unused")
 val gboardDeviceIntelligencePatch = gboardPublicResourcePatch(
     featureId = "enable_inline_autofill_suggestions",
     name = "Enable Inline Autofill Suggestions",
@@ -909,8 +868,6 @@ object GboardPublishedPatchCatalog {
         gboardSymbolsFooterOrderPatch,
         gboardClipboardEnhancementsPatch,
         gboardClipboardContentLimitPatch,
-        gboardWebClipboardPatch,
-        gboardLanFtpServerPatch,
         gboardDeviceIntelligencePatch,
         gboardGrammarCheckerFlagPatch,
         gboardInlineSuggestionsFlagPatch,

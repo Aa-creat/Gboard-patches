@@ -15,12 +15,7 @@ public final class GboardTopRowSwipeDialogSafetySourceTest {
                         + "GboardTopRowSwipeSettingsFeature.java");
 
         Assert.assertTrue(source.contains("private static void runUiActionSafely("));
-        Assert.assertTrue(source.contains("runUiActionSafely(activity, \"show global JavaScript dialog\"")
-                || source.contains("\"show global JavaScript dialog\""));
-        Assert.assertTrue(source.contains("\"save global JavaScript\""));
-        Assert.assertTrue(source.contains("\"show JavaScript runtime limits dialog\""));
-        Assert.assertTrue(source.contains("\"save JavaScript runtime limits\""));
-        Assert.assertTrue(source.contains("\"copy JavaScript example\""));
+        Assert.assertTrue(source.contains("\"show Top Row Swipe import error dialog\""));
     }
 
     @Test
@@ -31,10 +26,8 @@ public final class GboardTopRowSwipeDialogSafetySourceTest {
 
         Assert.assertTrue(source.contains("private static void runUiActionSafely("));
         Assert.assertTrue(source.contains("\"show slot editor dialog\""));
-        Assert.assertTrue(source.contains("scriptLockButton.setOnClickListener(view -> runUiActionSafely(")
-                || source.contains("scriptLockButton.setOnClickListener(view -> runUiActionSafely("));
-        Assert.assertTrue(source.contains("testButton.setOnClickListener(view -> runUiActionSafely(")
-                || source.contains("testButton.setOnClickListener(view -> runUiActionSafely("));
+        Assert.assertTrue(source.contains("\"save slot editor dialog\""));
+        Assert.assertTrue(source.contains("\"reset slot editor dialog\""));
     }
 
     private static String readSource(String path) throws Exception {

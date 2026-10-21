@@ -57,10 +57,6 @@ extension {
     name = "extensions/gboard-patches.rve"
 }
 
-val quickJsPayloadSourceDir = layout.projectDirectory.dir("native-payload/arm64-v8a")
-val generatedQuickJsPayloadDir = layout.buildDirectory.dir(
-    "generated/source/quickJsPayload/java"
-)
 val settingsTextAuthority = layout.projectDirectory.file(
     "src/main/settings-text/gboard_settings_text.xml"
 )
@@ -69,9 +65,6 @@ val generatedSettingsTextResDir = layout.buildDirectory.dir(
 )
 val generatedSettingsTextJavaDir = layout.buildDirectory.dir(
     "generated/source/settingsText/java"
-)
-val generatedLanFtpMessagesJavaDir = layout.buildDirectory.dir(
-    "generated/source/lanFtpMessages/java"
 )
 val generatedCustomThemeBindingsJavaDir = layout.buildDirectory.dir(
     "generated/source/customThemeBindings/java"
@@ -105,96 +98,16 @@ android {
     }
 
     sourceSets.named("main") {
-        java.directories.add(generatedQuickJsPayloadDir.get().asFile.absolutePath)
         java.directories.add(generatedSettingsTextJavaDir.get().asFile.absolutePath)
-        java.directories.add(generatedLanFtpMessagesJavaDir.get().asFile.absolutePath)
         java.directories.add(generatedCustomThemeBindingsJavaDir.get().asFile.absolutePath)
         res.directories.add(generatedSettingsTextResDir.get().asFile.absolutePath)
     }
 }
 
 dependencies {
-    implementation(libs.apache.ftpserver.core)
-    implementation(libs.apache.mina.core)
     implementation(libs.hidden.api.bypass)
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.14.1")
-}
-
-val generateQuickJsNativePayload = tasks.register("generateQuickJsNativePayload") {
-    val payloadFile = quickJsPayloadSourceDir.file("libgboardpatches_quickjs.so")
-    val outputFile = generatedQuickJsPayloadDir.map { directory ->
-        directory.file(
-            "dev/jason/gboardpatches/extension/toprowswipe/quickjs/QuickJsNgNativePayload.java"
-        )
-    }
-
-    inputs.file(payloadFile)
-    outputs.file(outputFile)
-
-    doLast {
-        val sourceFile = payloadFile.asFile
-        if (!sourceFile.exists()) {
-            throw GradleException("QuickJS payload not found: $sourceFile")
-        }
-
-        val bytes = sourceFile.readBytes()
-        val sha256 = MessageDigest.getInstance("SHA-256")
-            .digest(bytes)
-            .joinToString("") { value -> "%02x".format(value) }
-        val base64 = Base64.getEncoder().encodeToString(bytes)
-        val chunkSize = 8192
-        val chunks = buildList {
-            var index = 0
-            while (index < base64.length) {
-                add(base64.substring(index, minOf(index + chunkSize, base64.length)))
-                index += chunkSize
-            }
-        }
-
-        val renderedChunks = chunks.joinToString(",\n") { chunk ->
-            "            \"$chunk\""
-        }
-        val output = outputFile.get().asFile
-        output.parentFile.mkdirs()
-        output.writeText(
-            """
-            package dev.jason.gboardpatches.extension.toprowswipe.quickjs;
-
-            public final class QuickJsNgNativePayload {
-                private static final String ABI = "arm64-v8a";
-                private static final String LIBRARY_NAME = "libgboardpatches_quickjs.so";
-                private static final String SHA256 = "$sha256";
-                private static final String[] BASE64_CHUNKS = new String[] {
-$renderedChunks
-                };
-
-                private QuickJsNgNativePayload() {
-                }
-
-                public static String abi() {
-                    return ABI;
-                }
-
-                public static String libraryName() {
-                    return LIBRARY_NAME;
-                }
-
-                public static String sha256() {
-                    return SHA256;
-                }
-
-                public static String base64() {
-                    StringBuilder builder = new StringBuilder();
-                    for (String chunk : BASE64_CHUNKS) {
-                        builder.append(chunk);
-                    }
-                    return builder.toString();
-                }
-            }
-            """.trimIndent()
-        )
-    }
 }
 
 val generateSettingsText = tasks.register("generateSettingsText") {
@@ -371,88 +284,6 @@ tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
     systemProperty("user.country", "US")
 }
 
-val generateLanFtpMessageResource = tasks.register("generateLanFtpMessageResource") {
-    val runtimeClasspath = configurations.named("releaseRuntimeClasspath")
-    val outputFile = generatedLanFtpMessagesJavaDir.map { directory ->
-        directory.file(
-            "dev/jason/gboardpatches/extension/lanftp/runtime/LanFtpMessageResource.java"
-        )
-    }
-    inputs.files(runtimeClasspath)
-    outputs.file(outputFile)
-
-    doLast {
-        val ftpServerJar = runtimeClasspath.get().files.singleOrNull { file ->
-            file.name.startsWith("ftpserver-core-") && file.extension == "jar"
-        } ?: throw GradleException("Apache FTPServer core dependency was not resolved exactly once")
-        val messages = Properties()
-        ZipFile(ftpServerJar).use { archive ->
-            val entry = archive.getEntry("org/apache/ftpserver/message/FtpStatus.properties")
-                ?: throw GradleException("Apache FTPServer status messages are missing")
-            archive.getInputStream(entry).use(messages::load)
-        }
-        val renderedMessages = messages.stringPropertyNames().sorted().joinToString("\n") { key ->
-            val value = messages.getProperty(key)
-            "        messages.put(\"${escapeJavaString(key)}\", " +
-                "\"${escapeJavaString(value)}\");"
-        }
-        val output = outputFile.get().asFile
-        output.parentFile.mkdirs()
-        output.writeText(
-            """
-            package dev.jason.gboardpatches.extension.lanftp.runtime;
-
-            import java.util.Collections;
-            import java.util.HashMap;
-            import java.util.List;
-            import java.util.Map;
-
-            import org.apache.ftpserver.message.MessageResource;
-
-            /** Message table embedded in dex because Morphe extensions carry classes, not JAR resources. */
-            public final class LanFtpMessageResource implements MessageResource {
-                private static final Map<String, String> MESSAGES = createMessages();
-
-                private LanFtpMessageResource() {
-                }
-
-                public static MessageResource create() {
-                    return new LanFtpMessageResource();
-                }
-
-                @Override
-                public List<String> getAvailableLanguages() {
-                    return Collections.emptyList();
-                }
-
-                @Override
-                public String getMessage(int code, String subId, String language) {
-                    String key = Integer.toString(code);
-                    if (subId != null) {
-                        String specific = MESSAGES.get(key + "." + subId);
-                        if (specific != null) {
-                            return specific;
-                        }
-                    }
-                    return MESSAGES.get(key);
-                }
-
-                @Override
-                public Map<String, String> getMessages(String language) {
-                    return MESSAGES;
-                }
-
-                private static Map<String, String> createMessages() {
-                    Map<String, String> messages = new HashMap<String, String>();
-$renderedMessages
-                    return Collections.unmodifiableMap(messages);
-                }
-            }
-            """.trimIndent()
-        )
-    }
-}
-
 val generateCustomThemeVersionBindings = tasks.register("generateCustomThemeVersionBindings") {
     val outputFile = generatedCustomThemeBindingsJavaDir.map { directory ->
         directory.file(
@@ -571,9 +402,7 @@ val generateCustomThemeVersionBindings = tasks.register("generateCustomThemeVers
 }
 
 tasks.named("preBuild") {
-    dependsOn(generateQuickJsNativePayload)
     dependsOn(generateSettingsText)
-    dependsOn(generateLanFtpMessageResource)
     dependsOn(generateCustomThemeVersionBindings)
 }
 
@@ -586,36 +415,8 @@ tasks.named("syncExtension") {
             "Morphe extension dex was not generated: $extensionDex"
         }
         val dexText = String(extensionDex.readBytes(), StandardCharsets.ISO_8859_1)
-        val requiredLanFtpTypes = listOf(
-            "Ldev/jason/gboardpatches/extension/lanftp/android/LanFtpServerConfigSnapshot;",
-            "Ldev/jason/gboardpatches/extension/lanftp/android/LanFtpServerState;",
-            "Ldev/jason/gboardpatches/extension/lanftp/runtime/LanFtpServerConfig;",
-            "Ldev/jason/gboardpatches/extension/lanftp/runtime/LanFtpSessionInfo;",
-        )
-        requiredLanFtpTypes.forEach { descriptor ->
-            check(dexText.contains(descriptor)) {
-                "Morphe extension dex is missing required LAN FTP type: $descriptor"
-            }
-        }
         check(!dexText.contains("Lcom/android/tools/r8/RecordTag;")) {
             "Morphe extension dex contains record classes without the required D8 global synthetic"
-        }
-        val ftpServerJar = configurations.getByName("releaseRuntimeClasspath").files
-            .singleOrNull { file ->
-                file.name.startsWith("ftpserver-core-") && file.extension == "jar"
-            } ?: throw GradleException(
-                "Apache FTPServer core dependency was not resolved exactly once"
-            )
-        val messageOutput = layout.buildDirectory.file(
-            "morphe/lan-ftp-res/FtpStatus.properties"
-        ).get().asFile
-        messageOutput.parentFile.mkdirs()
-        ZipFile(ftpServerJar).use { archive ->
-            val entry = archive.getEntry("org/apache/ftpserver/message/FtpStatus.properties")
-                ?: throw GradleException("Apache FTPServer status messages are missing")
-            archive.getInputStream(entry).use { input ->
-                messageOutput.outputStream().use(input::copyTo)
-            }
         }
     }
 }

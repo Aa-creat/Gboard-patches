@@ -125,7 +125,7 @@ public final class GboardTopRowSlideMarkerIntegrationTest {
     @Test
     public void freshCustomZhuyinBindKeepsTopRowLineageAcrossSlideClone()
             throws Exception {
-        configureCustomJavaScriptSlot(0);
+        configureCustomSlot(0);
         GboardTopRowSwipeRuntime.setCurrentPage(
                 GboardTopRowSwipeRuntime.TopRowLayoutKind.ZHUYIN,
                 GboardTopRowSwipeRuntime.TopRowPage.CUSTOM);
@@ -144,11 +144,6 @@ public final class GboardTopRowSlideMarkerIntegrationTest {
         assertTrue(GboardZhuyinSlideRuntime.isPatchedMetadata(rebound));
         assertSame(base,
                 GboardTopRowSwipeRuntime.resolveOriginalKeyMetadataForPatchInterop(rebound));
-        GboardTopRowSwipeRuntime.QuickJsSlotConfig config =
-                GboardTopRowSwipeRuntime.quickJsSlotConfig(rebound);
-        assertNotNull(config);
-        assertEquals(0, config.rowIndex);
-        assertEquals(GboardTopRowSwipeRuntime.TopRowLayoutKind.ZHUYIN, config.layoutKind);
 
         GboardTopRowSwipeRuntime.afterSoftKeyBound(view);
         assertTrue(GboardTopRowSwipeRuntime.VISIBLE_TOP_ROW_KEYS.containsKey(view));
@@ -181,13 +176,12 @@ public final class GboardTopRowSlideMarkerIntegrationTest {
         return values;
     }
 
-    private static void configureCustomJavaScriptSlot(int slotIndex) throws Exception {
+    private static void configureCustomSlot(int slotIndex) throws Exception {
         boolean[] isJavaScripts = new boolean[GboardTopRowSwipeSettings.SLOT_COUNT];
-        isJavaScripts[slotIndex] = true;
         ArrayList<String> scripts = new ArrayList<String>();
         int[] timeouts = new int[GboardTopRowSwipeSettings.SLOT_COUNT];
         for (int index = 0; index < GboardTopRowSwipeSettings.SLOT_COUNT; index++) {
-            scripts.add(index == slotIndex ? "return 'ok';" : "");
+            scripts.add("");
             timeouts[index] = GboardTopRowSwipeSettings.DEFAULT_TIMEOUT_MS;
         }
         Field cachedSettings = GboardTopRowSwipeRuntime.class
