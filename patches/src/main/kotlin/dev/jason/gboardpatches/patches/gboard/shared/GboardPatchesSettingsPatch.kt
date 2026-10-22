@@ -136,22 +136,11 @@ internal fun applyGboardPatchesSettings(
     }
 }
 
-private fun Element.androidAttribute(localName: String): String? {
-    val namespaced = getAttributeNS(ANDROID_NS, localName)
-    if (namespaced.isNotBlank()) {
-        return namespaced
-    }
-    return getAttribute("android:$localName").takeIf { it.isNotBlank() }
-}
+private fun Element.androidAttribute(localName: String): String? = manifestAndroidAttribute(localName)
 
-private fun Element.removeAndroidAttribute(localName: String) {
-    removeAttributeNS(ANDROID_NS, localName)
-    removeAttribute("android:$localName")
-}
+private fun Element.removeAndroidAttribute(localName: String) = removeManifestAndroidAttribute(localName)
 
-private fun Element.setAndroidAttribute(localName: String, value: String) {
-    setAttributeNS(ANDROID_NS, "android:$localName", value)
-}
+private fun Element.setAndroidAttribute(localName: String, value: String) = setManifestAndroidAttribute(localName, value)
 
 internal const val GBOARD_PATCHES_SETTINGS_ACTIVITY_CLASS =
     "dev.jason.gboardpatches.extension.settings.GboardPatchesSettingsActivity"
