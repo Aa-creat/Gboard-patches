@@ -1,6 +1,6 @@
 {
   "created_at": "2026-10-22T18:40:00",
-  "description": "### ✨ Clean Release (纯净安全版)\n\n* **安全与隐私：** 彻底剔除 Web Clipboard（网页剪贴板同步）、LAN FTP Server（局域网文件传输服务）以及 QuickJS 脚本引擎与联网执行能力。\n* **功能保留：** 完整保留 Swipeable Custom Top Row（滑动自定义顶栏）纯离线快捷短语上屏功能。\n* **底层加固：** 彻底修复 Package Rename 在非命名空间感知环境下的 XML 属性重复解析异常。",
+  "description": "### Clean Release\n\n- Stripped Web Clipboard, LAN FTP Server, and QuickJS network execution\n- Preserved offline Custom Top Row shortcuts\n- Fixed manifest attribute duplication under namespace-unaware parsers",
   "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.13.1/patches-3.13.1.mpp",
   "signature_download_url": "",
   "version": "3.13.1"
