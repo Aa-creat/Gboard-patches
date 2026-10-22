@@ -1,5 +1,5 @@
 {
-  "version": "3.13.0",
+  "version": "3.13.1",
   "patches": [
     {
       "name": "AI Writing Tools",
@@ -439,7 +439,7 @@
     },
     {
       "name": "Swipeable Custom Top Row",
-      "description": "滑動鍵盤第一排，在原生列與可自訂文字快捷鍵列之間切換\nSwipe the keyboard top row to switch between the stock row and a customizable text shortcuts row.",
+      "description": "滑動鍵盤第一排，在原生列與可自訂文字/JavaScript 列之間切換\nSwipe the keyboard top row to switch between the stock row and a customizable text/JavaScript row.",
       "use": true,
       "dependencies": [],
       "compatiblePackages": {
