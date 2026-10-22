@@ -386,6 +386,27 @@
       ]
     },
     {
+      "feature_id": "custom_font",
+      "public_patch_name": "Custom Font & Modern Emoji",
+      "feature_marker": null,
+      "target_family_ids": [],
+      "migration_scope": "version-neutral-extension",
+      "consumer_files": [
+        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/font/GboardCustomFontPatch.kt",
+        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+      ],
+      "contributions": [
+        {
+          "contribution_id": "custom_font.bytecode",
+          "anchor_family_id": "dedicated_bytecode",
+          "phase": "dedicated",
+          "order": 100,
+          "required_bindings": [],
+          "runtime_calls": []
+        }
+      ]
+    },
+    {
       "feature_id": "custom_symbols",
       "public_patch_name": "Custom Symbols",
       "feature_marker": "dev.jason.gboardpatches.feature.custom_symbols",

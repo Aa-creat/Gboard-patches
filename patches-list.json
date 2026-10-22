@@ -1,5 +1,5 @@
 {
-  "version": "3.13.1",
+  "version": "3.14.0",
   "patches": [
     {
       "name": "AI Writing Tools",
@@ -108,6 +108,37 @@
         ]
       },
       "options": []
+    },
+    {
+      "name": "Custom Font & Modern Emoji",
+      "description": "匯入自訂 TTF 檔案（如無屏蔽版 Noto Color Emoji 或 iOS 表情字體）解決系統 Emoji 屏蔽與黑白方塊問題\nEmbeds a custom TTF font or modern uncensored Emoji font to replace system font rendering on keycaps and emojis.",
+      "use": false,
+      "dependencies": [],
+      "compatiblePackages": {
+        "com.google.android.inputmethod.latin": [
+          "18.0.3.954559732-release-arm64-v8a"
+        ]
+      },
+      "options": [
+        {
+          "key": "font_file",
+          "title": "Custom Font (.ttf)",
+          "description": "Select a TTF font file (e.g. NotoColorEmoji.ttf or AppleColorEmoji.ttf). Required when this patch is selected.",
+          "required": true,
+          "type": "java.lang.String (Kotlin reflection is not available)",
+          "default": null,
+          "values": null
+        },
+        {
+          "key": "emoji_only",
+          "title": "Emoji-Only Mode",
+          "description": "When enabled, custom font applies exclusively to Emoji glyphs while keeping stock typography for regular keys.",
+          "required": false,
+          "type": "boolean (Kotlin reflection is not available)",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Custom Symbols",
@@ -365,7 +396,7 @@
           "title": "App 名稱 / App name",
           "description": "",
           "required": true,
-          "type": "kotlin.String",
+          "type": "java.lang.String (Kotlin reflection is not available)",
           "default": "GboardWu",
           "values": {
             "Gboard": "Gboard",

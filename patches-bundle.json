@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-22T18:40:00",
-  "description": "### Clean Release\n\n- Stripped Web Clipboard, LAN FTP Server, and QuickJS network execution\n- Preserved offline Custom Top Row shortcuts\n- Fixed manifest attribute duplication under namespace-unaware parsers",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.13.1/patches-3.13.1.mpp",
+  "created_at": "2026-10-22T23:40:00",
+  "description": "### Release v3.14.0\n\n- Added Custom Font & Modern Emoji injection patch (bypassing OEM/OnePlus system emoji censorship with smart content-aware fallback)\n- Fixed standby battery drain and GoogleAsrService background leak\n- Fixed Bitwarden/1Password inline autofill on renamed package\n- Expanded multi-version reflection for Rambler on Gboard 18.0.3, 18.3.1, and 18.4.1",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.14.0/patches-3.14.0.mpp",
   "signature_download_url": "",
-  "version": "3.13.1"
+  "version": "3.14.0"
 }

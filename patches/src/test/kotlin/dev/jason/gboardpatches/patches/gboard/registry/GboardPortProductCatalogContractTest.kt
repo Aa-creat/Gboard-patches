@@ -637,6 +637,7 @@ class GboardPortProductCatalogContractTest {
             "clipboard_custom_character_limit" to "version-sensitive",
             "clipboard_enhancements" to "version-sensitive",
             "close_proactive_suggestions" to "version-sensitive",
+            "custom_font" to "version-neutral-extension",
             "custom_theme" to "version-sensitive",
             "custom_symbols" to "version-sensitive",
             "developer_options" to "version-sensitive",

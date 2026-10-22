@@ -21,7 +21,7 @@ public final class GboardAdvancedVoice1803PolicyTest {
                 "enable_advanced_features_in_consolidated_sd_stack",
                 "enable_dictation_feature_split_install",
                 "handle_fallback_inside_sd_stack",
-                "enable_sticky_mic_background",
+                "immediately_end_dictation_on_keyboard_hidden",
                 "enable_soda_longform_experiment"
         };
         for (String flagName : forcedFlags) {

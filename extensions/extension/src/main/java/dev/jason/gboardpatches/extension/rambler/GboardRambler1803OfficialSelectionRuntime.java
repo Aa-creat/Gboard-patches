@@ -81,14 +81,45 @@ public final class GboardRambler1803OfficialSelectionRuntime {
             if (!(application instanceof Context)) {
                 return null;
             }
-            ClassLoader loader = application.getClass().getClassLoader();
-            Class<?> support = Class.forName("mqk", false, loader);
-            Method selection = support.getDeclaredMethod("a", Context.class);
-            selection.setAccessible(true);
-            Object value = selection.invoke(null, application);
-            if (value instanceof Boolean) {
-                officialRamblerSelected = (Boolean) value;
-                return (Boolean) value;
+            Context context = (Context) application;
+            ClassLoader loader = context.getClassLoader();
+
+            // 1. In 18.3.1+: check aaeo.a(Context)
+            try {
+                Class<?> support = Class.forName("aaeo", false, loader);
+                Method selection = support.getDeclaredMethod("a", Context.class);
+                selection.setAccessible(true);
+                Object value = selection.invoke(null, context);
+                if (value instanceof Boolean) {
+                    officialRamblerSelected = (Boolean) value;
+                    return officialRamblerSelected;
+                }
+            } catch (Throwable ignored) {
+            }
+
+            // 2. In 18.0.3: check mqk.a(Context)
+            try {
+                Class<?> support = Class.forName("mqk", false, loader);
+                Method selection = support.getDeclaredMethod("a", Context.class);
+                selection.setAccessible(true);
+                Object value = selection.invoke(null, context);
+                if (value instanceof Boolean) {
+                    officialRamblerSelected = (Boolean) value;
+                    return officialRamblerSelected;
+                }
+            } catch (Throwable ignored) {
+            }
+
+            // 3. Fallback: check SharedPreferences for "enable_jetson"
+            try {
+                android.content.SharedPreferences prefs =
+                        android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+                if (prefs != null && prefs.contains("enable_jetson")) {
+                    boolean val = prefs.getBoolean("enable_jetson", true);
+                    officialRamblerSelected = Boolean.valueOf(val);
+                    return officialRamblerSelected;
+                }
+            } catch (Throwable ignored) {
             }
         } catch (Throwable ignored) {
             // Application or the exact formal selector may not be ready yet.

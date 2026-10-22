@@ -56,6 +56,7 @@ internal enum class RuntimeCallId(internal val encodedAbi: String) {
     CURSOR_TRACKPAD_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE("Ldev/jason/gboardpatches/extension/cursortrackpad/GboardCursorTrackpad1803Runtime;->applyOverriddenFlagValue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"),
     CUSTOM_THEME_RUNTIME_HANDLE_ACTIVITY_RESULT("Ldev/jason/gboardpatches/extension/customtheme/GboardCustomThemeOfficialImportRuntime;->handleActivityResult(Ljava/lang/Object;IILandroid/content/Intent;)Z"),
     CUSTOM_THEME_RUNTIME_INTERCEPT_PLUS("Ldev/jason/gboardpatches/extension/customtheme/GboardCustomThemeOfficialImportRuntime;->interceptPlus(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;I)Z"),
+    CUSTOM_FONT_RUNTIME_RESOLVE_TYPEFACE("Ldev/jason/gboardpatches/extension/font/GboardCustomFontRuntime;->resolveTypeface(Landroid/view/View;Landroid/graphics/Typeface;)Landroid/graphics/Typeface;"),
     DEVICE_INTELLIGENCE_RUNTIME_APPLY_FLAG_VALUE("Ldev/jason/gboardpatches/extension/featureflags/GboardFeatureFlagsRuntime;->applyDeviceIntelligenceFlagValue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"),
     EMOJI_SIZE_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE("Ldev/jason/gboardpatches/extension/emojisize/GboardEmojiSize1803Runtime;->applyOverriddenFlagValue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"),
     FEATURE_FLAGS_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE("Ldev/jason/gboardpatches/extension/featureflags/GboardFeatureFlagsRuntime;->applyOverriddenFlagValue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"),

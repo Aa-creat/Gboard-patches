@@ -39,6 +39,8 @@ public final class GboardAiWritingToolsRuntime {
             "enable_nga_lab_modeless_smartedit";
     static final String FLAG_MODELESS_SMART_EDIT_REGEX_VERSION =
             "nga_lab_modeless_smartedit_regex_version";
+    static final String FLAG_ENABLE_DEVICE_INTELLIGENCE =
+            "enable_device_intelligence";
     static final String ALL_LANGUAGES_ALLOWLIST_VALUE = "*";
     static final String MODELESS_SMART_EDIT_REGEX_VERSION = "v3";
     static final String RENAMED_GBOARD_PACKAGE =
@@ -74,13 +76,20 @@ public final class GboardAiWritingToolsRuntime {
 
     public static Object applyOverriddenFlagValue(Object receiver, Object originalResult) {
         try {
+            if (receiver == null) {
+                return originalResult;
+            }
+            String flagName = readFlagName(receiver);
+            if (FLAG_ENABLE_DEVICE_INTELLIGENCE.equals(flagName)
+                    && originalResult instanceof Boolean) {
+                return Boolean.TRUE;
+            }
             Context context = resolveContext();
-            if (context == null || receiver == null) {
+            if (context == null) {
                 return originalResult;
             }
             GboardAiWritingToolsSettings.Snapshot settings =
                     GboardAiWritingToolsSettings.snapshot(context);
-            String flagName = readFlagName(receiver);
             Object enforced = computeOverrideValue(
                     flagName,
                     originalResult,
