@@ -4,6 +4,7 @@ import app.morphe.patcher.patch.ResourcePatchContext
 import app.morphe.patcher.patch.resourcePatch
 import dev.jason.gboardpatches.patches.gboard.shared.ANDROID_NS
 import dev.jason.gboardpatches.patches.gboard.shared.childElements
+import dev.jason.gboardpatches.patches.gboard.shared.setManifestAndroidAttribute
 import dev.jason.gboardpatches.patches.gboard.shared.insertAfter
 import dev.jason.gboardpatches.patches.shared.Constants.GBOARD_PATCH_AUTHOR
 import dev.jason.gboardpatches.patches.shared.Constants.GBOARD_PATCH_AUTHOR_URL
@@ -116,7 +117,7 @@ private fun ensureAboutPreference(
 }
 
 private fun Element.setAndroidAttribute(localName: String, value: String) {
-    setAttributeNS(ANDROID_NS, "android:$localName", value)
+    setManifestAndroidAttribute(localName, value)
 }
 
 private fun Element.androidAttribute(localName: String): String {

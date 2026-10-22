@@ -1,8 +1,9 @@
 package dev.jason.gboardpatches.patches.gboard.features.websearch
 
 import app.morphe.patcher.patch.resourcePatch
-import dev.jason.gboardpatches.patches.gboard.shared.ANDROID_NS
 import dev.jason.gboardpatches.patches.gboard.shared.childElements
+import dev.jason.gboardpatches.patches.gboard.shared.manifestAndroidAttribute
+import dev.jason.gboardpatches.patches.gboard.shared.setManifestAndroidAttribute
 import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -42,43 +43,35 @@ private fun ensureHttpsViewQuery(document: Document, queries: Element) {
         candidate.hasAction(ACTION_VIEW) &&
             candidate.hasCategory(CATEGORY_BROWSABLE) &&
             candidate.childElements("data").any { data ->
-                data.androidAttribute("scheme") == HTTPS_SCHEME
+                data.manifestAndroidAttribute("scheme") == HTTPS_SCHEME
             }
     } ?: document.createElement("intent").also(queries::appendChild)
     intent.ensureAction(document, ACTION_VIEW)
     intent.ensureCategory(document, CATEGORY_BROWSABLE)
     val data = intent.childElements("data").firstOrNull {
-        it.androidAttribute("scheme") == HTTPS_SCHEME
+        it.manifestAndroidAttribute("scheme") == HTTPS_SCHEME
     } ?: document.createElement("data").also(intent::appendChild)
-    data.setAndroidAttribute("scheme", HTTPS_SCHEME)
+    data.setManifestAndroidAttribute("scheme", HTTPS_SCHEME)
 }
 
 private fun Element.hasAction(name: String): Boolean =
-    childElements("action").any { it.androidAttribute("name") == name }
+    childElements("action").any { it.manifestAndroidAttribute("name") == name }
 
 private fun Element.hasCategory(name: String): Boolean =
-    childElements("category").any { it.androidAttribute("name") == name }
+    childElements("category").any { it.manifestAndroidAttribute("name") == name }
 
 private fun Element.ensureAction(document: Document, name: String) {
     val action = childElements("action").firstOrNull {
-        it.androidAttribute("name") == name
+        it.manifestAndroidAttribute("name") == name
     } ?: document.createElement("action").also(::appendChild)
-    action.setAndroidAttribute("name", name)
+    action.setManifestAndroidAttribute("name", name)
 }
 
 private fun Element.ensureCategory(document: Document, name: String) {
     val category = childElements("category").firstOrNull {
-        it.androidAttribute("name") == name
+        it.manifestAndroidAttribute("name") == name
     } ?: document.createElement("category").also(::appendChild)
-    category.setAndroidAttribute("name", name)
-}
-
-private fun Element.androidAttribute(localName: String): String? =
-    getAttributeNS(ANDROID_NS, localName).takeIf(String::isNotBlank)
-        ?: getAttribute("android:$localName").takeIf(String::isNotBlank)
-
-private fun Element.setAndroidAttribute(localName: String, value: String) {
-    setAttributeNS(ANDROID_NS, "android:$localName", value)
+    category.setManifestAndroidAttribute("name", name)
 }
 
 private const val CUSTOM_TABS_SERVICE_ACTION =

@@ -1,5 +1,6 @@
 package dev.jason.gboardpatches.patches.gboard.shared
 
+import org.w3c.dom.Attr
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
@@ -8,17 +9,21 @@ internal fun ensureManifestUsesPermission(
     manifest: Element,
     permissionName: String,
 ) {
-    val permission = manifest.childElements("uses-permission").firstOrNull {
+    val existing = manifest.childElements("uses-permission").firstOrNull {
         it.manifestAndroidAttribute("name") == permissionName
-    } ?: document.createElement("uses-permission").also { createdPermission ->
+    }
+    if (existing != null) {
+        return
+    }
+    val createdPermission = document.createElement("uses-permission").also { created ->
         val application = manifest.childElements("application").firstOrNull()
         if (application == null) {
-            manifest.appendChild(createdPermission)
+            manifest.appendChild(created)
         } else {
-            manifest.insertBefore(createdPermission, application)
+            manifest.insertBefore(created, application)
         }
     }
-    permission.setManifestAndroidAttribute("name", permissionName)
+    createdPermission.setManifestAndroidAttribute("name", permissionName)
 }
 
 internal fun ensureManifestComponent(
@@ -71,10 +76,33 @@ internal fun Element.manifestAndroidAttribute(localName: String): String? {
 }
 
 internal fun Element.setManifestAndroidAttribute(localName: String, value: String) {
-    setAttributeNS(ANDROID_NS, "android:$localName", value)
+    val existingAttr = (0 until attributes.length)
+        .mapNotNull { attributes.item(it) as? Attr }
+        .firstOrNull { attr ->
+            (attr.namespaceURI == ANDROID_NS && attr.localName == localName) ||
+                attr.nodeName == "android:$localName"
+        }
+    if (existingAttr != null) {
+        existingAttr.value = value
+    } else {
+        if (ownerDocument?.documentElement?.namespaceURI == ANDROID_NS || namespaceURI == ANDROID_NS) {
+            setAttributeNS(ANDROID_NS, "android:$localName", value)
+        } else {
+            setAttribute("android:$localName", value)
+        }
+    }
 }
 
 internal fun Element.removeManifestAndroidAttribute(localName: String) {
+    val existingAttr = (0 until attributes.length)
+        .mapNotNull { attributes.item(it) as? Attr }
+        .firstOrNull { attr ->
+            (attr.namespaceURI == ANDROID_NS && attr.localName == localName) ||
+                attr.nodeName == "android:$localName"
+        }
+    if (existingAttr != null) {
+        removeAttributeNode(existingAttr)
+    }
     removeAttributeNS(ANDROID_NS, localName)
     removeAttribute("android:$localName")
 }

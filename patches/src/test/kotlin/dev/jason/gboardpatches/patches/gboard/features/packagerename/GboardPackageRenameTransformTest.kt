@@ -2,6 +2,7 @@ package dev.jason.gboardpatches.patches.gboard.features.packagerename
 
 import dev.jason.gboardpatches.patches.gboard.shared.ANDROID_NS
 import dev.jason.gboardpatches.patches.gboard.shared.applyGboardPatchesSettings
+import dev.jason.gboardpatches.patches.gboard.shared.ensureManifestUsesPermission
 import java.io.ByteArrayInputStream
 import java.io.StringWriter
 import java.nio.charset.StandardCharsets
@@ -59,6 +60,25 @@ class GboardPackageRenameTransformTest {
             },
         )
         assertFalse(serialize(manifest).contains("android:label=\"@string/ime_name\""))
+    }
+
+    @Test
+    fun `ensureManifestUsesPermission on namespace unaware document preserves single attribute and valid xml`() {
+        val manifest = parse(readFixtureBytes(MANIFEST_FIXTURE), namespaceAware = false)
+        ensureManifestUsesPermission(manifest, manifest.documentElement, "android.permission.ACCESS_NETWORK_STATE")
+        ensureManifestUsesPermission(manifest, manifest.documentElement, "android.permission.INTERNET")
+
+        val serialized = serialize(manifest)
+        // Verify XML can be parsed without SAXParseException "Attribute already specified"
+        val reparsed = parse(serialized.toByteArray(StandardCharsets.UTF_8), namespaceAware = true)
+        val permissions = elements(reparsed, "uses-permission").filter {
+            androidAttribute(it, "name") == "android.permission.ACCESS_NETWORK_STATE"
+        }
+        assertEquals(1, permissions.size)
+        val internetPermissions = elements(reparsed, "uses-permission").filter {
+            androidAttribute(it, "name") == "android.permission.INTERNET"
+        }
+        assertEquals(1, internetPermissions.size)
     }
 
     @Test
