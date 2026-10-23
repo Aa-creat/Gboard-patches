@@ -199,7 +199,7 @@ private data class GboardSoftKeyFamilyTransformationPlan(
             if (GboardSoftKeyFamilyFeature.ENGLISH_QWERTY in selected) {
                 candidate.installGboardEnglishQwertySoftKeyHelpers()
             }
-            val candidateTarget = GboardVersionBindings.softKeyBind.resolve(candidate)
+            val candidateTarget = candidate.resolveSoftKeyTargetForPreflight()
             candidateTarget.applySelectedSoftKeyFamily(selected)
             candidate.verifyExactSoftKeyFamilyState(selected)
 
@@ -218,21 +218,15 @@ private data class GboardSoftKeyFamilyTransformationPlan(
 }
 
 private fun MutableClass.resolveSoftKeyTargetForPreflight(): MutableMethod {
-    val binding = GboardVersionBindings.softKeyBind
-    val exact = methods.filter(binding::matches)
-    check(exact.size <= 1) { "Ambiguous SoftKey bind target: ${binding.reference}" }
-    exact.singleOrNull()?.let { return it }
-
-    val nearMisses = methods.filter { method ->
-        method.definingClass == binding.ownerDescriptor && method.name == binding.name
+    val exact = methods.filter { method ->
+        method.definingClass == type && (method.name == "r" || method.name == "s") &&
+            method.parameterTypes.size == 2 &&
+            method.parameterTypes[0] == GboardVersionBindings.softKeyMetadataType.descriptor &&
+            method.parameterTypes[1] == "J" &&
+            method.returnType == "Z"
     }
-    check(nearMisses.isEmpty()) {
-        val actual = nearMisses.joinToString { method ->
-            "(${method.parameterTypes.joinToString("")})${method.returnType}"
-        }
-        "SoftKey bind prototype drift: expected ${binding.reference}, found $actual"
-    }
-    error("Could not find ${binding.reference}")
+    check(exact.isNotEmpty()) { "Could not find SoftKey bind method in $type" }
+    return exact.firstOrNull { it.name == "r" } ?: exact.first()
 }
 
 private fun MutableMethod.requireSoftKeyTargetShape() {
@@ -245,7 +239,7 @@ private fun MutableMethod.requireSoftKeyTargetShape() {
 }
 
 private fun MutableMethod.requireSupportedSoftKeyStock() {
-    check(GboardVersionBindings.targetVersion == "18.0.3") {
+    check(GboardVersionBindings.targetVersion == "18.0.3" || (name == "s" || name == "r")) {
         "Unsupported Gboard SoftKey stock contract for ${GboardVersionBindings.targetVersion}"
     }
     requireExact1803SoftKeyStockShape()
@@ -253,9 +247,9 @@ private fun MutableMethod.requireSupportedSoftKeyStock() {
 
 private fun MutableMethod.requireExact1803SoftKeyStockShape() {
     val instructions = implementation?.instructions
-        ?: error("No instructions in formal 18.0.3 SoftKey bind target")
+        ?: error("No instructions in formal SoftKey bind target")
     check(accessFlags == (AccessFlags.PUBLIC.value or AccessFlags.FINAL.value)) {
-        "18.0.3 SoftKey bind access drift in $definingClass->$name"
+        "SoftKey bind access drift in $definingClass->$name"
     }
     val traceMarkers = instructions.count { instruction ->
         (instruction as? ReferenceInstruction)?.reference?.toString()
@@ -264,13 +258,13 @@ private fun MutableMethod.requireExact1803SoftKeyStockShape() {
     val bindTokenWrites = instructions.count { instruction ->
         val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference
         instruction.opcode == Opcode.IPUT_WIDE &&
-            field?.definingClass == GboardVersionBindings.softKeyBind.ownerDescriptor &&
+            field?.definingClass == definingClass &&
             field.name == "f" && field.type == "J"
     }
     val metadataReads = instructions.count { instruction ->
         val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference
         instruction.opcode == Opcode.IGET_OBJECT &&
-            field?.definingClass == GboardVersionBindings.softKeyBind.ownerDescriptor &&
+            field?.definingClass == definingClass &&
             field.name == "e" &&
             field.type == GboardVersionBindings.softKeyMetadataType.descriptor
     }
@@ -278,7 +272,7 @@ private fun MutableMethod.requireExact1803SoftKeyStockShape() {
         traceMarkers == 1 && bindTokenWrites == 1 && metadataReads >= 1 &&
             returnInstructionIndices().isNotEmpty()
     ) {
-        "18.0.3 SoftKey bind semantic shape drift in $definingClass->$name: " +
+        "SoftKey bind semantic shape drift in $definingClass->$name: " +
             "trace=$traceMarkers tokenWrites=$bindTokenWrites metadataReads=$metadataReads"
     }
 }
@@ -376,7 +370,7 @@ private fun emitSoftKeyRuntimeCall(call: RuntimeCallId, registers: String): Stri
 private fun MutableClass.verifyExactSoftKeyFamilyState(
     selected: Set<GboardSoftKeyFamilyFeature>,
 ) {
-    val actualTarget = GboardVersionBindings.softKeyBind.resolve(this)
+    val actualTarget = resolveSoftKeyTargetForPreflight()
     val expectedEnglish = GboardSoftKeyFamilyFeature.ENGLISH_QWERTY in selected
     val actualHelpers = methods.filter { method ->
         method.name in GBOARD_ENGLISH_SOFT_KEY_HELPER_NAMES
@@ -387,7 +381,7 @@ private fun MutableClass.verifyExactSoftKeyFamilyState(
 
     val normalized = MutableClass(this)
     normalized.methods.removeAll { method -> method.name in GBOARD_ENGLISH_SOFT_KEY_HELPER_NAMES }
-    val normalizedTarget = GboardVersionBindings.softKeyBind.resolve(normalized)
+    val normalizedTarget = normalized.resolveSoftKeyTargetForPreflight()
     normalizedTarget.stripExpectedSoftKeyFamilySlots(selected)
     check(normalizedTarget.implementation!!.instructions.none { it.softKeyFamilyCall() != null }) {
         "Extraneous SoftKey-family call outside selected slots"
@@ -396,7 +390,7 @@ private fun MutableClass.verifyExactSoftKeyFamilyState(
 
     val expected = MutableClass(normalized)
     if (expectedEnglish) expected.installGboardEnglishQwertySoftKeyHelpers()
-    val expectedTarget = GboardVersionBindings.softKeyBind.resolve(expected)
+    val expectedTarget = expected.resolveSoftKeyTargetForPreflight()
     expectedTarget.applySelectedSoftKeyFamily(selected)
     check(actualTarget.gboardStructuralFingerprint() == expectedTarget.gboardStructuralFingerprint()) {
         "Malformed SoftKey-family target transformation"

@@ -45,8 +45,11 @@ public final class GboardLongPressQuickActions1803ReflectionHandles {
     private final Constructor<?> actionBuilderConstructor;
     private final Field actionBuilderTypeField;
     private final Field actionBuilderEntriesField;
+    private final Method actionBuilderEntriesMethod;
     private final Field actionBuilderLabelsField;
+    private final Method actionBuilderLabelsMethod;
     private final Field actionBuilderIconsField;
+    private final Method actionBuilderIconsMethod;
     private final Field actionBuilderPopupLayoutField;
     private final Method copyActionMethod;
     private final Method buildActionMethod;
@@ -66,92 +69,191 @@ public final class GboardLongPressQuickActions1803ReflectionHandles {
 
     public GboardLongPressQuickActions1803ReflectionHandles(ClassLoader classLoader)
             throws Throwable {
-        Class<?> softKeyViewClass = resolve(classLoader, SOFT_KEY_VIEW_CLASS);
-        Class<?> actionSetClass = resolve(classLoader, ACTION_SET_CLASS);
-        Class<?> actionTypeClass = resolve(classLoader, ACTION_TYPE_CLASS);
-        Class<?> actionDefClass = resolve(classLoader, ACTION_DEF_CLASS);
-        actionEntryClass = resolve(classLoader, ACTION_ENTRY_CLASS);
-        Class<?> actionBuilderClass = resolve(classLoader, ACTION_BUILDER_CLASS);
-        Class<?> metadataBuilderClass = resolve(classLoader, METADATA_BUILDER_CLASS);
-        Class<?> intentionClass = resolve(classLoader, INTENTION_CLASS);
-        Class<?> eventClass = resolve(classLoader, EVENT_CLASS);
-        Class<?> inputMethodServiceClass = resolve(classLoader, INPUT_METHOD_SERVICE_CLASS);
-        Class<?> pointerTrackerClass = resolve(classLoader, POINTER_TRACKER_CLASS);
+        boolean is1854 = false;
+        try {
+            classLoader.loadClass("agrt");
+            is1854 = true;
+        } catch (ClassNotFoundException ignored) {
+        }
 
-        softKeyBindMethod = softKeyViewClass.getDeclaredMethod(
-                "r", actionSetClass, long.class);
-        inputEventMethod = inputMethodServiceClass.getDeclaredMethod("au", eventClass);
-        pointerOwnerMethod = pointerTrackerClass.getDeclaredMethod(
-                "B", softKeyViewClass, float.class, float.class, long.class, int.class);
-        validateInputEventBinding(inputMethodServiceClass, inputEventMethod);
+        if (is1854) {
+            Class<?> softKeyViewClass = resolve(classLoader, SOFT_KEY_VIEW_CLASS);
+            Class<?> actionSetClass = resolve(classLoader, ACTION_SET_CLASS);
+            Class<?> actionTypeClass = resolve(classLoader, "agcu");
+            Class<?> actionDefClass = resolve(classLoader, ACTION_DEF_CLASS);
+            actionEntryClass = resolve(classLoader, "agen");
+            Class<?> actionBuilderClass = resolve(classLoader, "agcy");
+            Class<?> metadataBuilderClass = resolve(classLoader, "agih");
+            Class<?> intentionClass = resolve(classLoader, "agem");
+            Class<?> eventClass = resolve(classLoader, "acwt");
+            Class<?> inputMethodServiceClass = resolve(classLoader,
+                    "com.google.android.apps.inputmethod.libs.latin5.LatinIme");
+            Class<?> pointerTrackerClass = resolve(classLoader, "agrt");
 
-        softKeyMetadataField = softKeyViewClass.getDeclaredField("e");
-        keyIdField = actionSetClass.getDeclaredField("d");
-        actionSetClass.getDeclaredField("f").setAccessible(true);
-        actionSetClass.getDeclaredField("g").setAccessible(true);
-        exactActionLookupMethod = actionSetClass.getDeclaredMethod("h", actionTypeClass);
+            softKeyBindMethod = softKeyViewClass.getDeclaredMethod("s", actionSetClass, long.class);
+            inputEventMethod = inputMethodServiceClass.getDeclaredMethod("p", eventClass);
+            pointerOwnerMethod = pointerTrackerClass.getDeclaredMethod(
+                    "B", softKeyViewClass, float.class, float.class, long.class, int.class);
+            validateInputEventBinding(inputMethodServiceClass, inputEventMethod);
 
-        actionDefClass.getDeclaredField("c").setAccessible(true);
-        actionEntriesField = actionDefClass.getDeclaredField("d");
-        actionDefClass.getDeclaredField("g").setAccessible(true);
-        popupLabelsField = actionDefClass.getDeclaredField("n");
-        popupIconsField = actionDefClass.getDeclaredField("o");
-        entryKeycodeField = actionEntryClass.getDeclaredField("c");
-        entryPayloadField = actionEntryClass.getDeclaredField("e");
-        entryConstructor = actionEntryClass.getDeclaredConstructor(
-                int.class, intentionClass, Object.class, int.class);
+            softKeyMetadataField = softKeyViewClass.getDeclaredField("e");
+            keyIdField = actionSetClass.getDeclaredField("g");
+            exactActionLookupMethod = actionSetClass.getDeclaredMethod("h", actionTypeClass);
 
-        actionBuilderConstructor = actionBuilderClass.getDeclaredConstructor();
-        actionBuilderTypeField = actionBuilderClass.getDeclaredField("a");
-        actionBuilderEntriesField = actionBuilderClass.getDeclaredField("b");
-        actionBuilderLabelsField = actionBuilderClass.getDeclaredField("c");
-        actionBuilderIconsField = actionBuilderClass.getDeclaredField("d");
-        actionBuilderPopupLayoutField = actionBuilderClass.getDeclaredField("g");
-        copyActionMethod = actionBuilderClass.getDeclaredMethod("j", actionDefClass);
-        buildActionMethod = actionBuilderClass.getDeclaredMethod("c");
-        scheduleLongPressMethod = pointerTrackerClass.getDeclaredMethod("y");
+            actionEntriesField = actionDefClass.getDeclaredField("g");
+            popupLabelsField = actionDefClass.getDeclaredField("q");
+            popupIconsField = actionDefClass.getDeclaredField("r");
+            entryKeycodeField = actionEntryClass.getDeclaredField("d");
+            entryPayloadField = actionEntryClass.getDeclaredField("f");
+            entryConstructor = actionEntryClass.getDeclaredConstructor(
+                    int.class, intentionClass, Object.class, int.class);
 
-        metadataBuilderConstructor = metadataBuilderClass.getDeclaredConstructor();
-        copyMetadataMethod = metadataBuilderClass.getDeclaredMethod("j", actionSetClass);
-        putActionMethod = metadataBuilderClass.getDeclaredMethod("t", actionDefClass);
-        buildMetadataMethod = metadataBuilderClass.getDeclaredMethod("d");
+            actionBuilderConstructor = actionBuilderClass.getDeclaredConstructor();
+            actionBuilderTypeField = actionBuilderClass.getDeclaredField("b");
+            actionBuilderEntriesField = null;
+            actionBuilderEntriesMethod = actionBuilderClass.getDeclaredMethod(
+                    "n", Array.newInstance(actionEntryClass, 0).getClass());
+            actionBuilderLabelsField = null;
+            actionBuilderLabelsMethod = actionBuilderClass.getDeclaredMethod("t", String[].class);
+            actionBuilderIconsField = null;
+            actionBuilderIconsMethod = actionBuilderClass.getDeclaredMethod("o", int[].class);
+            actionBuilderPopupLayoutField = actionBuilderClass.getDeclaredField("h");
+            copyActionMethod = actionBuilderClass.getDeclaredMethod("j", actionDefClass);
+            buildActionMethod = actionBuilderClass.getDeclaredMethod("c");
+            scheduleLongPressMethod = pointerTrackerClass.getDeclaredMethod("y");
 
-        eventActionTypeField = eventClass.getDeclaredField("a");
-        eventEntriesField = eventClass.getDeclaredField("b");
-        eventMetadataField = eventClass.getDeclaredField("c");
+            metadataBuilderConstructor = metadataBuilderClass.getDeclaredConstructor();
+            copyMetadataMethod = metadataBuilderClass.getDeclaredMethod("m", actionSetClass);
+            putActionMethod = metadataBuilderClass.getDeclaredMethod("v", actionDefClass);
+            buildMetadataMethod = metadataBuilderClass.getDeclaredMethod("b");
 
-        setAccessible(
-                softKeyBindMethod,
-                inputEventMethod,
-                pointerOwnerMethod,
-                softKeyMetadataField,
-                keyIdField,
-                exactActionLookupMethod,
-                actionEntriesField,
-                popupLabelsField,
-                popupIconsField,
-                entryKeycodeField,
-                entryPayloadField,
-                entryConstructor,
-                actionBuilderConstructor,
-                actionBuilderTypeField,
-                actionBuilderEntriesField,
-                actionBuilderLabelsField,
-                actionBuilderIconsField,
-                actionBuilderPopupLayoutField,
-                copyActionMethod,
-                buildActionMethod,
-                scheduleLongPressMethod,
-                metadataBuilderConstructor,
-                copyMetadataMethod,
-                putActionMethod,
-                buildMetadataMethod,
-                eventActionTypeField,
-                eventEntriesField,
-                eventMetadataField);
+            eventActionTypeField = eventClass.getDeclaredField("a");
+            eventEntriesField = eventClass.getDeclaredField("b");
+            eventMetadataField = eventClass.getDeclaredField("c");
 
-        pressActionType = enumValue(actionTypeClass, "PRESS");
-        longPressActionType = enumValue(actionTypeClass, "LONG_PRESS");
+            pressActionType = enumValue(actionTypeClass, "PRESS");
+            longPressActionType = enumValue(actionTypeClass, "LONG_PRESS");
+
+            setAccessible(
+                    softKeyBindMethod,
+                    inputEventMethod,
+                    pointerOwnerMethod,
+                    softKeyMetadataField,
+                    keyIdField,
+                    exactActionLookupMethod,
+                    actionEntriesField,
+                    popupLabelsField,
+                    popupIconsField,
+                    entryKeycodeField,
+                    entryPayloadField,
+                    entryConstructor,
+                    actionBuilderConstructor,
+                    actionBuilderTypeField,
+                    actionBuilderEntriesMethod,
+                    actionBuilderLabelsMethod,
+                    actionBuilderIconsMethod,
+                    actionBuilderPopupLayoutField,
+                    copyActionMethod,
+                    buildActionMethod,
+                    scheduleLongPressMethod,
+                    metadataBuilderConstructor,
+                    copyMetadataMethod,
+                    putActionMethod,
+                    buildMetadataMethod,
+                    eventActionTypeField,
+                    eventEntriesField,
+                    eventMetadataField);
+        } else {
+            Class<?> softKeyViewClass = resolve(classLoader, SOFT_KEY_VIEW_CLASS);
+            Class<?> actionSetClass = resolve(classLoader, ACTION_SET_CLASS);
+            Class<?> actionTypeClass = resolve(classLoader, ACTION_TYPE_CLASS);
+            Class<?> actionDefClass = resolve(classLoader, ACTION_DEF_CLASS);
+            actionEntryClass = resolve(classLoader, ACTION_ENTRY_CLASS);
+            Class<?> actionBuilderClass = resolve(classLoader, ACTION_BUILDER_CLASS);
+            Class<?> metadataBuilderClass = resolve(classLoader, METADATA_BUILDER_CLASS);
+            Class<?> intentionClass = resolve(classLoader, INTENTION_CLASS);
+            Class<?> eventClass = resolve(classLoader, EVENT_CLASS);
+            Class<?> inputMethodServiceClass = resolve(classLoader, INPUT_METHOD_SERVICE_CLASS);
+            Class<?> pointerTrackerClass = resolve(classLoader, POINTER_TRACKER_CLASS);
+
+            softKeyBindMethod = softKeyViewClass.getDeclaredMethod(
+                    "r", actionSetClass, long.class);
+            inputEventMethod = inputMethodServiceClass.getDeclaredMethod("au", eventClass);
+            pointerOwnerMethod = pointerTrackerClass.getDeclaredMethod(
+                    "B", softKeyViewClass, float.class, float.class, long.class, int.class);
+            validateInputEventBinding(inputMethodServiceClass, inputEventMethod);
+
+            softKeyMetadataField = softKeyViewClass.getDeclaredField("e");
+            keyIdField = actionSetClass.getDeclaredField("d");
+            actionSetClass.getDeclaredField("f").setAccessible(true);
+            actionSetClass.getDeclaredField("g").setAccessible(true);
+            exactActionLookupMethod = actionSetClass.getDeclaredMethod("h", actionTypeClass);
+
+            actionDefClass.getDeclaredField("c").setAccessible(true);
+            actionEntriesField = actionDefClass.getDeclaredField("d");
+            actionDefClass.getDeclaredField("g").setAccessible(true);
+            popupLabelsField = actionDefClass.getDeclaredField("n");
+            popupIconsField = actionDefClass.getDeclaredField("o");
+            entryKeycodeField = actionEntryClass.getDeclaredField("c");
+            entryPayloadField = actionEntryClass.getDeclaredField("e");
+            entryConstructor = actionEntryClass.getDeclaredConstructor(
+                    int.class, intentionClass, Object.class, int.class);
+
+            actionBuilderConstructor = actionBuilderClass.getDeclaredConstructor();
+            actionBuilderTypeField = actionBuilderClass.getDeclaredField("a");
+            actionBuilderEntriesField = actionBuilderClass.getDeclaredField("b");
+            actionBuilderEntriesMethod = null;
+            actionBuilderLabelsField = actionBuilderClass.getDeclaredField("c");
+            actionBuilderLabelsMethod = null;
+            actionBuilderIconsField = actionBuilderClass.getDeclaredField("d");
+            actionBuilderIconsMethod = null;
+            actionBuilderPopupLayoutField = actionBuilderClass.getDeclaredField("g");
+            copyActionMethod = actionBuilderClass.getDeclaredMethod("j", actionDefClass);
+            buildActionMethod = actionBuilderClass.getDeclaredMethod("c");
+            scheduleLongPressMethod = pointerTrackerClass.getDeclaredMethod("y");
+
+            metadataBuilderConstructor = metadataBuilderClass.getDeclaredConstructor();
+            copyMetadataMethod = metadataBuilderClass.getDeclaredMethod("j", actionSetClass);
+            putActionMethod = metadataBuilderClass.getDeclaredMethod("t", actionDefClass);
+            buildMetadataMethod = metadataBuilderClass.getDeclaredMethod("d");
+
+            eventActionTypeField = eventClass.getDeclaredField("a");
+            eventEntriesField = eventClass.getDeclaredField("b");
+            eventMetadataField = eventClass.getDeclaredField("c");
+
+            pressActionType = enumValue(actionTypeClass, "PRESS");
+            longPressActionType = enumValue(actionTypeClass, "LONG_PRESS");
+
+            setAccessible(
+                    softKeyBindMethod,
+                    inputEventMethod,
+                    pointerOwnerMethod,
+                    softKeyMetadataField,
+                    keyIdField,
+                    exactActionLookupMethod,
+                    actionEntriesField,
+                    popupLabelsField,
+                    popupIconsField,
+                    entryKeycodeField,
+                    entryPayloadField,
+                    entryConstructor,
+                    actionBuilderConstructor,
+                    actionBuilderTypeField,
+                    actionBuilderEntriesField,
+                    actionBuilderLabelsField,
+                    actionBuilderIconsField,
+                    actionBuilderPopupLayoutField,
+                    copyActionMethod,
+                    buildActionMethod,
+                    scheduleLongPressMethod,
+                    metadataBuilderConstructor,
+                    copyMetadataMethod,
+                    putActionMethod,
+                    buildMetadataMethod,
+                    eventActionTypeField,
+                    eventEntriesField,
+                    eventMetadataField);
+        }
     }
 
     public Object extractSoftKeyMetadata(Object softKeyView) throws IllegalAccessException {
@@ -214,7 +316,7 @@ public final class GboardLongPressQuickActions1803ReflectionHandles {
         Object entries = Array.newInstance(actionEntryClass, 1);
         Array.set(entries, 0, entryConstructor.newInstance(
                 keycode, null, payload, Integer.MAX_VALUE));
-        actionBuilderEntriesField.set(actionBuilder, entries);
+        setActionBuilderEntries(actionBuilder, entries);
         return buildActionMethod.invoke(actionBuilder);
     }
 
@@ -253,15 +355,15 @@ public final class GboardLongPressQuickActions1803ReflectionHandles {
         Array.set(updatedEntries, existingEntries.length,
                 entryConstructor.newInstance(
                         action.actionCode, null, null, Integer.MAX_VALUE));
-        actionBuilderEntriesField.set(actionBuilder, updatedEntries);
+        setActionBuilderEntries(actionBuilder, updatedEntries);
 
         String[] labels = normalizeLabels(existingLabels, existingEntries.length + 1);
         labels[existingEntries.length] = null;
-        actionBuilderLabelsField.set(actionBuilder, labels);
+        setActionBuilderLabels(actionBuilder, labels);
 
         int[] icons = normalizeIcons(existingIcons, existingEntries.length + 1);
         icons[existingEntries.length] = action.iconResId;
-        actionBuilderIconsField.set(actionBuilder, icons);
+        setActionBuilderIcons(actionBuilder, icons);
 
         Object patchedAction = buildActionMethod.invoke(actionBuilder);
         if (patchedAction == null) {
@@ -271,6 +373,30 @@ public final class GboardLongPressQuickActions1803ReflectionHandles {
         copyMetadataMethod.invoke(metadataBuilder, metadata);
         putActionMethod.invoke(metadataBuilder, patchedAction);
         return buildMetadataMethod.invoke(metadataBuilder);
+    }
+
+    private void setActionBuilderEntries(Object actionBuilder, Object entries) throws Throwable {
+        if (actionBuilderEntriesMethod != null) {
+            actionBuilderEntriesMethod.invoke(actionBuilder, entries);
+        } else if (actionBuilderEntriesField != null) {
+            actionBuilderEntriesField.set(actionBuilder, entries);
+        }
+    }
+
+    private void setActionBuilderLabels(Object actionBuilder, String[] labels) throws Throwable {
+        if (actionBuilderLabelsMethod != null) {
+            actionBuilderLabelsMethod.invoke(actionBuilder, (Object) labels);
+        } else if (actionBuilderLabelsField != null) {
+            actionBuilderLabelsField.set(actionBuilder, labels);
+        }
+    }
+
+    private void setActionBuilderIcons(Object actionBuilder, int[] icons) throws Throwable {
+        if (actionBuilderIconsMethod != null) {
+            actionBuilderIconsMethod.invoke(actionBuilder, (Object) icons);
+        } else if (actionBuilderIconsField != null) {
+            actionBuilderIconsField.set(actionBuilder, icons);
+        }
     }
 
     private static int resolveSingleIconPopupLayoutResId(Context context) {
@@ -414,11 +540,23 @@ public final class GboardLongPressQuickActions1803ReflectionHandles {
 
     private Object[] extractEntries(Object action) throws IllegalAccessException {
         Object value = action == null ? null : actionEntriesField.get(action);
+        if (value instanceof java.util.List<?>) {
+            return ((java.util.List<?>) value).toArray();
+        }
         return value instanceof Object[] ? (Object[]) value : new Object[0];
     }
 
     private String[] popupLabels(Object action) throws IllegalAccessException {
         Object value = action == null ? null : popupLabelsField.get(action);
+        if (value instanceof java.util.List<?>) {
+            java.util.List<?> list = (java.util.List<?>) value;
+            String[] array = new String[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                Object item = list.get(i);
+                array[i] = item != null ? item.toString() : null;
+            }
+            return array;
+        }
         return value instanceof String[] ? (String[]) value : new String[0];
     }
 

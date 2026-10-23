@@ -25,21 +25,37 @@ internal val gboardClipboardColumnCountPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
-        val mutableMethod = findMutableMethodOrThrow(
-            classType = CLIPBOARD_KEYBOARD_CLASS,
-            name = "l",
-            returnType = "I",
-            parameterTypes = emptyList()
+        val targets = resolveClipboardTargets(this)
+        val mutableMethod = if (targets.columnCountMethod != "l") {
+            findMutableMethodOrThrow(
+                classType = targets.keyboardClass,
+                name = targets.columnCountMethod,
+                returnType = "I",
+                parameterTypes = emptyList(),
+            )
+        } else {
+            findMutableMethodOrThrow(
+                classType = targets.keyboardClass,
+                name = "l",
+                returnType = "I",
+                parameterTypes = emptyList(),
+            )
+        }
+        mutableMethod.applyClipboardColumnCountDelegate(
+            targets.keyboardClass,
+            targets.columnCountMethod,
         )
-        mutableMethod.applyClipboardColumnCountDelegate()
     }
 }
 
-internal fun MutableMethod.applyClipboardColumnCountDelegate() {
-    requireExactClipboardTarget(CLIPBOARD_KEYBOARD_CLASS, "l", "I", emptyList())
+internal fun MutableMethod.applyClipboardColumnCountDelegate(
+    keyboardClass: String = CLIPBOARD_KEYBOARD_CLASS,
+    columnCountMethod: String = "l",
+) {
+    requireExactClipboardTarget(keyboardClass, columnCountMethod, "I", emptyList())
     applyVerified(
         VerifiedTransformationPlan(
-            targetName = "$CLIPBOARD_KEYBOARD_CLASS->l()I",
+            targetName = "$keyboardClass->$columnCountMethod()I",
             classify = MutableMethod::classifyClipboardColumnCount,
             mutate = { method ->
                 method.addInstructions(0, COLUMN_COUNT_DELEGATE)

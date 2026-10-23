@@ -100,6 +100,8 @@ import dev.jason.gboardpatches.patches.gboard.shared.generated.GboardTargetAdmis
 import dev.jason.gboardpatches.patches.gboard.features.zhuyinbottomrow.gboardZhuyinBottomRowWeightFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.zhuyinbottomrow.gboardZhuyinBottomRowWeightSoftKeyPatch
 import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD
+import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD_1803_1854
+import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD_UNIVERSAL
 
 private fun gboardPublicResourcePatch(
     featureId: String,
@@ -142,7 +144,7 @@ val gboardEnglishQwertySlideUppercaseTogglePatch = gboardPublicResourcePatch(
     description = "英文 QWERTY 鍵盤上滑大小寫\nFlick up on the English QWERTY keyboard to toggle uppercase and lowercase.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardAboutPageResourcePatch,
@@ -160,7 +162,7 @@ val gboardLongPressQuickActionsPatch = gboardPublicResourcePatch(
         "to English QWERTY and Zhuyin.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -246,7 +248,7 @@ val gboardSimpleCalculatorPatch = gboardPublicResourcePatch(
         "Type an expression and show a scrollable equation plus its answer in Gboard's suggestion row.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -263,7 +265,7 @@ val gboardSwipeDismissPatch = gboardPublicResourcePatch(
         "Swipe down from the suggestions or toolbar to close the keyboard.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -280,7 +282,7 @@ val gboardAdvancedVoiceTypingPatch = gboardPublicResourcePatch(
         "Enable Advanced Voice Typing with automatic punctuation, and separately enable automatic punctuation for Traditional Chinese voice typing, which does not support Advanced Voice Typing.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -296,7 +298,7 @@ val gboardBluetoothMicrophonePatch = gboardPublicResourcePatch(
         "Enable Voice typing -> Use Bluetooth microphone.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -312,7 +314,7 @@ val gboardEmojiSizePatch = gboardPublicResourcePatch(
     description = "變更表情符號大小\nChange emoji size.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -329,7 +331,7 @@ val gboardCursorTrackpadPatch = gboardPublicResourcePatch(
         "Long-press the space bar to use cursor trackpad and lock modes.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -346,7 +348,7 @@ val gboardAccessPointsMenuStylePatch = gboardPublicResourcePatch(
         "Switch between the new and legacy Access Points menu styles.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -379,7 +381,7 @@ val gboardAccessibilityLayoutPatch = gboardPublicResourcePatch(
     description = "啟用無障礙鍵盤配置\nEnable accessibility layout.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -429,7 +431,7 @@ val gboardAccessPointCountPatch = gboardPublicResourcePatch(
         "Customize the Gboard top toolbar item count.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -446,7 +448,7 @@ val gboardCloseProactiveSuggestionsPatch = gboardPublicResourcePatch(
         "Show a dismiss button in the proactive suggestions bar.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -497,7 +499,7 @@ val gboardQuickInsertPatch = gboardPublicResourcePatch(
         "Enable the Quick Insert panel and toolbar access point.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -573,7 +575,7 @@ val gboardBackupRestorePatch = gboardPublicResourcePatch(
         "Export or restore all Patches settings, and back up, compare, or restore the Gboard PB/XML flag store.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -605,7 +607,7 @@ val gboardClipboardEnhancementsPatch = gboardPublicResourcePatch(
     description = "增強剪貼簿的保留時間、數量上限、預覽行數、倒數/建立時間、順序編號與欄數\nEnhance clipboard retention time, item count limit, preview lines, countdown/creation time labels, order index, and column count.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardAboutPageResourcePatch,
@@ -626,7 +628,7 @@ val gboardClipboardContentLimitPatch = gboardPublicResourcePatch(
     description = "自訂每個文字剪貼簿項目的最大字元數\nCustomize the maximum character count for each text clipboard item.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -642,7 +644,7 @@ val gboardDeviceIntelligencePatch = gboardPublicResourcePatch(
     description = "啟用內嵌自動填入建議\nEnable Inline Autofill Suggestions",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesExtensionCarrierPatch,
@@ -658,7 +660,7 @@ val gboardGrammarCheckerFlagPatch = gboardPublicResourcePatch(
     description = "啟用 修正和建議 > 文法檢查\nEnable Text correction > Grammar check.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesExtensionCarrierPatch,
@@ -674,7 +676,7 @@ val gboardInlineSuggestionsFlagPatch = gboardPublicResourcePatch(
     description = "啟用 修正和建議 > 智慧撰寫\nEnable Text correction > Smart Compose.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesExtensionCarrierPatch,
@@ -706,7 +708,7 @@ val gboardAiWritingToolsPatch = gboardPublicResourcePatch(
     description = "啟用 AI 撰寫工具，支援所有語言\nEnable AI writing tools with support for all languages.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -728,7 +730,7 @@ val gboardOcrScanTextPatch = gboardPublicResourcePatch(
         "Enable the OCR / Scan Text feature with Latin, Chinese, Japanese, Korean, and Devanagari recognition backends.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -759,7 +761,7 @@ val gboardLatinGlobeKeyIgnoreIntervalPatch = gboardPublicResourcePatch(
     description = "新增英文鍵盤地球鍵忽略時間覆寫，可獨立控制輸入後切語言延遲\nAdd an independent English globe key ignore interval override for post-typing language-switch delay.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -793,7 +795,7 @@ val gboardPackageRenamePatch = gboardPublicResourcePatch(
         "a custom app name so it can be installed alongside the official Gboard.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     val appDisplayName = stringOption(
         key = "app_display_name",
@@ -833,7 +835,7 @@ val gboardSignatureBypassPatch = gboardPublicResourcePatch(
     description = "攔截 Gboard 的簽章白名單檢查並強制通過\nBypass Gboard signature whitelist checks and force them to pass.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardSignatureBypassBytecodePatch
@@ -848,7 +850,7 @@ val gboardCustomFontPatch = gboardPublicResourcePatch(
         "Embeds or imports custom fonts & modern Emoji with smart text fallback, manageable inside Gboard Patches Settings.",
     default = false
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_UNIVERSAL)
 
     val fontFile = filePathOption(
         key = "font_file",

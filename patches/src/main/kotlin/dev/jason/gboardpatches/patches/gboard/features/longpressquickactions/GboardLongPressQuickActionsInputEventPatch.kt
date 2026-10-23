@@ -15,6 +15,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import dev.jason.gboardpatches.patches.gboard.shared.VerifiedTransformationPlan
 import dev.jason.gboardpatches.patches.gboard.shared.VerifiedTransformationState
 import dev.jason.gboardpatches.patches.gboard.shared.applyVerified
+import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrNull
 import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrThrow
 import dev.jason.gboardpatches.patches.gboard.shared.gboardPatchesExtensionCarrierPatch
 import dev.jason.gboardpatches.patches.gboard.shared.isInvoke
@@ -59,8 +60,13 @@ internal val gboardLongPressQuickActionsInputEventPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
-        val method = findMutableMethodOrThrow(
+        val method = findMutableMethodOrNull(
             GboardVersionBindings.longPressQuickActionsInputEvent,
+        ) ?: findMutableMethodOrThrow(
+            "Lcom/google/android/apps/inputmethod/libs/latin5/LatinIme;",
+            "p",
+            "Z",
+            listOf("Lacwt;"),
         )
         method.applyLongPressQuickActionsInputEventDelegate()
     }
@@ -69,7 +75,7 @@ internal val gboardLongPressQuickActionsInputEventPatch = bytecodePatch(
 internal fun MutableMethod.applyLongPressQuickActionsInputEventDelegate() {
     applyVerified(
         VerifiedTransformationPlan(
-            targetName = GboardVersionBindings.longPressQuickActionsInputEvent.reference,
+            targetName = "$definingClass->$name",
             classify = MutableMethod::classifyLongPressInputEvent,
             mutate = { method ->
                 method.addInstructions(0, "nop")
@@ -92,13 +98,13 @@ internal fun MutableMethod.applyLongPressQuickActionsInputEventDelegate() {
 private fun MutableMethod.classifyLongPressInputEvent(): VerifiedTransformationState {
     val implementation = implementation
         ?: error("Long-press input event target has no implementation")
-    val layout = inputEventRegisterLayout(implementation.registerCount)
+    val layout = inputEventRegisterLayout(this)
     val instructions = implementation.instructions
     return when (instructions.count { it.isMethodReference(INPUT_EVENT_RUNTIME_DESCRIPTOR) }) {
         0 -> {
             check(instructions.hasLongPressInputStockEntry(0, layout.eventRegister)) {
                 "Stock entry drift in " +
-                    "${GboardVersionBindings.longPressQuickActionsInputEvent.reference}: " +
+                    "$definingClass->$name: " +
                     instructions.take(4).joinToString { instruction ->
                         instruction.opcode.name + ":" +
                             (instruction as? OneRegisterInstruction)?.registerA + ":" +
@@ -137,13 +143,20 @@ private fun List<Instruction>.hasLongPressInputStockEntry(
     if (size < startIndex + 4) return false
     val firstMove = this[startIndex] as? TwoRegisterInstruction
     val zero = this[startIndex + 1] as? NarrowLiteralInstruction
-    return this[startIndex].isOpcode("MOVE_OBJECT_FROM16") &&
+    val is1803 = this[startIndex].isOpcode("MOVE_OBJECT_FROM16") &&
         firstMove?.registerA == 1 && firstMove.registerB == eventRegister &&
         this[startIndex + 1].isOpcode("CONST_4") &&
         (this[startIndex + 1] as? OneRegisterInstruction)?.registerA == 2 &&
         zero?.narrowLiteral == 0 &&
         this[startIndex + 2].isRegisterOperation("IF_NEZ", 1) &&
         this[startIndex + 3].isRegisterOperation("RETURN", 2)
+    if (is1803) return true
+
+    val secondMove = this.getOrNull(startIndex + 1) as? TwoRegisterInstruction
+    return this[startIndex].isOpcode("MOVE_OBJECT_FROM16") &&
+        this[startIndex + 1].isOpcode("MOVE_OBJECT_FROM16") &&
+        secondMove?.registerA == 0 && secondMove.registerB == eventRegister &&
+        this[startIndex + 2].isOpcode("CONST_STRING")
 }
 
 private data class InputEventRegisterLayout(
@@ -151,18 +164,15 @@ private data class InputEventRegisterLayout(
     val eventRegister: Int,
 )
 
-private fun inputEventRegisterLayout(registerCount: Int): InputEventRegisterLayout {
-    val binding = GboardVersionBindings.longPressQuickActionsInputEvent
-    check(binding.parameterTypes.size == 1 && binding.returnType == "Z") {
-        "Long-press input event prototype drift: ${binding.reference}"
-    }
-    val parameterWordCount = 1 + binding.parameterTypes.sumOf { type ->
+private fun inputEventRegisterLayout(method: MutableMethod): InputEventRegisterLayout {
+    val registerCount = method.implementation!!.registerCount
+    val parameterWordCount = 1 + method.parameterTypes.sumOf { type ->
         if (type == "J" || type == "D") 2 else 1
     }
     val receiverRegister = registerCount - parameterWordCount
     val eventRegister = receiverRegister + 1
     check(receiverRegister >= 0 && eventRegister < registerCount) {
-        "Long-press input event register layout is smaller than its prototype"
+        "Long-press input event register layout is smaller than its prototype in ${method.definingClass}->${method.name}"
     }
     return InputEventRegisterLayout(receiverRegister, eventRegister)
 }

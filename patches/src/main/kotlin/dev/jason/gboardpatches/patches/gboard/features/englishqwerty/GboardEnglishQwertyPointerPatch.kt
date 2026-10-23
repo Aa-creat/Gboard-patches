@@ -53,13 +53,15 @@ private fun GboardPointerOwnerTransformationContext.addEnglishAnchorField() {
 }
 
 private fun GboardPointerOwnerTransformationContext.addEnglishPointerHelpers() {
+    val pointerClass = ownerClass.type
+    val actionTypeClass = if (pointerClass == "Lagrt;") "Lagcu;" else "Lpmy;"
     ownerClass.addHelperMethodIfMissing(
         name = "jasondevShouldSuppressEnglishRetarget",
         parameterTypes = listOf(SOFT_KEY_VIEW_TYPE, "F", "F"),
         returnType = "Z",
         accessFlags = AccessFlags.PRIVATE.value or AccessFlags.FINAL.value,
         registerCount = 9,
-        body = SHOULD_SUPPRESS_ENGLISH_RETARGET_BODY
+        body = shouldSuppressEnglishRetargetBody(pointerClass, actionTypeClass)
     )
     ownerClass.addHelperMethodIfMissing(
         name = "jasondevClearEnglishAnchor",
@@ -67,27 +69,27 @@ private fun GboardPointerOwnerTransformationContext.addEnglishPointerHelpers() {
         returnType = "V",
         accessFlags = AccessFlags.PRIVATE.value or AccessFlags.FINAL.value,
         registerCount = 2,
-        body = CLEAR_ENGLISH_POINTER_ANCHOR_BODY
+        body = clearEnglishPointerAnchorBody(pointerClass)
     )
 }
 
 private fun GboardPointerOwnerTransformationContext.injectEnglishPointerOwner() {
     val finish = GboardVersionBindings.pointerFinish
     val rCallIndex = pointerOwnerMethod.indexOfFirstMethodCall(
-        definingClass = finish.ownerDescriptor,
+        definingClass = pointerOwnerMethod.definingClass,
         name = finish.name,
         returnType = finish.returnType,
         parameterTypes = finish.parameterTypes,
     )
     val preReset = GboardVersionBindings.pointerPreReset
     val acCallIndex = pointerOwnerMethod.indexOfFirstMethodCall(
-        definingClass = preReset.ownerDescriptor,
+        definingClass = pointerOwnerMethod.definingClass,
         name = preReset.name,
         returnType = preReset.returnType,
         parameterTypes = preReset.parameterTypes,
     )
-    check(rCallIndex >= 0) { "Unable to find ${finish.reference} inside pointer owner" }
-    check(acCallIndex >= 0) { "Unable to find ${preReset.reference} inside pointer owner" }
+    check(rCallIndex >= 0) { "Unable to find ${finish.name} inside pointer owner" }
+    check(acCallIndex >= 0) { "Unable to find ${preReset.name} inside pointer owner" }
     check(rCallIndex < acCallIndex) {
         "Target pointer owner must finish the prior session before resetting tracker state"
     }
@@ -96,7 +98,7 @@ private fun GboardPointerOwnerTransformationContext.injectEnglishPointerOwner() 
     val continuationInstruction = pointerOwnerMethod.implementation!!.instructions[rCallIndex]
     pointerOwnerMethod.addInstructionsWithLabels(
         rCallIndex,
-        ENGLISH_POINTER_OWNER_PRE_RESET_DELEGATE,
+        englishPointerOwnerPreResetDelegate(ownerClass.type),
         ExternalLabel(
             "jasondev_continue_english_pointer_owner",
             continuationInstruction
@@ -105,11 +107,11 @@ private fun GboardPointerOwnerTransformationContext.injectEnglishPointerOwner() 
 }
 
 private fun GboardPointerOwnerTransformationContext.injectEnglishPointerCleanup() {
-    pointerCancelMethod.addInstructions(0, CLEAR_ENGLISH_POINTER_ANCHOR_DELEGATE)
-    pointerResetMethod.addInstructions(0, CLEAR_ENGLISH_POINTER_ANCHOR_DELEGATE)
+    pointerCancelMethod.addInstructions(0, clearEnglishPointerAnchorDelegate(ownerClass.type))
+    pointerResetMethod.addInstructions(0, clearEnglishPointerAnchorDelegate(ownerClass.type))
 }
 
-private val ENGLISH_POINTER_OWNER_PRE_RESET_DELEGATE by lazy { """
+private fun englishPointerOwnerPreResetDelegate(pointerTrackerClass: String) = """
     invoke-direct {p0, p1, v0, v1}, $pointerTrackerClass->jasondevShouldSuppressEnglishRetarget(${SOFT_KEY_VIEW_TYPE}FF)Z
 
     move-result v4
@@ -117,21 +119,21 @@ private val ENGLISH_POINTER_OWNER_PRE_RESET_DELEGATE by lazy { """
     if-eqz v4, :jasondev_continue_english_pointer_owner
 
     return-void
-""".trimIndent() }
+""".trimIndent()
 
-private val CLEAR_ENGLISH_POINTER_ANCHOR_DELEGATE by lazy { """
+private fun clearEnglishPointerAnchorDelegate(pointerTrackerClass: String) = """
     invoke-direct {p0}, $pointerTrackerClass->jasondevClearEnglishAnchor()V
-""".trimIndent() }
+""".trimIndent()
 
-private val CLEAR_ENGLISH_POINTER_ANCHOR_BODY by lazy { """
+private fun clearEnglishPointerAnchorBody(pointerTrackerClass: String) = """
     const/4 v0, 0x0
 
     iput-object v0, p0, $pointerTrackerClass->$ENGLISH_ANCHOR_FIELD_NAME:$SOFT_KEY_VIEW_TYPE
 
     return-void
-""".trimIndent() }
+""".trimIndent()
 
-private val SHOULD_SUPPRESS_ENGLISH_RETARGET_BODY by lazy { """
+private fun shouldSuppressEnglishRetargetBody(pointerTrackerClass: String, actionTypeClass: String) = """
     :try_start_0
     ${RuntimeCallEmitter.invoke(RuntimeCallId.ENGLISH_UPPERCASE_TOGGLE_RUNTIME_IS_ENABLED, "")}
 
@@ -187,19 +189,19 @@ private val SHOULD_SUPPRESS_ENGLISH_RETARGET_BODY by lazy { """
 
     if-eqz v2, :cond_return_false
 
-    invoke-virtual {p0}, $pointerTrackerClass->i()Lpmy;
+    invoke-virtual {p0}, $pointerTrackerClass->i()$actionTypeClass
 
     move-result-object v2
 
-    invoke-virtual {p0, p2, p3, v2}, $pointerTrackerClass->h(FFLpmy;)Lpmy;
+    invoke-virtual {p0, p2, p3, v2}, $pointerTrackerClass->h(FF$actionTypeClass;)$actionTypeClass
 
     move-result-object v2
 
-    sget-object v3, Lpmy;->c:Lpmy;
+    sget-object v3, $actionTypeClass->c:$actionTypeClass
 
     if-ne v2, v3, :cond_return_false
 
-    invoke-virtual {v1, v2}, Lcom/google/android/libraries/inputmethod/metadata/SoftKeyDef;->h(Lpmy;)Lcom/google/android/libraries/inputmethod/metadata/ActionDef;
+    invoke-virtual {v1, v2}, Lcom/google/android/libraries/inputmethod/metadata/SoftKeyDef;->h($actionTypeClass;)Lcom/google/android/libraries/inputmethod/metadata/ActionDef;
 
     move-result-object v1
 
@@ -220,4 +222,4 @@ private val SHOULD_SUPPRESS_ENGLISH_RETARGET_BODY by lazy { """
     const/4 v0, 0x0
 
     return v0
-""".trimIndent() }
+""".trimIndent()

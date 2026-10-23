@@ -24,26 +24,29 @@ internal val gboardClipboardLoaderPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        val targets = resolveClipboardTargets(this)
         val mutableMethod = findMutableMethodOrThrow(
-            classType = CLIPBOARD_LOADER_CALLABLE_CLASS,
+            classType = targets.loaderClass,
             name = "call",
             returnType = "Ljava/lang/Object;",
-            parameterTypes = emptyList()
+            parameterTypes = emptyList(),
         )
-        mutableMethod.applyClipboardLoaderDelegate()
+        mutableMethod.applyClipboardLoaderDelegate(targets.loaderClass)
     }
 }
 
-internal fun MutableMethod.applyClipboardLoaderDelegate() {
+internal fun MutableMethod.applyClipboardLoaderDelegate(
+    loaderClass: String = CLIPBOARD_LOADER_CALLABLE_CLASS,
+) {
     requireExactClipboardTarget(
-        CLIPBOARD_LOADER_CALLABLE_CLASS,
+        loaderClass,
         "call",
         "Ljava/lang/Object;",
         emptyList(),
     )
     applyVerified(
         VerifiedTransformationPlan(
-            targetName = "$CLIPBOARD_LOADER_CALLABLE_CLASS->call()Ljava/lang/Object;",
+            targetName = "$loaderClass->call()Ljava/lang/Object;",
             classify = MutableMethod::classifyClipboardLoader,
             mutate = { method ->
                 method.addInstructions(0, LOADER_DELEGATE)

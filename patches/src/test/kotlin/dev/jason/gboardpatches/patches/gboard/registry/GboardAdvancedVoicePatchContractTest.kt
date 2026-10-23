@@ -2,6 +2,7 @@ package dev.jason.gboardpatches.patches.gboard.registry
 
 import com.google.gson.JsonParser
 import dev.jason.gboardpatches.patches.gboard.features.advancedvoice.gboardAdvancedVoice1803ZhTwPatch
+import dev.jason.gboardpatches.patches.gboard.features.advancedvoice.gboardAdvancedVoice1831LanguageDownloadGuardPatch
 import dev.jason.gboardpatches.patches.gboard.features.advancedvoice.gboardAdvancedVoiceFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.advancedvoice.gboardAdvancedVoiceFlagValuePatch
 import dev.jason.gboardpatches.patches.gboard.features.rambler.gboardRambler1803OfficialSelectorPatch
@@ -26,7 +27,7 @@ class GboardAdvancedVoicePatchContractTest {
         val compatiblePackages = row.getAsJsonObject("compatiblePackages")
         assertEquals(setOf(GBOARD_PACKAGE), compatiblePackages.keySet())
         assertEquals(
-            listOf(GBOARD_VERSION),
+            listOf(GBOARD_VERSION, GBOARD_1854_VERSION),
             compatiblePackages.getAsJsonArray(GBOARD_PACKAGE).map { it.asString },
         )
     }
@@ -47,6 +48,7 @@ class GboardAdvancedVoicePatchContractTest {
                 gboardAdvancedVoiceFeatureMarkerPatch,
                 gboardAdvancedVoiceFlagValuePatch,
                 gboardAdvancedVoice1803ZhTwPatch,
+                gboardAdvancedVoice1831LanguageDownloadGuardPatch,
                 gboardRambler1803OfficialSelectorPatch,
             ),
             gboardAdvancedVoiceTypingPatch.dependencies.toList(),
@@ -74,5 +76,6 @@ class GboardAdvancedVoicePatchContractTest {
     private companion object {
         const val GBOARD_PACKAGE = "com.google.android.inputmethod.latin"
         const val GBOARD_VERSION = "18.0.3.954559732-release-arm64-v8a"
+        const val GBOARD_1854_VERSION = "18.5.4.993608717-beta-arm64-v8a"
     }
 }

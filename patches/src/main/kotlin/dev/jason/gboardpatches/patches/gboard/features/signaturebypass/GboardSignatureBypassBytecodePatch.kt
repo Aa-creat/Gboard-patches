@@ -22,6 +22,10 @@ import dev.jason.gboardpatches.patches.gboard.shared.isOpcode
 import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD
 
 private const val SIGNATURE_UTILS_CLASS = "Lrpv;"
+private const val SIGNATURE_UTILS_CLASS_1831 = "Lajpz;"
+private const val SIGNATURE_UTILS_CLASS_1831_RELEASE = "Lrvl;"
+private const val SIGNATURE_UTILS_CLASS_1841_RELEASE = "Lryi;"
+private const val SIGNATURE_UTILS_CLASS_1854_RELEASE = "Lakft;"
 
 internal val gboardSignatureBypassBytecodePatch = bytecodePatch(
     description = "強制通過 Gboard 自身的簽章白名單檢查。"
@@ -35,7 +39,15 @@ internal val gboardSignatureBypassBytecodePatch = bytecodePatch(
 
 context(context: BytecodePatchContext)
 private fun injectSignatureBypass() = with(context) {
-    mutableClass(SIGNATURE_UTILS_CLASS)
+    val targetClass = when {
+        mutableClassDefByOrNull(SIGNATURE_UTILS_CLASS_1854_RELEASE) != null -> SIGNATURE_UTILS_CLASS_1854_RELEASE
+        mutableClassDefByOrNull(SIGNATURE_UTILS_CLASS_1841_RELEASE) != null -> SIGNATURE_UTILS_CLASS_1841_RELEASE
+        mutableClassDefByOrNull(SIGNATURE_UTILS_CLASS_1831_RELEASE) != null -> SIGNATURE_UTILS_CLASS_1831_RELEASE
+        mutableClassDefByOrNull(SIGNATURE_UTILS_CLASS_1831) != null -> SIGNATURE_UTILS_CLASS_1831
+        mutableClassDefByOrNull(SIGNATURE_UTILS_CLASS) != null -> SIGNATURE_UTILS_CLASS
+        else -> return@with
+    }
+    mutableClass(targetClass)
         .methods
         .findGboardSignatureBypassTargetOrThrow()
         .applyGboardSignatureBypass()
@@ -44,7 +56,7 @@ private fun injectSignatureBypass() = with(context) {
 internal fun Iterable<MutableMethod>.findGboardSignatureBypassTargetOrThrow(): MutableMethod {
     val targets = filter(MutableMethod::isExactGboardSignatureBypassTarget)
     check(targets.size == 1) {
-        "Expected exactly one $SIGNATURE_CHECK_DESCRIPTOR target"
+        "Expected exactly one signature bypass target, found ${targets.size}"
     }
     return targets.single()
 }
@@ -52,7 +64,7 @@ internal fun Iterable<MutableMethod>.findGboardSignatureBypassTargetOrThrow(): M
 internal fun MutableMethod.applyGboardSignatureBypass() {
     applyVerified(
         VerifiedTransformationPlan(
-            targetName = SIGNATURE_CHECK_DESCRIPTOR,
+            targetName = "${definingClass}->$SIGNATURE_CHECK_METHOD_NAME",
             classify = MutableMethod::classifyGboardSignatureBypass,
             mutate = { method ->
                 method.forceSignatureBypassReturns()
@@ -67,38 +79,52 @@ private fun MutableMethod.classifyGboardSignatureBypass(): VerifiedTransformatio
         "Refusing non-target signature bypass method $definingClass->$name"
     }
     val instructions = implementation?.instructions
-        ?: error("No instructions available in $SIGNATURE_CHECK_DESCRIPTOR")
+        ?: error("No instructions available in $definingClass->$name")
     check(implementation!!.registerCount == TARGET_REGISTER_COUNT) {
-        "Unexpected register count in $SIGNATURE_CHECK_DESCRIPTOR"
+        "Unexpected register count in $definingClass->$name"
     }
 
     val returnIndices = instructions.indices.filter { index ->
         instructions[index].isOpcode("RETURN")
     }
     check(returnIndices.size == TARGET_RETURN_REGISTERS.size) {
-        "Expected three normal returns in $SIGNATURE_CHECK_DESCRIPTOR"
+        "Expected three normal returns in $definingClass->$name"
     }
     val returnRegisters = returnIndices.map { returnIndex ->
         (instructions[returnIndex] as? OneRegisterInstruction)?.registerA
             ?: error("RETURN at $returnIndex has no register")
     }
     check(returnRegisters == TARGET_RETURN_REGISTERS) {
-        "Unexpected normal return registers in $SIGNATURE_CHECK_DESCRIPTOR"
+        "Unexpected normal return registers in $definingClass->$name"
     }
-    check(instructions.count { it.isMethodReference(DIGEST_METHOD_DESCRIPTOR) } == 1) {
-        "Expected exact digest call in $SIGNATURE_CHECK_DESCRIPTOR"
+    val digestMethod = when (definingClass) {
+        SIGNATURE_UTILS_CLASS_1854_RELEASE -> DIGEST_METHOD_DESCRIPTOR_1854_RELEASE
+        SIGNATURE_UTILS_CLASS_1841_RELEASE -> DIGEST_METHOD_DESCRIPTOR_1841_RELEASE
+        SIGNATURE_UTILS_CLASS_1831_RELEASE -> DIGEST_METHOD_DESCRIPTOR_1831_RELEASE
+        SIGNATURE_UTILS_CLASS_1831 -> DIGEST_METHOD_DESCRIPTOR_1831
+        else -> DIGEST_METHOD_DESCRIPTOR
+    }
+    val targetFields = when (definingClass) {
+        SIGNATURE_UTILS_CLASS_1854_RELEASE -> TARGET_FIELD_DESCRIPTORS_1854_RELEASE
+        SIGNATURE_UTILS_CLASS_1841_RELEASE -> TARGET_FIELD_DESCRIPTORS_1841_RELEASE
+        SIGNATURE_UTILS_CLASS_1831_RELEASE -> TARGET_FIELD_DESCRIPTORS_1831_RELEASE
+        SIGNATURE_UTILS_CLASS_1831 -> TARGET_FIELD_DESCRIPTORS_1831
+        else -> TARGET_FIELD_DESCRIPTORS
+    }
+    check(instructions.count { it.isMethodReference(digestMethod) } == 1) {
+        "Expected exact digest call in $definingClass->$name"
     }
     check(instructions.count { it.isMethodReference(ARRAYS_EQUALS_DESCRIPTOR) } == 1) {
-        "Expected exact digest comparison in $SIGNATURE_CHECK_DESCRIPTOR"
+        "Expected exact digest comparison in $definingClass->$name"
     }
-    TARGET_FIELD_DESCRIPTORS.forEach { descriptor ->
+    targetFields.forEach { descriptor ->
         check(instructions.count { it.isFieldReference(descriptor) } == 1) {
-            "Expected exact field $descriptor in $SIGNATURE_CHECK_DESCRIPTOR"
+            "Expected exact field $descriptor in $definingClass->$name"
         }
     }
     TARGET_BASELINE_LITERALS.forEach { expected ->
         check(instructions.any { instruction -> instruction.matchesLiteral(expected) }) {
-            "Expected exact literal shape $expected in $SIGNATURE_CHECK_DESCRIPTOR; " +
+            "Expected exact literal shape $expected in $definingClass->$name; " +
                 "actual=${instructions.mapNotNull { instruction -> instruction.literalShape() }}"
         }
     }
@@ -124,7 +150,7 @@ private fun MutableMethod.classifyGboardSignatureBypass(): VerifiedTransformatio
 
 private fun MutableMethod.forceSignatureBypassReturns() {
     val instructions = implementation?.instructions
-        ?: error("No instructions available in $SIGNATURE_CHECK_DESCRIPTOR")
+        ?: error("No instructions available in $definingClass->$name")
     val returnIndices = instructions.indices.filter { index ->
         instructions[index].isOpcode("RETURN")
     }
@@ -139,7 +165,11 @@ private fun MutableMethod.forceSignatureBypassReturns() {
 }
 
 private fun MutableMethod.isExactGboardSignatureBypassTarget(): Boolean =
-    definingClass == SIGNATURE_UTILS_CLASS &&
+    (definingClass == SIGNATURE_UTILS_CLASS ||
+        definingClass == SIGNATURE_UTILS_CLASS_1831 ||
+        definingClass == SIGNATURE_UTILS_CLASS_1831_RELEASE ||
+        definingClass == SIGNATURE_UTILS_CLASS_1841_RELEASE ||
+        definingClass == SIGNATURE_UTILS_CLASS_1854_RELEASE) &&
         name == SIGNATURE_CHECK_METHOD_NAME &&
         returnType == "Z" &&
         parameterTypes == SIGNATURE_CHECK_PARAMETERS &&
@@ -169,19 +199,52 @@ private data class LiteralShape(
 )
 
 private const val SIGNATURE_CHECK_METHOD_NAME = "a"
-private const val SIGNATURE_CHECK_DESCRIPTOR =
-    "Lrpv;->a(Landroid/content/Context;Ljava/lang/String;)Z"
 private val SIGNATURE_CHECK_PARAMETERS =
     listOf("Landroid/content/Context;", "Ljava/lang/String;")
 private const val DIGEST_METHOD_DESCRIPTOR =
     "Lrpv;->c(Landroid/content/Context;Ljava/lang/String;)[B"
+private const val DIGEST_METHOD_DESCRIPTOR_1831 =
+    "Lajpz;->c(Landroid/content/Context;Ljava/lang/String;)[B"
+private const val DIGEST_METHOD_DESCRIPTOR_1831_RELEASE =
+    "Lrvl;->c(Landroid/content/Context;Ljava/lang/String;)[B"
+private const val DIGEST_METHOD_DESCRIPTOR_1841_RELEASE =
+    "Lryi;->c(Landroid/content/Context;Ljava/lang/String;)[B"
+private const val DIGEST_METHOD_DESCRIPTOR_1854_RELEASE =
+    "Lakft;->c(Landroid/content/Context;Ljava/lang/String;)[B"
+
 private const val ARRAYS_EQUALS_DESCRIPTOR = "Ljava/util/Arrays;->equals([B[B)Z"
+
 private val TARGET_FIELD_DESCRIPTORS = listOf(
     "Lrpv;->e:[B",
     "Lrpv;->d:[B",
     "Lrpv;->c:[B",
     "Lrox;->b:Z",
 )
+private val TARGET_FIELD_DESCRIPTORS_1831 = listOf(
+    "Lajpz;->e:[B",
+    "Lajpz;->d:[B",
+    "Lajpz;->c:[B",
+    "Lajom;->b:Z",
+)
+private val TARGET_FIELD_DESCRIPTORS_1831_RELEASE = listOf(
+    "Lrvl;->e:[B",
+    "Lrvl;->d:[B",
+    "Lrvl;->c:[B",
+    "Lrum;->b:Z",
+)
+private val TARGET_FIELD_DESCRIPTORS_1841_RELEASE = listOf(
+    "Lryi;->e:[B",
+    "Lryi;->d:[B",
+    "Lryi;->c:[B",
+    "Lrxk;->b:Z",
+)
+private val TARGET_FIELD_DESCRIPTORS_1854_RELEASE = listOf(
+    "Lakft;->e:[B",
+    "Lakft;->d:[B",
+    "Lakft;->c:[B",
+    "Lakeh;->b:Z",
+)
+
 private val TARGET_BASELINE_LITERALS = listOf(
     LiteralShape(0, 3),
     LiteralShape(3, 0),

@@ -2,7 +2,7 @@ package dev.jason.gboardpatches.patches.gboard.registry
 
 import com.google.gson.JsonParser
 import dev.jason.gboardpatches.patches.gboard.features.signaturebypass.gboardSignatureBypassBytecodePatch
-import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD
+import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD_1803_1854
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
@@ -27,10 +27,10 @@ class GboardSignatureBypassPatchContractTest {
 
         val compatibilities = checkNotNull(patch.compatibility)
         assertEquals(1, compatibilities.size)
-        assertSame(COMPATIBILITY_GBOARD, compatibilities.single())
+        assertSame(COMPATIBILITY_GBOARD_1803_1854, compatibilities.single())
         assertEquals(GBOARD_PACKAGE, compatibilities.single().packageName)
         assertEquals(
-            listOf(TARGET_VERSION),
+            listOf(TARGET_VERSION, TARGET_1854_VERSION),
             compatibilities.single().targets.map { target -> target.version },
         )
 
@@ -46,7 +46,7 @@ class GboardSignatureBypassPatchContractTest {
         val packages = row.getAsJsonObject("compatiblePackages")
         assertEquals(setOf(GBOARD_PACKAGE), packages.keySet())
         assertEquals(
-            listOf(TARGET_VERSION),
+            listOf(TARGET_VERSION, TARGET_1854_VERSION),
             packages.getAsJsonArray(GBOARD_PACKAGE).map { it.asString },
         )
     }
@@ -91,6 +91,7 @@ class GboardSignatureBypassPatchContractTest {
     private companion object {
         const val GBOARD_PACKAGE = "com.google.android.inputmethod.latin"
         const val TARGET_VERSION = "18.0.3.954559732-release-arm64-v8a"
+        const val TARGET_1854_VERSION = "18.5.4.993608717-beta-arm64-v8a"
         const val SIGNATURE_BYPASS_DESCRIPTION =
             "攔截 Gboard 的簽章白名單檢查並強制通過\n" +
                 "Bypass Gboard signature whitelist checks and force them to pass."

@@ -63,9 +63,14 @@ class GboardFiveFlagPatchesContractTest {
         expectedDependencies.forEach { (patch, dependencies) ->
             assertTrue(patch.default)
             assertEquals(dependencies, patch.dependencies.toList())
+            val expectedVersions = if (patch.name == "Enable split keyboard") {
+                listOf("18.0.3.954559732-release-arm64-v8a")
+            } else {
+                listOf("18.0.3.954559732-release-arm64-v8a", "18.5.4.993608717-beta-arm64-v8a")
+            }
             assertEquals(
-                "18.0.3.954559732-release-arm64-v8a",
-                patch.compatibility!!.single().targets.single().version,
+                expectedVersions,
+                patch.compatibility!!.single().targets.map { it.version },
             )
         }
     }

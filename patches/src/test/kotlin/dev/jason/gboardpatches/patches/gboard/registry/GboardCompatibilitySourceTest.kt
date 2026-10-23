@@ -41,12 +41,12 @@ class GboardCompatibilitySourceTest {
         publicPatchBlocks.forEach { block ->
             assertEquals(
                 1,
-                Regex("""compatibleWith\s*\(\s*COMPATIBILITY_GBOARD\s*\)""")
+                Regex("""compatibleWith\s*\(\s*(COMPATIBILITY_GBOARD_1803_1854|COMPATIBILITY_GBOARD_UNIVERSAL|COMPATIBILITY_GBOARD)\s*\)""")
                     .findAll(block)
                     .count(),
             )
             assertFalse(
-                Regex("""compatibleWith\s*\((?!\s*COMPATIBILITY_GBOARD\s*\))""")
+                Regex("""compatibleWith\s*\((?!\s*(COMPATIBILITY_GBOARD_1803_1854|COMPATIBILITY_GBOARD_UNIVERSAL|COMPATIBILITY_GBOARD)\s*\))""")
                     .containsMatchIn(block),
             )
         }

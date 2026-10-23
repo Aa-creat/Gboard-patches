@@ -26,6 +26,28 @@ internal object Constants {
         },
     )
 
+    const val GBOARD_1803_VERSION_NAME = "18.0.3.954559732-release-arm64-v8a"
+    const val GBOARD_1854_VERSION_NAME = "18.5.4.993608717-beta-arm64-v8a"
+
+    val GBOARD_1803_1854_VERSION_NAMES = listOf(
+        GBOARD_1803_VERSION_NAME,
+        GBOARD_1854_VERSION_NAME,
+    )
+
+    val COMPATIBILITY_GBOARD_1803_1854 = Compatibility(
+        name = "Gboard",
+        packageName = GboardTargetAdmission.packageName,
+        apkFileType = GboardTargetAdmission.apkFileType,
+        appIconColor = 0x1A73E8,
+        signatures = GboardTargetAdmission.signatures,
+        targets = GBOARD_1803_1854_VERSION_NAMES.map { versionName ->
+            AppTarget(
+                version = versionName,
+                isExperimental = false,
+            )
+        },
+    )
+
     val GBOARD_UNIVERSAL_VERSION_NAMES = listOf(
         "18.0.3.954559732-release-arm64-v8a",
         "18.3.1.977415014-beta-arm64-v8a",

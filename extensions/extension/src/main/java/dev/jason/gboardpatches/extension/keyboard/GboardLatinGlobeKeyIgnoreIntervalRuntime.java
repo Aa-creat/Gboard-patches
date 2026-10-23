@@ -187,11 +187,18 @@ public final class GboardLatinGlobeKeyIgnoreIntervalRuntime {
         final Field globeKeyIgnoreIntervalField;
 
         Handles(ClassLoader targetLoader) throws Exception {
-            targetClass = Class.forName(TARGET_CLASS_NAME, false, targetLoader);
+            Class<?> resolvedClass = null;
+            try {
+                resolvedClass = Class.forName("awxf", false, targetLoader);
+            } catch (ClassNotFoundException ignored) {
+                resolvedClass = Class.forName(TARGET_CLASS_NAME, false, targetLoader);
+            }
+            targetClass = resolvedClass;
             int classModifiers = targetClass.getModifiers();
             if (classModifiers != (Modifier.PUBLIC | Modifier.FINAL)) {
                 throw new IllegalStateException(
-                        "Expected exact public final yaf, modifiers=" + classModifiers);
+                        "Expected exact public final " + targetClass.getSimpleName()
+                                + ", modifiers=" + classModifiers);
             }
 
             globeKeyIgnoreIntervalField = targetClass.getDeclaredField(TARGET_FIELD_NAME);
@@ -200,7 +207,8 @@ public final class GboardLatinGlobeKeyIgnoreIntervalRuntime {
                     || globeKeyIgnoreIntervalField.getType() != Float.TYPE
                     || fieldModifiers != Modifier.PUBLIC) {
                 throw new IllegalStateException(
-                        "Expected exact declared public primitive-float yaf.h, modifiers="
+                        "Expected exact declared public primitive-float "
+                                + targetClass.getSimpleName() + ".h, modifiers="
                                 + fieldModifiers
                                 + ", type="
                                 + globeKeyIgnoreIntervalField.getType().getName());

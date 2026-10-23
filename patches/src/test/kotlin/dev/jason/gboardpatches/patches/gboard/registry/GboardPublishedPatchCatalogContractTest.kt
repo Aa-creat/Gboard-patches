@@ -2,6 +2,7 @@ package dev.jason.gboardpatches.patches.gboard.registry
 
 import com.google.gson.JsonParser
 import dev.jason.gboardpatches.patches.gboard.shared.generated.GboardTargetAdmission
+import dev.jason.gboardpatches.patches.shared.Constants.GBOARD_UNIVERSAL_VERSION_NAMES
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
@@ -52,7 +53,7 @@ class GboardPublishedPatchCatalogContractTest {
             },
         )
         assertEquals(
-            listOf("18.0.3.954559732-release-arm64-v8a"),
+            listOf("18.0.3.954559732-release-arm64-v8a", "18.5.4.993608717-beta-arm64-v8a"),
             inlineSuggestions.getAsJsonObject("compatiblePackages")
                 .getAsJsonArray("com.google.android.inputmethod.latin")
                 .map { version -> version.asString },
@@ -72,7 +73,7 @@ class GboardPublishedPatchCatalogContractTest {
             }.toSet(),
         )
         assertEquals(
-            GboardTargetAdmission.versionNames.toSet(),
+            GBOARD_UNIVERSAL_VERSION_NAMES.toSet(),
             patches.flatMap { patch ->
                 patch.getAsJsonObject("compatiblePackages")
                     .getAsJsonArray(GboardTargetAdmission.packageName)

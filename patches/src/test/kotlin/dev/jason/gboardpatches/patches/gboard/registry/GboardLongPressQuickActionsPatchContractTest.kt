@@ -16,7 +16,7 @@ import org.junit.Test
 
 class GboardLongPressQuickActionsPatchContractTest {
     @Test
-    fun publicPatchIsIndependentAndExact1803Only() {
+    fun publicPatchIsIndependentAndHasExpectedCompatibility() {
         val patch = gboardLongPressQuickActionsPatch
         assertEquals("Long-Press Editing Shortcuts", patch.name)
         assertEquals(LONG_PRESS_DESCRIPTION, patch.description)
@@ -38,8 +38,8 @@ class GboardLongPressQuickActionsPatchContractTest {
         })
 
         assertEquals(
-            "18.0.3.954559732-release-arm64-v8a",
-            patch.compatibility!!.single().targets.single().version,
+            listOf("18.0.3.954559732-release-arm64-v8a", "18.5.4.993608717-beta-arm64-v8a"),
+            patch.compatibility!!.single().targets.map { it.version },
         )
     }
 
@@ -54,7 +54,7 @@ class GboardLongPressQuickActionsPatchContractTest {
         assertTrue(row.get("use").asBoolean)
         assertEquals(0, row.getAsJsonArray("options").size())
         assertEquals(
-            listOf("18.0.3.954559732-release-arm64-v8a"),
+            listOf("18.0.3.954559732-release-arm64-v8a", "18.5.4.993608717-beta-arm64-v8a"),
             row.getAsJsonObject("compatiblePackages")
                 .getAsJsonArray("com.google.android.inputmethod.latin")
                 .map { it.asString },

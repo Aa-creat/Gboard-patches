@@ -641,61 +641,124 @@ final class GboardClipboardRuntimeSupport {
         final Object specialHeader;
 
         ReflectionHandles(ClassLoader classLoader) throws Throwable {
-            Class<?> loaderCallableClass = resolveClass(classLoader,
-                    CLIPBOARD_LOADER_CALLABLE_CLASS);
-            Class<?> loaderClass = resolveClass(classLoader, "fil");
-            Class<?> dataHandlerClass = resolveClass(classLoader, "fjv");
-            Class<?> adapterClass = resolveClass(classLoader, CLIPBOARD_ADAPTER_CLASS);
-            Class<?> clipItemViewHolderClass = resolveClass(classLoader,
-                    CLIPBOARD_VIEW_HOLDER_CLASS);
-            Class<?> clipClass = resolveClass(classLoader, "fih");
-            Class<?> clipModelClass = resolveClass(classLoader, "fij");
-            Class<?> queryUtilsClass = resolveClass(classLoader, "fjo");
-            Class<?> preferencesClass = resolveClass(classLoader, "qhy");
-            Class<?> preferenceBaseClass = resolveClass(classLoader, "cdl");
+            boolean is1854 = false;
+            try {
+                classLoader.loadClass("ldo");
+                is1854 = true;
+            } catch (ClassNotFoundException ignored) {
+                // Fall back to 18.0.3 stock handles.
+            }
 
-            loaderCallableOwnerField = declaredField(loaderCallableClass, "a");
-            loaderContextField = declaredField(loaderClass, "b");
-            dataHandlerContextField = declaredField(dataHandlerClass, "c");
-            dataHandlerDisabledField = declaredField(dataHandlerClass, "f");
-            dataHandlerCountField = declaredField(dataHandlerClass, "g");
-            adapterContextField = declaredField(adapterClass, "e");
-            adapterItemsField = declaredField(adapterClass, "n");
-            adapterRecentCountField = declaredField(adapterClass, "o");
-            adapterPinnedVisibleCountField = declaredField(adapterClass, "y");
-            clipItemViewHolderTextField = declaredField(clipItemViewHolderClass, "t");
-            clipIdField = declaredField(clipClass, "d");
-            clipTimestampField = declaredField(clipClass, "e");
-            clipModelField = declaredField(clipClass, "g");
-            clipModelTextField = declaredField(clipModelClass, "c");
-            clipModelItemTypeField = declaredField(clipModelClass, "e");
-            clipIsSensitiveMethod = declaredMethod(clipClass, "m");
-            clipIsPinnedMethod = declaredMethod(clipClass, "n");
-            clipIsSpecialMethod = declaredMethod(clipClass, "o");
-            queryClipsMethod = declaredMethod(queryUtilsClass, "j",
-                    Context.class, String.class, String[].class, String.class);
-            createClipboardUriMethod = declaredMethod(queryUtilsClass, "d",
-                    Context.class, int.class, long.class);
-            deleteClipsMethod = declaredMethod(queryUtilsClass, "h",
-                    Context.class, List.class);
-            primaryTimestampReadMethod = declaredMethod(dataHandlerClass, "a",
-                    Context.class);
-            dataHandlerQueryByItemTypeMethod = declaredMethod(dataHandlerClass, "s",
-                    Uri.class, int.class);
-            dataHandlerCleanupCursorMethod = declaredMethod(dataHandlerClass, "t",
-                    Cursor.class);
-            preferencesAccessorMethod = declaredMethod(preferencesClass, "I", Context.class);
-            preferenceReadLongMethod = declaredMethod(preferenceBaseClass, "m",
-                    int.class, long.class);
-            preferenceWriteLongMethod = declaredMethod(preferenceBaseClass, "s",
-                    int.class, long.class);
-            adapterNotifyItemRemovedMethod = declaredMethod(adapterClass.getSuperclass(),
-                    "n", int.class);
-            adapterRefreshMethod = declaredMethod(adapterClass, "R");
-            this.clipItemViewHolderClass = clipItemViewHolderClass;
-            recentHeader = declaredField(clipClass, "a").get(null);
-            pinnedHeader = declaredField(clipClass, "b").get(null);
-            specialHeader = declaredField(clipClass, "c").get(null);
+            if (is1854) {
+                Class<?> loaderCallableClass = resolveClass(classLoader, "lcz");
+                Class<?> dataHandlerClass = resolveClass(classLoader, "ldo");
+                Class<?> adapterClass = resolveClass(classLoader, "lcl");
+                Class<?> clipItemViewHolderClass = resolveClass(classLoader, "lci");
+                Class<?> clipClass = resolveClass(classLoader, "lao");
+                Class<?> clipModelClass = resolveClass(classLoader, "laq");
+                Class<?> queryUtilsClass = resolveClass(classLoader, "lcs");
+                Class<?> preferencesClass = resolveClass(classLoader, "ahpn");
+                Class<?> preferenceBaseClass = resolveClass(classLoader, "ahoj");
+
+                loaderCallableOwnerField = declaredField(loaderCallableClass, "a");
+                loaderContextField = declaredField(dataHandlerClass, "c");
+                dataHandlerContextField = declaredField(dataHandlerClass, "c");
+                dataHandlerDisabledField = declaredField(dataHandlerClass, "f");
+                dataHandlerCountField = declaredField(dataHandlerClass, "g");
+                adapterContextField = declaredField(adapterClass, "e");
+                adapterItemsField = declaredField(adapterClass, "o");
+                adapterRecentCountField = declaredField(adapterClass, "p");
+                adapterPinnedVisibleCountField = declaredField(adapterClass, "q");
+                clipItemViewHolderTextField = declaredField(clipItemViewHolderClass, "t");
+                clipIdField = declaredField(clipClass, "d");
+                clipTimestampField = declaredField(clipClass, "e");
+                clipModelField = declaredField(clipClass, "g");
+                clipModelTextField = declaredField(clipModelClass, "a");
+                clipModelItemTypeField = declaredField(clipModelClass, "c");
+                clipIsSensitiveMethod = declaredMethod(clipClass, "m");
+                clipIsPinnedMethod = declaredMethod(clipClass, "n");
+                clipIsSpecialMethod = declaredMethod(clipClass, "o");
+                queryClipsMethod = declaredMethod(queryUtilsClass, "j",
+                        Context.class, String.class, String[].class, String.class);
+                createClipboardUriMethod = declaredMethod(queryUtilsClass, "d",
+                        Context.class, int.class, long.class);
+                deleteClipsMethod = declaredMethod(queryUtilsClass, "h",
+                        Context.class, List.class);
+                primaryTimestampReadMethod = declaredMethod(dataHandlerClass, "a",
+                        Context.class);
+                dataHandlerQueryByItemTypeMethod = declaredMethod(dataHandlerClass, "s",
+                        Uri.class, int.class);
+                dataHandlerCleanupCursorMethod = declaredMethod(dataHandlerClass, "t",
+                        Cursor.class);
+                preferencesAccessorMethod = declaredMethod(preferencesClass, "I", Context.class);
+                preferenceReadLongMethod = declaredMethod(preferenceBaseClass, "m",
+                        int.class, long.class);
+                preferenceWriteLongMethod = declaredMethod(preferenceBaseClass, "s",
+                        int.class, long.class);
+                adapterNotifyItemRemovedMethod = declaredMethod(adapterClass.getSuperclass(),
+                        "n", int.class);
+                adapterRefreshMethod = declaredMethod(adapterClass, "R");
+                this.clipItemViewHolderClass = clipItemViewHolderClass;
+                recentHeader = declaredField(clipClass, "a").get(null);
+                pinnedHeader = declaredField(clipClass, "b").get(null);
+                specialHeader = declaredField(clipClass, "c").get(null);
+            } else {
+                Class<?> loaderCallableClass = resolveClass(classLoader,
+                        CLIPBOARD_LOADER_CALLABLE_CLASS);
+                Class<?> loaderClass = resolveClass(classLoader, "fil");
+                Class<?> dataHandlerClass = resolveClass(classLoader, "fjv");
+                Class<?> adapterClass = resolveClass(classLoader, CLIPBOARD_ADAPTER_CLASS);
+                Class<?> clipItemViewHolderClass = resolveClass(classLoader,
+                        CLIPBOARD_VIEW_HOLDER_CLASS);
+                Class<?> clipClass = resolveClass(classLoader, "fih");
+                Class<?> clipModelClass = resolveClass(classLoader, "fij");
+                Class<?> queryUtilsClass = resolveClass(classLoader, "fjo");
+                Class<?> preferencesClass = resolveClass(classLoader, "qhy");
+                Class<?> preferenceBaseClass = resolveClass(classLoader, "cdl");
+
+                loaderCallableOwnerField = declaredField(loaderCallableClass, "a");
+                loaderContextField = declaredField(loaderClass, "b");
+                dataHandlerContextField = declaredField(dataHandlerClass, "c");
+                dataHandlerDisabledField = declaredField(dataHandlerClass, "f");
+                dataHandlerCountField = declaredField(dataHandlerClass, "g");
+                adapterContextField = declaredField(adapterClass, "e");
+                adapterItemsField = declaredField(adapterClass, "n");
+                adapterRecentCountField = declaredField(adapterClass, "o");
+                adapterPinnedVisibleCountField = declaredField(adapterClass, "y");
+                clipItemViewHolderTextField = declaredField(clipItemViewHolderClass, "t");
+                clipIdField = declaredField(clipClass, "d");
+                clipTimestampField = declaredField(clipClass, "e");
+                clipModelField = declaredField(clipClass, "g");
+                clipModelTextField = declaredField(clipModelClass, "c");
+                clipModelItemTypeField = declaredField(clipModelClass, "e");
+                clipIsSensitiveMethod = declaredMethod(clipClass, "m");
+                clipIsPinnedMethod = declaredMethod(clipClass, "n");
+                clipIsSpecialMethod = declaredMethod(clipClass, "o");
+                queryClipsMethod = declaredMethod(queryUtilsClass, "j",
+                        Context.class, String.class, String[].class, String.class);
+                createClipboardUriMethod = declaredMethod(queryUtilsClass, "d",
+                        Context.class, int.class, long.class);
+                deleteClipsMethod = declaredMethod(queryUtilsClass, "h",
+                        Context.class, List.class);
+                primaryTimestampReadMethod = declaredMethod(dataHandlerClass, "a",
+                        Context.class);
+                dataHandlerQueryByItemTypeMethod = declaredMethod(dataHandlerClass, "s",
+                        Uri.class, int.class);
+                dataHandlerCleanupCursorMethod = declaredMethod(dataHandlerClass, "t",
+                        Cursor.class);
+                preferencesAccessorMethod = declaredMethod(preferencesClass, "I", Context.class);
+                preferenceReadLongMethod = declaredMethod(preferenceBaseClass, "m",
+                        int.class, long.class);
+                preferenceWriteLongMethod = declaredMethod(preferenceBaseClass, "s",
+                        int.class, long.class);
+                adapterNotifyItemRemovedMethod = declaredMethod(adapterClass.getSuperclass(),
+                        "n", int.class);
+                adapterRefreshMethod = declaredMethod(adapterClass, "R");
+                this.clipItemViewHolderClass = clipItemViewHolderClass;
+                recentHeader = declaredField(clipClass, "a").get(null);
+                pinnedHeader = declaredField(clipClass, "b").get(null);
+                specialHeader = declaredField(clipClass, "c").get(null);
+            }
         }
 
         private static Field declaredField(Class<?> owner, String name)

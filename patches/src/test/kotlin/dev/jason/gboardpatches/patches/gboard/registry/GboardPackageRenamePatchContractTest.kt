@@ -2,7 +2,7 @@ package dev.jason.gboardpatches.patches.gboard.registry
 
 import com.google.gson.JsonParser
 import dev.jason.gboardpatches.patches.gboard.features.packagerename.gboardPackageRenameResourcePatch
-import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD
+import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD_1803_1854
 import dev.jason.gboardpatches.patches.shared.Constants.GBOARD_PACKAGE_NAME
 import dev.jason.gboardpatches.patches.shared.Constants.GBOARD_PATCHED_PACKAGE_NAME
 import java.nio.charset.StandardCharsets
@@ -39,10 +39,10 @@ class GboardPackageRenamePatchContractTest {
 
         val compatibilities = checkNotNull(patch.compatibility)
         assertEquals(1, compatibilities.size)
-        assertSame(COMPATIBILITY_GBOARD, compatibilities.single())
+        assertSame(COMPATIBILITY_GBOARD_1803_1854, compatibilities.single())
         assertEquals(GBOARD_PACKAGE_NAME, compatibilities.single().packageName)
         assertEquals(
-            listOf(TARGET_VERSION),
+            listOf(TARGET_VERSION, TARGET_1854_VERSION),
             compatibilities.single().targets.map { target -> target.version },
         )
         assertTrue(compatibilities.single().targets.none { target -> target.isExperimental })
@@ -77,7 +77,7 @@ class GboardPackageRenamePatchContractTest {
         val packages = row.getAsJsonObject("compatiblePackages")
         assertEquals(setOf(GBOARD_PACKAGE_NAME), packages.keySet())
         assertEquals(
-            listOf(TARGET_VERSION),
+            listOf(TARGET_VERSION, TARGET_1854_VERSION),
             packages.getAsJsonArray(GBOARD_PACKAGE_NAME).map { it.asString },
         )
     }
@@ -108,6 +108,7 @@ class GboardPackageRenamePatchContractTest {
 
     private companion object {
         const val TARGET_VERSION = "18.0.3.954559732-release-arm64-v8a"
+        const val TARGET_1854_VERSION = "18.5.4.993608717-beta-arm64-v8a"
         const val PACKAGE_RENAME_DESCRIPTION =
             "將套件名稱改成 dev.jason.com.google.android.inputmethod.latin，並可自訂 App 名稱，以便共存安裝\n" +
                 "Rename the package to dev.jason.com.google.android.inputmethod.latin " +

@@ -9,6 +9,7 @@ import dev.jason.gboardpatches.patches.gboard.features.addsymbols.gboardZhuyinCu
 import dev.jason.gboardpatches.patches.gboard.features.addsymbols.gboardZhuyinCustomSymbolsRecyclerPatch
 import dev.jason.gboardpatches.patches.gboard.features.addsymbols.gboardZhuyinCustomSymbolsRoutingPatch
 import dev.jason.gboardpatches.patches.gboard.features.advancedvoice.gboardAdvancedVoice1803ZhTwPatch
+import dev.jason.gboardpatches.patches.gboard.features.advancedvoice.gboardAdvancedVoice1831LanguageDownloadGuardPatch
 import dev.jason.gboardpatches.patches.gboard.features.advancedvoice.gboardAdvancedVoiceFlagValuePatch
 import dev.jason.gboardpatches.patches.gboard.features.englishqwerty.gboardEnglishQwertyPointerPatch
 import dev.jason.gboardpatches.patches.gboard.features.englishqwerty.gboardEnglishQwertySoftKeyPatch
@@ -48,6 +49,7 @@ internal object GboardContributionWiring {
             unit("advanced_voice_typing.bytecode") {
                 arrayOf(
                     gboardAdvancedVoice1803ZhTwPatch,
+                    gboardAdvancedVoice1831LanguageDownloadGuardPatch,
                     gboardRambler1803OfficialSelectorPatch,
                 )
             },

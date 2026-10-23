@@ -67,6 +67,10 @@ internal fun BytecodePatchContext.findMutableMethodOrThrow(
     binding: GboardMethodTarget,
 ): MutableMethod = binding.resolve(this)
 
+internal fun BytecodePatchContext.findMutableMethodOrNull(
+    binding: GboardMethodTarget,
+): MutableMethod? = binding.resolveOrNull(this)
+
 internal fun BytecodePatchContext.mutableFieldOrThrow(
     binding: GboardFieldTarget,
 ): MutableField = binding.resolve(this)

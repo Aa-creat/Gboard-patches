@@ -83,7 +83,7 @@ public final class GboardCustomFontSettingsFeatureTest {
         GboardPatchesSettingsContract.Screen screen = feature.buildScreen(host);
 
         Assert.assertNotNull(screen);
-        Assert.assertEquals("自訂字型與現代表情符號", screen.getTitle());
+        Assert.assertEquals("自訂字型與現代表情符號", screen.getToolbarTitle());
         Assert.assertEquals(2, screen.getSections().size());
 
         List<GboardPatchesSettingsContract.Row> rows = screen.getRows();

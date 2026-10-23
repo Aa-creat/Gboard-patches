@@ -83,7 +83,9 @@ internal val gboardAiWritingTools1803AutoFixRoutePatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_GBOARD)
 
     execute {
-        findMutableMethodOrThrow(autoFixRouteBuilder).applyAutoFixRoute()
+        if (autoFixRouteBuilder.resolveOrNull(this) != null) {
+            findMutableMethodOrThrow(autoFixRouteBuilder).applyAutoFixRoute()
+        }
     }
 }
 
@@ -93,7 +95,9 @@ internal val gboardAiWritingTools1803AutoFixAcceptancePatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_GBOARD)
 
     execute {
-        findMutableMethodOrThrow(autoFixAmbiguityGate).applyAutoFixAcceptance()
+        if (autoFixAmbiguityGate.resolveOrNull(this) != null) {
+            findMutableMethodOrThrow(autoFixAmbiguityGate).applyAutoFixAcceptance()
+        }
     }
 }
 
@@ -104,7 +108,9 @@ internal val gboardAiWritingTools1803GenAiInitPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
-        findMutableMethodOrThrow(genAiVoiceEditInit).applyGenAiInitClientTypeCompatibility()
+        if (genAiVoiceEditInit.resolveOrNull(this) != null) {
+            findMutableMethodOrThrow(genAiVoiceEditInit).applyGenAiInitClientTypeCompatibility()
+        }
     }
 }
 
@@ -115,7 +121,9 @@ internal val gboardAiWritingTools1803SmartEditInitPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
-        findMutableMethodOrThrow(smartEditInit).applySmartEditInitClientTypeCompatibility()
+        if (smartEditInit.resolveOrNull(this) != null) {
+            findMutableMethodOrThrow(smartEditInit).applySmartEditInitClientTypeCompatibility()
+        }
     }
 }
 
@@ -126,7 +134,9 @@ internal val gboardAiWritingTools1803GenAiRefreshPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
-        findMutableMethodOrThrow(genAiClientRefresh).applyGenAiClientRefreshRetry()
+        if (genAiClientRefresh.resolveOrNull(this) != null) {
+            findMutableMethodOrThrow(genAiClientRefresh).applyGenAiClientRefreshRetry()
+        }
     }
 }
 

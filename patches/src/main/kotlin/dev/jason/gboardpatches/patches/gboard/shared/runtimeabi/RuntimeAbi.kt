@@ -38,6 +38,7 @@ internal enum class RuntimeCallId(internal val encodedAbi: String) {
     ADVANCED_VOICE_RUNTIME_BEFORE_FORMATTER_CONSTRUCTED("Ldev/jason/gboardpatches/extension/advancedvoice/GboardAdvancedVoice1803Runtime;->beforeFormatterConstructed(Ljava/util/Locale;Ljava/lang/Object;Z)Z"),
     ADVANCED_VOICE_RUNTIME_INCLUDE_EXACT_ZH_TW_SUPPORTED_LOCALE("Ldev/jason/gboardpatches/extension/advancedvoice/GboardAdvancedVoice1803Runtime;->includeExactZhTwSupportedLocale(Ljava/lang/Object;)Ljava/lang/Object;"),
     ADVANCED_VOICE_RUNTIME_SEED_APPLICATION_CONTEXT("Ldev/jason/gboardpatches/extension/advancedvoice/GboardAdvancedVoice1803Runtime;->seedApplicationContext(Landroid/content/Context;)V"),
+    LANGUAGE_DOWNLOAD_GUARD_SHOULD_SKIP("Ldev/jason/gboardpatches/extension/advancedvoice/GboardLanguageDownloadGuard;->shouldSkip(Ljava/lang/String;Ljava/lang/Object;)Z"),
     BLUETOOTH_MICROPHONE_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE("Ldev/jason/gboardpatches/extension/bluetoothmicrophone/GboardBluetoothMicrophone1803Runtime;->applyOverriddenFlagValue(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"),
     CALCULATOR_RUNTIME_ON_INPUT_VIEW_STARTED("Ldev/jason/gboardpatches/extension/calculator/GboardCalculatorLifecycleRuntime;->onInputViewStarted(Ljava/lang/Object;)V"),
     CALCULATOR_RUNTIME_ON_SELECTION_UPDATED("Ldev/jason/gboardpatches/extension/calculator/GboardCalculatorLifecycleRuntime;->onSelectionUpdated(Ljava/lang/Object;Landroid/view/View;II)V"),

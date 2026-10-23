@@ -31,13 +31,14 @@ internal val gboardClipboardAdapterTrimPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        val targets = resolveClipboardTargets(this)
         val mutableMethod = findMutableMethodOrThrow(
-            classType = CLIPBOARD_ADAPTER_CLASS,
+            classType = targets.adapterClass,
             name = "F",
             returnType = "V",
-            parameterTypes = emptyList()
+            parameterTypes = emptyList(),
         )
-        mutableMethod.applyClipboardAdapterTrimDelegate()
+        mutableMethod.applyClipboardAdapterTrimDelegate(targets.adapterClass)
     }
 }
 
@@ -47,15 +48,23 @@ internal val gboardClipboardItemBindPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        val targets = resolveClipboardTargets(this)
         val mutableMethod = findMutableMethodOrThrow(
-            classType = CLIPBOARD_ADAPTER_CLASS,
+            classType = targets.adapterClass,
             name = "p",
             returnType = "V",
-            parameterTypes = listOf(RECYCLER_VIEW_HOLDER_CLASS, "I")
+            parameterTypes = if (targets.viewHolderClass != RECYCLER_VIEW_HOLDER_CLASS) {
+                listOf(targets.viewHolderClass, "I")
+            } else {
+                listOf(RECYCLER_VIEW_HOLDER_CLASS, "I")
+            },
         )
-        val patchedMethod = mutableMethod.applyClipboardItemBindDelegate()
+        val patchedMethod = mutableMethod.applyClipboardItemBindDelegate(
+            targets.adapterClass,
+            targets.viewHolderClass,
+        )
         if (patchedMethod !== mutableMethod) {
-            val methods = mutableClass(CLIPBOARD_ADAPTER_CLASS).methods
+            val methods = mutableClass(targets.adapterClass).methods
             check(methods.remove(mutableMethod) && methods.add(patchedMethod)) {
                 "Could not replace expanded Clipboard item-bind method"
             }
@@ -63,11 +72,13 @@ internal val gboardClipboardItemBindPatch = bytecodePatch(
     }
 }
 
-internal fun MutableMethod.applyClipboardAdapterTrimDelegate() {
-    requireExactClipboardTarget(CLIPBOARD_ADAPTER_CLASS, "F", "V", emptyList())
+internal fun MutableMethod.applyClipboardAdapterTrimDelegate(
+    adapterClass: String = CLIPBOARD_ADAPTER_CLASS,
+) {
+    requireExactClipboardTarget(adapterClass, "F", "V", emptyList())
     applyVerified(
         VerifiedTransformationPlan(
-            targetName = "$CLIPBOARD_ADAPTER_CLASS->F()V",
+            targetName = "$adapterClass->F()V",
             classify = { method ->
                 method.classifyClipboardReturnDelegate(TRIM_METHOD_DESCRIPTOR, 1)
             },
@@ -79,20 +90,24 @@ internal fun MutableMethod.applyClipboardAdapterTrimDelegate() {
     )
 }
 
-internal fun MutableMethod.applyClipboardItemBindDelegate(): MutableMethod {
+internal fun MutableMethod.applyClipboardItemBindDelegate(
+    adapterClass: String = CLIPBOARD_ADAPTER_CLASS,
+    viewHolderClass: String = RECYCLER_VIEW_HOLDER_CLASS,
+): MutableMethod {
     requireExactClipboardTarget(
-        CLIPBOARD_ADAPTER_CLASS,
+        adapterClass,
         "p",
         "V",
-        listOf(RECYCLER_VIEW_HOLDER_CLASS, "I"),
+        listOf(viewHolderClass, "I"),
     )
     return applyVerified(
         VerifiedTransformationPlan(
-            targetName = "$CLIPBOARD_ADAPTER_CLASS->p(${RECYCLER_VIEW_HOLDER_CLASS}I)V",
+            targetName = "$adapterClass->p(${viewHolderClass}I)V",
             classify = MutableMethod::classifyClipboardItemBind,
             mutate = { stock ->
+                val stockRegs = stock.implementation!!.registerCount
                 stock.expandClipboardItemBindRegisters().also { expanded ->
-                    expanded.addInstructions(0, ITEM_BIND_ENTRY)
+                    expanded.addInstructions(0, buildItemBindEntry(stockRegs))
                     val instructions = expanded.implementation!!.instructions
                     val returnIndices = expanded.returnInstructionIndices().filter {
                         instructions[it].isOpcode("RETURN_VOID")
@@ -112,7 +127,7 @@ internal fun MutableMethod.applyClipboardItemBindDelegate(): MutableMethod {
 private fun MutableMethod.classifyClipboardItemBind(): VerifiedTransformationState {
     val implementation = implementation ?: error("No instructions in $definingClass->$name")
     return when (implementation.registerCount) {
-        ITEM_BIND_STOCK_REGISTER_COUNT -> {
+        15, ITEM_BIND_STOCK_REGISTER_COUNT -> {
             check(returnInstructionIndices().count {
                 implementation.instructions[it].isOpcode("RETURN_VOID")
             } == ITEM_BIND_RETURN_COUNT) {
@@ -120,7 +135,7 @@ private fun MutableMethod.classifyClipboardItemBind(): VerifiedTransformationSta
             }
             VerifiedTransformationState.STOCK
         }
-        ITEM_BIND_EXPANDED_REGISTER_COUNT -> {
+        18, ITEM_BIND_EXPANDED_REGISTER_COUNT -> {
             validateExpandedClipboardItemBind()
             VerifiedTransformationState.PATCHED
         }
@@ -130,8 +145,9 @@ private fun MutableMethod.classifyClipboardItemBind(): VerifiedTransformationSta
 
 private fun MutableMethod.expandClipboardItemBindRegisters(): MutableMethod {
     val stock = implementation ?: error("No instructions in $definingClass->$name")
+    val expandedCount = stock.registerCount + 3
     val expandedImplementation = ImmutableMethodImplementation(
-        ITEM_BIND_EXPANDED_REGISTER_COUNT,
+        expandedCount,
         stock.instructions,
         stock.tryBlocks,
         stock.debugItems,
@@ -150,18 +166,19 @@ private fun MutableMethod.expandClipboardItemBindRegisters(): MutableMethod {
 
 private fun MutableMethod.validateExpandedClipboardItemBind() {
     val implementation = implementation ?: error("No instructions in $definingClass->$name")
-    check(implementation.registerCount == ITEM_BIND_EXPANDED_REGISTER_COUNT)
+    check(implementation.registerCount in setOf(18, ITEM_BIND_EXPANDED_REGISTER_COUNT))
     val instructions = implementation.instructions
     val savedP0 = p0Register()
+    val legacyP0 = savedP0 - 3
     check(
         instructions.getOrNull(0).isExactMove(
-            "MOVE_OBJECT_FROM16", ITEM_BIND_LEGACY_P0_REGISTER, savedP0,
+            "MOVE_OBJECT_FROM16", legacyP0, savedP0,
         ) &&
             instructions.getOrNull(1).isExactMove(
-                "MOVE_OBJECT_FROM16", ITEM_BIND_LEGACY_P0_REGISTER + 1, savedP0 + 1,
+                "MOVE_OBJECT_FROM16", legacyP0 + 1, savedP0 + 1,
             ) &&
             instructions.getOrNull(2).isExactMove(
-                "MOVE_FROM16", ITEM_BIND_LEGACY_P0_REGISTER + 2, savedP0 + 2,
+                "MOVE_FROM16", legacyP0 + 2, savedP0 + 2,
             ) &&
             instructions.getOrNull(3)?.isExactRangeInvoke(
                 ITEM_BIND_BEFORE_METHOD_DESCRIPTOR,
@@ -251,13 +268,18 @@ private val ITEM_BIND_DELEGATE = """
     ${RuntimeCallEmitter.invoke(ITEM_BIND_RUNTIME_CALL, "p0 .. p2")}
 """.trimIndent()
 
-private val ITEM_BIND_ENTRY = """
-    move-object/from16 v13, p0
-    move-object/from16 v14, p1
-    move/from16 v15, p2
+private fun buildItemBindEntry(stockRegisterCount: Int): String {
+    val legacyP0 = stockRegisterCount - 3
+    return """
+        move-object/from16 v$legacyP0, p0
+        move-object/from16 v${legacyP0 + 1}, p1
+        move/from16 v${legacyP0 + 2}, p2
 
-    ${RuntimeCallEmitter.invoke(ITEM_BIND_BEFORE_RUNTIME_CALL, "p0 .. p2")}
-""".trimIndent()
+        ${RuntimeCallEmitter.invoke(ITEM_BIND_BEFORE_RUNTIME_CALL, "p0 .. p2")}
+    """.trimIndent()
+}
+
+private val ITEM_BIND_ENTRY = buildItemBindEntry(ITEM_BIND_STOCK_REGISTER_COUNT)
 
 private val TRIM_METHOD_DESCRIPTOR = RuntimeAbiCatalog.abi(TRIM_RUNTIME_CALL).reference
 private val ITEM_BIND_BEFORE_METHOD_DESCRIPTOR =

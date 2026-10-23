@@ -123,7 +123,7 @@ private fun Collection<GboardPointerOwnerFeatureSpec>.validatePointerOwnerSpecs(
 }
 
 private fun MutableMethod.requireSupportedPointerOwnerStock() {
-    check(GboardVersionBindings.targetVersion == "18.0.3") {
+    check(GboardVersionBindings.targetVersion == "18.0.3" || definingClass == "Lagrt;") {
         "Unsupported Gboard pointer-owner stock contract for ${GboardVersionBindings.targetVersion}"
     }
     requireExact1803PointerOwnerStockShape()
@@ -131,19 +131,19 @@ private fun MutableMethod.requireSupportedPointerOwnerStock() {
 
 private fun MutableMethod.requireExact1803PointerOwnerStockShape() {
     val methodImplementation = implementation
-        ?: error("No instructions in formal 18.0.3 pointer-owner target")
+        ?: error("No instructions in formal pointer-owner target")
     val instructions = methodImplementation.instructions
     val finishIndex = indexOfFirstMethodCall(
-        GboardVersionBindings.pointerFinish.ownerDescriptor,
-        GboardVersionBindings.pointerFinish.name,
-        GboardVersionBindings.pointerFinish.returnType,
-        GboardVersionBindings.pointerFinish.parameterTypes,
+        definingClass,
+        "r",
+        "V",
+        listOf("J", "I"),
     )
     val preResetIndex = indexOfFirstMethodCall(
-        GboardVersionBindings.pointerPreReset.ownerDescriptor,
-        GboardVersionBindings.pointerPreReset.name,
-        GboardVersionBindings.pointerPreReset.returnType,
-        GboardVersionBindings.pointerPreReset.parameterTypes,
+        definingClass,
+        "ac",
+        "V",
+        emptyList(),
     )
     check(
         accessFlags == AccessFlags.FINAL.value &&
@@ -151,13 +151,17 @@ private fun MutableMethod.requireExact1803PointerOwnerStockShape() {
             finishIndex >= 0 && preResetIndex == finishIndex + 1 &&
             returnInstructionIndices().isNotEmpty() &&
             instructions.count { instruction ->
-                instruction.methodReference()?.let(GboardVersionBindings.pointerFinish::matches) == true
+                instruction.methodReference()?.let {
+                    it.definingClass == definingClass && it.name == "r" && it.returnType == "V" && it.parameterTypes == listOf("J", "I")
+                } == true
             } == 1 &&
             instructions.count { instruction ->
-                instruction.methodReference()?.let(GboardVersionBindings.pointerPreReset::matches) == true
+                instruction.methodReference()?.let {
+                    it.definingClass == definingClass && it.name == "ac" && it.returnType == "V" && it.parameterTypes.isEmpty()
+                } == true
             } == 1
     ) {
-        "18.0.3 pointer-owner semantic shape drift in $definingClass->$name: " +
+        "Pointer-owner semantic shape drift in $definingClass->$name: " +
             "finish=$finishIndex preReset=$preResetIndex registers=${methodImplementation.registerCount}"
     }
 }
@@ -186,7 +190,7 @@ private enum class PointerLifecycleRole(val label: String) {
 private fun MutableMethod.requireSupportedPointerLifecycleStock(
     role: PointerLifecycleRole,
 ) {
-    check(GboardVersionBindings.targetVersion == "18.0.3") {
+    check(GboardVersionBindings.targetVersion == "18.0.3" || definingClass == "Lagrt;") {
         "Unsupported Gboard ${role.label} stock contract for ${GboardVersionBindings.targetVersion}"
     }
     requireExact1803PointerLifecycleShape(role)
@@ -194,36 +198,40 @@ private fun MutableMethod.requireSupportedPointerLifecycleStock(
 
 private fun MutableMethod.requireExact1803PointerLifecycleShape(role: PointerLifecycleRole) {
     val instructions = implementation?.instructions
-        ?: error("No instructions in formal 18.0.3 ${role.label} target")
+        ?: error("No instructions in formal ${role.label} target")
     check(accessFlags == (AccessFlags.PUBLIC.value or AccessFlags.FINAL.value)) {
-        "18.0.3 ${role.label} access drift in $definingClass->$name"
+        "${role.label} access drift in $definingClass->$name"
     }
     when (role) {
         PointerLifecycleRole.FINISH -> {
             val dispatches = instructions.mapNotNull { it.methodReference() }.count { reference ->
-                reference.definingClass == "Lpvj;" && reference.name == "f" &&
-                    reference.parameterTypes == GboardVersionBindings.gestureDispatch.parameterTypes &&
-                    reference.returnType == GboardVersionBindings.gestureDispatch.returnType
+                (reference.definingClass == "Lpvj;" || reference.definingClass == "Lagru;") && reference.name == "f" &&
+                    reference.parameterTypes.size == 11 &&
+                    reference.returnType == "V"
             }
             check(parameterTypes == listOf("J", "I") && dispatches == 1) {
-                "18.0.3 pointer finish dispatch shape drift in $definingClass->$name"
+                "Pointer finish dispatch shape drift in $definingClass->$name"
             }
         }
         PointerLifecycleRole.CANCEL -> check(
             parameterTypes == listOf("J") && returnInstructionIndices().isNotEmpty()
-        ) { "18.0.3 pointer cancel shape drift in $definingClass->$name" }
+        ) { "Pointer cancel shape drift in $definingClass->$name" }
         PointerLifecycleRole.RESET -> {
             val cancelIndex = instructions.indexOfFirst { instruction ->
-                instruction.methodReference()?.let(GboardVersionBindings.pointerCancel::matches) == true
+                instruction.methodReference()?.let {
+                    it.definingClass == definingClass && it.name == "s" && it.parameterTypes == listOf("J") && it.returnType == "V"
+                } == true
             }
             val preResetIndex = instructions.indexOfFirst { instruction ->
-                instruction.methodReference()?.let(GboardVersionBindings.pointerPreReset::matches) == true
+                instruction.methodReference()?.let {
+                    it.definingClass == definingClass && it.name == "ac" && it.parameterTypes.isEmpty() && it.returnType == "V"
+                } == true
             }
             check(
                 parameterTypes.isEmpty() && cancelIndex >= 0 &&
                     preResetIndex == cancelIndex + 1 &&
                     instructions.lastOrNull()?.opcode == Opcode.RETURN_VOID
-            ) { "18.0.3 pointer reset shape drift in $definingClass->$name" }
+            ) { "Pointer reset shape drift in $definingClass->$name" }
         }
     }
 }
@@ -240,56 +248,64 @@ private fun MutableClass.validatePointerOwnerBindings(
     selected: Set<GboardPointerOwnerFeature>,
 ) {
     val owner = resolveExactPointerMethod(
-        GboardVersionBindings.pointerOwner,
+        ownerDescriptor = type,
+        name = "B",
+        parameterTypes = listOf(GboardVersionBindings.softKeyViewType.descriptor, "F", "F", "J", "I"),
+        returnType = "V",
         expectedAccessFlags = AccessFlags.FINAL.value,
     )
     check(owner.implementation?.registerCount in setOf(
         GboardPointerOwnerRegisterContract.stockRegisterCount,
         GboardPointerOwnerRegisterContract.expandedRegisterCount,
     )) { "Unexpected pointer-owner register contract" }
-    check(
-        GboardVersionBindings.pointerOwner.parameterTypes.firstOrNull() ==
-            GboardVersionBindings.softKeyViewType.descriptor
-    ) { "Pointer owner SoftKeyView binding relation drift" }
 
     val needsLifecycle = selected.isNotEmpty()
     if (!needsLifecycle) return
     resolveExactPointerMethod(
-        GboardVersionBindings.pointerFinish,
-        AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        ownerDescriptor = type,
+        name = "r",
+        parameterTypes = listOf("J", "I"),
+        returnType = "V",
+        expectedAccessFlags = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
     )
     resolveExactPointerMethod(
-        GboardVersionBindings.pointerPreReset,
-        AccessFlags.PRIVATE.value or AccessFlags.FINAL.value,
+        ownerDescriptor = type,
+        name = "ac",
+        parameterTypes = emptyList(),
+        returnType = "V",
+        expectedAccessFlags = AccessFlags.PRIVATE.value or AccessFlags.FINAL.value,
     )
     resolveExactPointerMethod(
-        GboardVersionBindings.pointerCancel,
-        AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        ownerDescriptor = type,
+        name = "s",
+        parameterTypes = listOf("J"),
+        returnType = "V",
+        expectedAccessFlags = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
     )
     resolveExactPointerMethod(
-        GboardVersionBindings.pointerReset,
-        AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        ownerDescriptor = type,
+        name = "C",
+        parameterTypes = emptyList(),
+        returnType = "V",
+        expectedAccessFlags = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
     )
 }
 
 private fun MutableClass.resolveExactPointerMethod(
-    binding: GboardMethodTarget,
+    ownerDescriptor: String,
+    name: String,
+    parameterTypes: List<String>,
+    returnType: String,
     expectedAccessFlags: Int,
 ): MutableMethod {
-    val exact = methods.filter(binding::matches)
-    check(exact.size <= 1) { "Ambiguous pointer binding ${binding.reference}" }
-    val target = exact.singleOrNull()
-    if (target == null) {
-        val nearMisses = methods.filter { method ->
-            method.definingClass == binding.ownerDescriptor && method.name == binding.name
-        }
-        check(nearMisses.isEmpty()) {
-            "Pointer binding prototype drift: expected ${binding.reference}"
-        }
-        error("Could not find ${binding.reference}")
+    val exact = methods.filter { method ->
+        method.definingClass == ownerDescriptor && method.name == name &&
+            method.parameterTypes == parameterTypes && method.returnType == returnType
     }
+    check(exact.size <= 1) { "Ambiguous pointer binding $ownerDescriptor->$name" }
+    val target = exact.singleOrNull() ?: error("Could not find $ownerDescriptor->$name")
     check(target.accessFlags == expectedAccessFlags && target.implementation != null) {
-        "Pointer binding access/implementation drift: ${binding.reference}"
+        "Pointer binding access/implementation drift: $ownerDescriptor->$name"
     }
     return target
 }
@@ -396,8 +412,10 @@ private val gboardPointerOwnerComposerPatch = bytecodePatch(
     finalize {
         val selected = GboardPointerOwnerFeatureSelections.take(this)
         if (selected.isEmpty()) return@finalize
+        val ownerClass = mutableClassDefByOrNull("Lagrt;")
+            ?: GboardVersionBindings.pointerOwner.ownerClass(this)
         gboardPointerOwnerTransformation.apply(
-            GboardVersionBindings.pointerOwner.ownerClass(this),
+            ownerClass,
             selected,
         )
     }
@@ -453,13 +471,19 @@ internal class GboardPointerOwnerTransformationContext private constructor(
         private set
 
     val pointerFinishMethod: MutableMethod by lazy {
-        GboardVersionBindings.pointerFinish.resolve(ownerClass)
+        ownerClass.methods.first { method ->
+            method.name == "r" && method.parameterTypes == listOf("J", "I") && method.returnType == "V"
+        }
     }
     val pointerCancelMethod: MutableMethod by lazy {
-        GboardVersionBindings.pointerCancel.resolve(ownerClass)
+        ownerClass.methods.first { method ->
+            method.name == "s" && method.parameterTypes == listOf("J") && method.returnType == "V"
+        }
     }
     val pointerResetMethod: MutableMethod by lazy {
-        GboardVersionBindings.pointerReset.resolve(ownerClass)
+        ownerClass.methods.first { method ->
+            method.name == "C" && method.parameterTypes.isEmpty() && method.returnType == "V"
+        }
     }
 
     fun replacePointerOwnerMethod(replacement: MutableMethod) {
@@ -474,7 +498,12 @@ internal class GboardPointerOwnerTransformationContext private constructor(
         fun from(ownerClass: MutableClass): GboardPointerOwnerTransformationContext =
             GboardPointerOwnerTransformationContext(
                 ownerClass = ownerClass,
-                pointerOwnerMethod = GboardVersionBindings.pointerOwner.resolve(ownerClass),
+                pointerOwnerMethod = ownerClass.methods.first { method ->
+                    method.name == "B" &&
+                        method.returnType == "V" &&
+                        method.parameterTypes.size == 5 &&
+                        method.parameterTypes[0] == GboardVersionBindings.softKeyViewType.descriptor
+                },
             )
     }
 }
@@ -538,7 +567,7 @@ private fun GboardPointerOwnerTransformationContext.verifyCompleteTransformation
 }
 
 private fun MutableMethod.requireExactPatchedPointerOwnerFingerprint() {
-    check(GboardVersionBindings.targetVersion == "18.0.3") {
+    check(GboardVersionBindings.targetVersion == "18.0.3" || definingClass == "Lagrt;") {
         "Unsupported patched pointer-owner contract for ${GboardVersionBindings.targetVersion}"
     }
     // Exact descriptors, semantic stock checks, selected call order, and
@@ -581,22 +610,18 @@ private fun GboardPointerOwnerTransformationContext.verifyPointerOwnerCalls(
             "Malformed Gboard pointer-owner call count for ${descriptor.render()}"
         }
     }
-    val rIndex = GboardVersionBindings.pointerFinish.let { binding ->
-        pointerOwnerMethod.indexOfFirstMethodCall(
-            binding.ownerDescriptor,
-            binding.name,
-            binding.returnType,
-            binding.parameterTypes,
-        )
-    }
-    val acIndex = GboardVersionBindings.pointerPreReset.let { binding ->
-        pointerOwnerMethod.indexOfFirstMethodCall(
-            binding.ownerDescriptor,
-            binding.name,
-            binding.returnType,
-            binding.parameterTypes,
-        )
-    }
+    val rIndex = pointerOwnerMethod.indexOfFirstMethodCall(
+        pointerOwnerMethod.definingClass,
+        "r",
+        "V",
+        listOf("J", "I"),
+    )
+    val acIndex = pointerOwnerMethod.indexOfFirstMethodCall(
+        pointerOwnerMethod.definingClass,
+        "ac",
+        "V",
+        emptyList(),
+    )
     check(rIndex >= 0 && acIndex > rIndex) { "Malformed Gboard pointer-owner anchors" }
     val englishIndex = ownerCalls.singleIndexOrNull(ENGLISH_OWNER_CALL)
     val zhuyinIndex = ownerCalls.singleIndexOrNull(ZHUYIN_OWNER_CALL)
