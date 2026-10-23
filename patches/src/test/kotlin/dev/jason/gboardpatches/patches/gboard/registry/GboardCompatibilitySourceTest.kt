@@ -20,7 +20,7 @@ class GboardCompatibilitySourceTest {
         assertEquals(GBOARD_PACKAGE, COMPATIBILITY_GBOARD.packageName)
         assertEquals(ApkFileType.APK, COMPATIBILITY_GBOARD.apkFileType)
         assertEquals(EXPECTED_SIGNATURES, COMPATIBILITY_GBOARD.signatures)
-        assertEquals(listOf(TARGET_VERSION), COMPATIBILITY_GBOARD.targets.map { it.version })
+        assertEquals(listOf(TARGET_VERSION, TARGET_VERSION_1854), COMPATIBILITY_GBOARD.targets.map { it.version })
         assertTrue(COMPATIBILITY_GBOARD.targets.none { it.isExperimental })
         assertTrue(constants.contains("GboardTargetAdmission.packageName"))
         assertTrue(constants.contains("GboardTargetAdmission.versionNames"))
@@ -74,6 +74,7 @@ class GboardCompatibilitySourceTest {
 
     private companion object {
         const val TARGET_VERSION = "18.0.3.954559732-release-arm64-v8a"
+        const val TARGET_VERSION_1854 = "18.5.4.993608717-beta-arm64-v8a"
         const val GBOARD_PACKAGE = "com.google.android.inputmethod.latin"
         val EXPECTED_SIGNATURES = setOf(
             "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",

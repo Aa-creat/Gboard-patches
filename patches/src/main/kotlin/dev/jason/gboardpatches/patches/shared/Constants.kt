@@ -31,6 +31,7 @@ internal object Constants {
         "18.3.1.977415014-beta-arm64-v8a",
         "18.3.1.977415014-release-arm64-v8a",
         "18.4.1.985164140-release-arm64-v8a",
+        "18.5.4.993608717-beta-arm64-v8a",
     )
 
     val COMPATIBILITY_GBOARD_UNIVERSAL = Compatibility(

@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-23T18:30:00",
-  "description": "### Release v3.15.1\n\n- **Fix SoftKey Keycaps Font Binding**: Directly inject custom typeface into `SoftKeyView.q` key TextViews, resolving tofu on keys while preserving stock typography for alphanumeric/Zhuyin keys in Smart Emoji mode\n- **Fix Emoji Picker & Grid Tofu**: Hook `EmojiView.h()` and canvas background worker `nts.b` TextPaint to ensure pre-rendered emoji bitmaps and fallbacks render with the custom emoji typeface\n- **Fix Keyboard Lifecycle Font Loading**: Hook `SoftKeyboardView.onAttachedToWindow()` to guarantee instant runtime font application whenever the soft keyboard opens\n- **Dynamic In-App Font Switch**: Eliminate `sApplied` cold-start latch so newly imported fonts and toggles take effect immediately without requiring process kill",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.15.1/patches-3.15.1.mpp",
+  "created_at": "2026-10-23T21:30:00",
+  "description": "### Release v3.16.0\n\n- **Gboard 18.5.4 Beta Compatibility**: Full support and targeting for Gboard `18.5.4.993608717-beta-arm64-v8a`\n- **Universal Target Admission**: Verified core view bindings (`SoftKeyView`, `SoftKeyboardView`, `EmojiView`, `AutoCenterScaleTextView`) on Gboard 18.5.4\n- **Signature Bypass & Package Rename**: Extended multi-version compatibility across 18.0.3 and 18.5.4\n- **Dual-Track Target Stability**: Preserves all 43 flagship patches on 18.0.3 while admitting 18.5.4 for Morphe Manager patch workflow",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.0/patches-3.16.0.mpp",
   "signature_download_url": "",
-  "version": "3.15.1"
+  "version": "3.16.0"
 }

@@ -1,3 +1,17 @@
+## [3.16.0](https://github.com/Aa-creat/Gboard-patches/compare/v3.15.1...v3.16.0) (2026-10-23)
+
+### ✨ New Features & Version Compatibility
+
+* **Gboard 18.5.4 Beta Compatibility:** Full admission and patch support for `18.5.4.993608717-beta-arm64-v8a` (`versionCode: 176049710`).
+* **Universal Target Admission:** Verified core view bindings (`SoftKeyView`, `SoftKeyboardView`, `EmojiView`, and `AutoCenterScaleTextView`) on Gboard 18.5.4 DEX bytecode.
+* **Dual-Track Target Stability:** Preserves full 43-patch baseline compatibility on Gboard 18.0.3 while admitting 18.5.4 into Morphe Manager patch inventories.
+
+### ✨ 新功能與版本適配
+
+* **Gboard 18.5.4 Beta 適配:** 全面納入並支援最新版 Gboard `18.5.4.993608717-beta-arm64-v8a` (`versionCode: 176049710`)。
+* **通用目標接納與核心視圖核驗:** 實測驗證 18.5.4 DEX 字節碼中 `SoftKeyView`、`SoftKeyboardView`、`EmojiView` 及 `AutoCenterScaleTextView` 的類路徑與方法簽名。
+* **雙軌相容穩定性:** 完整保留 18.0.3 穩定版基線的 43 項旗艦補丁，同時將 18.5.4 納入 Morphe Manager 補丁支援清單。
+
 ## [3.15.1](https://github.com/Aa-creat/Gboard-patches/compare/v3.15.0...v3.15.1) (2026-10-23)
 
 ### 🐛 Bug Fixes & Improvements
