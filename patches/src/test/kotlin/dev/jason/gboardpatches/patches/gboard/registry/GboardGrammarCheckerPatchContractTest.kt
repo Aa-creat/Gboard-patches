@@ -29,7 +29,7 @@ class GboardGrammarCheckerPatchContractTest {
         val compatibility = compatibilities.single()
         assertSame(COMPATIBILITY_GBOARD, compatibility)
         assertEquals(GBOARD_PACKAGE, compatibility.packageName)
-        assertEquals(listOf(TARGET_VERSION, TARGET_VERSION_1854), compatibility.targets.map { target -> target.version })
+        assertEquals(listOf(TARGET_VERSION), compatibility.targets.map { target -> target.version })
         assertTrue(compatibility.targets.none { target -> target.isExperimental })
 
         val expectedDependencies = listOf(
@@ -316,7 +316,7 @@ class GboardGrammarCheckerPatchContractTest {
         assertTrue(grammarPatch.get("use").asBoolean)
         assertEquals(setOf(GBOARD_PACKAGE), compatiblePackages.keySet())
         assertEquals(
-            listOf(TARGET_VERSION, TARGET_VERSION_1854),
+            listOf(TARGET_VERSION),
             compatiblePackages.getAsJsonArray(GBOARD_PACKAGE).map { version -> version.asString },
         )
     }
@@ -340,7 +340,6 @@ class GboardGrammarCheckerPatchContractTest {
         const val GRAMMAR_FLAG = "enable_grammar_checker"
         const val GRAMMAR_MARKER = "dev.jason.gboardpatches.feature.grammar_checker"
         const val TARGET_VERSION = "18.0.3.954559732-release-arm64-v8a"
-        const val TARGET_VERSION_1854 = "18.5.4.993608717-beta-arm64-v8a"
         const val GRAMMAR_MARKER_PATH =
             "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/" +
                 "featureflags/GboardGrammarCheckerFeatureMarkerPatch.kt"

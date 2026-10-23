@@ -29,7 +29,7 @@ class GboardInlineSuggestionsPatchContractTest {
         val compatibility = compatibilities.single()
         assertSame(COMPATIBILITY_GBOARD, compatibility)
         assertEquals(GBOARD_PACKAGE, compatibility.packageName)
-        assertEquals(listOf(TARGET_VERSION, TARGET_VERSION_1854), compatibility.targets.map { target -> target.version })
+        assertEquals(listOf(TARGET_VERSION), compatibility.targets.map { target -> target.version })
         assertTrue(compatibility.targets.none { target -> target.isExperimental })
 
         val expectedDependencies = listOf(
@@ -184,7 +184,7 @@ class GboardInlineSuggestionsPatchContractTest {
         assertTrue(inlinePatch.get("use").asBoolean)
         assertEquals(setOf(GBOARD_PACKAGE), compatiblePackages.keySet())
         assertEquals(
-            listOf(TARGET_VERSION, TARGET_VERSION_1854),
+            listOf(TARGET_VERSION),
             compatiblePackages.getAsJsonArray(GBOARD_PACKAGE).map { version -> version.asString },
         )
     }
@@ -220,7 +220,6 @@ class GboardInlineSuggestionsPatchContractTest {
     private companion object {
         const val GBOARD_PACKAGE = "com.google.android.inputmethod.latin"
         const val TARGET_VERSION = "18.0.3.954559732-release-arm64-v8a"
-        const val TARGET_VERSION_1854 = "18.5.4.993608717-beta-arm64-v8a"
         const val INLINE_MARKER = "dev.jason.gboardpatches.feature.inline_suggestions"
         const val INLINE_MARKER_PATH =
             "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/" +
