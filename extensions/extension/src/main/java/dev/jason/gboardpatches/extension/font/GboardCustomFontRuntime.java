@@ -47,7 +47,7 @@ public final class GboardCustomFontRuntime {
 
         if (sEmojiOnlyMode && view instanceof TextView) {
             CharSequence text = ((TextView) view).getText();
-            if (text != null && text.length() > 0 && !containsEmoji(text)) {
+            if (text == null || text.length() == 0 || !containsEmoji(text)) {
                 return original;
             }
         }

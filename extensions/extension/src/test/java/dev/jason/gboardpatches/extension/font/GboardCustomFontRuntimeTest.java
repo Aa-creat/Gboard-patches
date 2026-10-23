@@ -58,6 +58,20 @@ public final class GboardCustomFontRuntimeTest {
     }
 
     @Test
+    public void emojiOnlyModeKeepsOriginalTypefaceForEmptyOrUnsetText() {
+        TextView textView = new TextView(context);
+        textView.setText("");
+        Typeface stockTypeface = Typeface.DEFAULT_BOLD;
+        Typeface customMockTypeface = Typeface.MONOSPACE;
+
+        GboardCustomFontRuntime.setCustomTypefaceForTesting(customMockTypeface);
+        GboardCustomFontRuntime.sEmojiOnlyMode = true;
+
+        Typeface resolved = GboardCustomFontRuntime.resolveTypeface(textView, stockTypeface);
+        Assert.assertSame("Should keep stock typeface for empty/unset text", stockTypeface, resolved);
+    }
+
+    @Test
     public void emojiOnlyModeAppliesCustomFontWhenEmojiPresent() {
         TextView textView = new TextView(context);
         textView.setText("🎉");
