@@ -241,6 +241,7 @@ tasks {
     }
 
     named<Test>("test") {
+        classpath += sourceSets.test.get().output + sourceSets.main.get().output
         val builtMpp = mppJar.flatMap { task -> task.archiveFile }
         dependsOn(mppJar)
         dependsOn(syncExtensionTasks)

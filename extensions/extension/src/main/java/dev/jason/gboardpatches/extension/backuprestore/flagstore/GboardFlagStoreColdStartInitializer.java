@@ -9,5 +9,9 @@ public final class GboardFlagStoreColdStartInitializer {
 
     public static void initialize(Context context) {
         GboardFlagStoreManager.applyPendingAtColdStart(context);
+        try {
+            dev.jason.gboardpatches.extension.font.GboardCustomFontRuntime.applyCustomFont(context);
+        } catch (Throwable ignored) {
+        }
     }
 }

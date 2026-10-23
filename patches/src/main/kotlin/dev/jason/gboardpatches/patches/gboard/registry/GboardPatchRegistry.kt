@@ -10,6 +10,7 @@ import app.morphe.patcher.patch.filePathOption
 import app.morphe.patcher.patch.stringOption
 import java.io.File
 import dev.jason.gboardpatches.patches.gboard.features.font.gboardCustomFontBytecodePatch
+import dev.jason.gboardpatches.patches.gboard.features.font.gboardCustomFontFeatureMarkerPatch
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import dev.jason.gboardpatches.patches.gboard.features.accessibilitylayout.gboardAccessibilityLayoutFeatureMarkerPatch
@@ -843,18 +844,18 @@ val gboardSignatureBypassPatch = gboardPublicResourcePatch(
 val gboardCustomFontPatch = gboardPublicResourcePatch(
     featureId = "custom_font",
     name = "Custom Font & Modern Emoji",
-    description = "匯入自訂 TTF 檔案（如無屏蔽版 Noto Color Emoji 或 iOS 表情字體）解決系統 Emoji 屏蔽與黑白方塊問題\n" +
-        "Embeds a custom TTF font or modern uncensored Emoji font to replace system font rendering on keycaps and emojis.",
+    description = "匯入自訂字型或無屏蔽版 Emoji 字體，並在 Gboard Patches 設定中隨時選取切換與保護文字樣式\n" +
+        "Embeds or imports custom fonts & modern Emoji with smart text fallback, manageable inside Gboard Patches Settings.",
     default = false
 ) {
     compatibleWith(COMPATIBILITY_GBOARD)
 
     val fontFile = filePathOption(
         key = "font_file",
-        title = "Custom Font (.ttf)",
-        description = "Select a TTF font file (e.g. NotoColorEmoji.ttf or AppleColorEmoji.ttf). Required when this patch is selected.",
-        required = true,
-        allowedExtensions = listOf("ttf"),
+        title = "Pre-bundled Font (.ttf/.otf)",
+        description = "Optional: Select a TTF/OTF font file (e.g. NotoColorEmoji.ttf or AppleColorEmoji.ttf) to pre-bundle. You can also import fonts anytime inside Gboard Patches Settings.",
+        required = false,
+        allowedExtensions = listOf("ttf", "otf"),
     )
 
     val emojiOnly = booleanOption(
@@ -868,19 +869,22 @@ val gboardCustomFontPatch = gboardPublicResourcePatch(
     dependsOn(
         gboardPatchesExtensionCarrierPatch,
         gboardCustomFontBytecodePatch,
+        gboardCustomFontFeatureMarkerPatch,
         resourcePatch {
             finalize {
-                val path = requireNotNull(fontFile.value) { "Please select a TTF font file." }
-                val fontBytes = File(path).readBytes()
-                get("assets/gboard/custom-font.ttf").apply {
-                    parentFile.mkdirs()
-                    writeBytes(fontBytes)
-                }
-
-                if (emojiOnly.value == false) {
-                    get("assets/gboard/font-mode-global.marker").apply {
+                val path = fontFile.value
+                if (!path.isNullOrBlank()) {
+                    val fontBytes = File(path).readBytes()
+                    get("assets/gboard/custom-font.ttf").apply {
                         parentFile.mkdirs()
-                        writeText("global")
+                        writeBytes(fontBytes)
+                    }
+
+                    if (emojiOnly.value == false) {
+                        get("assets/gboard/font-mode-global.marker").apply {
+                            parentFile.mkdirs()
+                            writeText("global")
+                        }
                     }
                 }
             }

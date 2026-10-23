@@ -83,6 +83,8 @@ public final class GboardPatchesFeatureAvailability {
             "dev.jason.gboardpatches.feature.frosted_glass";
     public static final String FEATURE_SWIPE_DISMISS =
             "dev.jason.gboardpatches.feature.swipe_dismiss";
+    public static final String FEATURE_CUSTOM_FONT =
+            "dev.jason.gboardpatches.feature.custom_font";
 
     private static final String TAG = "GboardPatches";
 

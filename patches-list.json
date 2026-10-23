@@ -1,5 +1,5 @@
 {
-  "version": "3.14.1",
+  "version": "3.15.0",
   "patches": [
     {
       "name": "AI Writing Tools",
@@ -111,7 +111,7 @@
     },
     {
       "name": "Custom Font & Modern Emoji",
-      "description": "匯入自訂 TTF 檔案（如無屏蔽版 Noto Color Emoji 或 iOS 表情字體）解決系統 Emoji 屏蔽與黑白方塊問題\nEmbeds a custom TTF font or modern uncensored Emoji font to replace system font rendering on keycaps and emojis.",
+      "description": "匯入自訂字型或無屏蔽版 Emoji 字體，並在 Gboard Patches 設定中隨時選取切換與保護文字樣式\nEmbeds or imports custom fonts & modern Emoji with smart text fallback, manageable inside Gboard Patches Settings.",
       "use": false,
       "dependencies": [],
       "compatiblePackages": {
@@ -122,10 +122,10 @@
       "options": [
         {
           "key": "font_file",
-          "title": "Custom Font (.ttf)",
-          "description": "Select a TTF font file (e.g. NotoColorEmoji.ttf or AppleColorEmoji.ttf). Required when this patch is selected.",
-          "required": true,
-          "type": "java.lang.String (Kotlin reflection is not available)",
+          "title": "Pre-bundled Font (.ttf/.otf)",
+          "description": "Optional: Select a TTF/OTF font file (e.g. NotoColorEmoji.ttf or AppleColorEmoji.ttf) to pre-bundle. You can also import fonts anytime inside Gboard Patches Settings.",
+          "required": false,
+          "type": "kotlin.String",
           "default": null,
           "values": null
         },
@@ -134,7 +134,7 @@
           "title": "Emoji-Only Mode",
           "description": "When enabled, custom font applies exclusively to Emoji glyphs while keeping stock typography for regular keys.",
           "required": false,
-          "type": "boolean (Kotlin reflection is not available)",
+          "type": "kotlin.Boolean",
           "default": true,
           "values": null
         }
@@ -396,7 +396,7 @@
           "title": "App 名稱 / App name",
           "description": "",
           "required": true,
-          "type": "java.lang.String (Kotlin reflection is not available)",
+          "type": "kotlin.String",
           "default": "GboardWu",
           "values": {
             "Gboard": "Gboard",

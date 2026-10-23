@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-23T14:20:00",
-  "description": "### Release v3.14.1\n\n- Fix Custom Font & Modern Emoji patch class targeting for Gboard 18.0.3 (added `com.google.android.libraries.inputmethod.widgets.AutoCenterScaleTextView` alongside 18.4.1 `...widgets.text...`)\n- Refined Emoji-only fallback to preserve stock typography when text is empty/initial\n- Fully compatible with Gboard 18.0.3, 18.3.1, and 18.4.1",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.14.1/patches-3.14.1.mpp",
+  "created_at": "2026-10-23T16:45:00",
+  "description": "### Release v3.15.0\n\n- **In-App Font & Emoji Management**: Configure fonts directly inside Gboard (Settings -> Patches -> Keyboard Appearance & Layout -> Custom Font & Modern Emoji)\n- **Zero-Corruption Smart Emoji Fallback**: Separate Emoji slot and Text font slot. In Smart Emoji mode, native system Latin & CJK typography is preserved with 100% precision while missing/censored emojis fall back to the imported modern emoji font (Android 10+ CustomFallbackBuilder)\n- **Dynamic On-the-Fly Import**: Pick and switch `.ttf`/`.otf` files anytime without re-patching or rebuilding the APK\n- **Global Font Mode**: Full keyboard font customization option available for custom styling\n- **Pre-bundle Backward Compatibility**: Pre-bundled fonts continue to work seamlessly across Gboard 18.0.3, 18.3.1, and 18.4.1",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.15.0/patches-3.15.0.mpp",
   "signature_download_url": "",
-  "version": "3.14.1"
+  "version": "3.15.0"
 }

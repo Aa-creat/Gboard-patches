@@ -1,3 +1,15 @@
+## [3.15.0](https://github.com/Aa-creat/Gboard-patches/compare/v3.14.1...v3.15.0) (2026-10-23)
+
+### ✨ New Features
+
+* **Gboard (Custom Font & Modern Emoji):** Add full in-app font management screen inside Gboard settings (`Patches -> Keyboard Appearance & Layout -> Custom Font & Modern Emoji`).
+* **Gboard (Smart Emoji Fallback):** Independent Emoji and Text font slots with zero-distortion typography fallback powered by Android 10+ `CustomFallbackBuilder`, ensuring 100% native Latin/CJK rendering while modernizing emojis.
+* **Gboard (Dynamic Import):** Support importing `.ttf`/`.otf` font files on-the-fly without rebuilding or re-patching the APK.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** Fix compatibility with Gboard 18.0.3 and older target views missing newer package hierarchy classes.
+
 ## [3.13.0](https://github.com/jasonwu1994/Gboard-patches/compare/v3.12.0...v3.13.0) (2026-10-15)
 
 ### ✨ New Features
