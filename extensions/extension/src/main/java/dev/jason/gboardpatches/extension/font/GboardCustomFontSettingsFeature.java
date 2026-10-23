@@ -66,7 +66,7 @@ public final class GboardCustomFontSettingsFeature implements GboardPatchesSetti
                 value -> {
                     GboardCustomFontSettings.writeEnabled(context, value);
                     GboardPatchesSettingsContract.refresh(host);
-                    showToast(context, value ? "已開啟自訂字型，建議重啟鍵盤生效" : "已關閉自訂字型");
+                    showToast(context, value ? "已開啟自訂字型，立即生效！" : "已關閉自訂字型");
                 }
         ));
 
@@ -99,7 +99,7 @@ public final class GboardCustomFontSettingsFeature implements GboardPatchesSetti
                             selectedMode -> {
                                 GboardCustomFontSettings.writeMode(context, selectedMode);
                                 GboardPatchesSettingsContract.refresh(host);
-                                showToast(context, "已更新模式，建議重啟鍵盤生效");
+                                showToast(context, "已更新模式，立即生效！");
                             }
                     ));
                 }
@@ -135,7 +135,7 @@ public final class GboardCustomFontSettingsFeature implements GboardPatchesSetti
                                         document.getData()
                                 );
                                 if (success) {
-                                    showToast(context, "Emoji 字型匯入成功！點擊下方重啟鍵盤生效");
+                                    showToast(context, "Emoji 字型匯入成功，已立即生效！");
                                 } else {
                                     showToast(context, "字型解析失敗，請確認檔案為有效的 .ttf 或 .otf 格式");
                                 }

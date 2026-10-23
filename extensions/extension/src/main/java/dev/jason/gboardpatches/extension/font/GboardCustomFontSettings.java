@@ -69,6 +69,7 @@ public final class GboardCustomFontSettings {
 
     public static void writeEnabled(Context context, boolean enabled) {
         preferences(context).edit().putBoolean(KEY_ENABLED, enabled).apply();
+        GboardCustomFontRuntime.reload(context);
     }
 
     public static boolean isCustomFontActive(Context context) {
@@ -86,6 +87,7 @@ public final class GboardCustomFontSettings {
     public static void writeMode(Context context, String mode) {
         String validMode = MODE_GLOBAL.equalsIgnoreCase(mode) ? MODE_GLOBAL : MODE_EMOJI_ONLY;
         preferences(context).edit().putString(KEY_MODE, validMode).apply();
+        GboardCustomFontRuntime.reload(context);
     }
 
     public static String getEmojiFontDisplayName(Context context) {
@@ -178,6 +180,7 @@ public final class GboardCustomFontSettings {
             editor.apply();
 
             Log.i(TAG, "Font imported successfully: " + targetFile.getName() + " (" + data.length + " bytes)");
+            GboardCustomFontRuntime.reload(context);
             return true;
         } catch (Throwable throwable) {
             Log.e(TAG, "Failed to import font: " + targetFile.getName(), throwable);
@@ -197,6 +200,8 @@ public final class GboardCustomFontSettings {
         preferences(context).edit().remove(KEY_EMOJI_FILENAME).apply();
         if (!hasAnyFont(context)) {
             writeEnabled(context, false);
+        } else {
+            GboardCustomFontRuntime.reload(context);
         }
         return deleted;
     }
@@ -207,6 +212,8 @@ public final class GboardCustomFontSettings {
         preferences(context).edit().remove(KEY_TEXT_FILENAME).apply();
         if (!hasAnyFont(context)) {
             writeEnabled(context, false);
+        } else {
+            GboardCustomFontRuntime.reload(context);
         }
         return deleted;
     }
@@ -220,6 +227,7 @@ public final class GboardCustomFontSettings {
                 .remove(KEY_EMOJI_FILENAME)
                 .remove(KEY_TEXT_FILENAME)
                 .apply();
+        GboardCustomFontRuntime.reload(context);
         return ok;
     }
 }

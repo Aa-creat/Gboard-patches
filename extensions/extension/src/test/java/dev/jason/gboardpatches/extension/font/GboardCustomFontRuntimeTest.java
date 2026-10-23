@@ -98,4 +98,40 @@ public final class GboardCustomFontRuntimeTest {
         Typeface resolved = GboardCustomFontRuntime.resolveTypeface(textView, stockTypeface);
         Assert.assertSame("Should apply custom typeface when emojiOnly is disabled", customMockTypeface, resolved);
     }
+
+    @Test
+    public void applyTypefaceToPaintSetsTypeface() {
+        android.graphics.Paint paint = new android.graphics.Paint();
+        Typeface customMockTypeface = Typeface.MONOSPACE;
+        GboardCustomFontRuntime.setCustomTypefaceForTesting(customMockTypeface);
+
+        GboardCustomFontRuntime.applyTypefaceToPaint(paint);
+        Assert.assertSame("applyTypefaceToPaint should configure typeface on paint",
+                customMockTypeface, paint.getTypeface());
+    }
+
+    @Test
+    public void applyTypefaceToKeyInEmojiModeAppliesOnlyToEmoji() {
+        TextView emojiKey = new TextView(context);
+        TextView letterKey = new TextView(context);
+        Typeface stockTypeface = Typeface.DEFAULT_BOLD;
+        Typeface customMockTypeface = Typeface.MONOSPACE;
+
+        emojiKey.setTypeface(stockTypeface);
+        letterKey.setTypeface(stockTypeface);
+
+        GboardCustomFontRuntime.setCustomTypefaceForTesting(customMockTypeface);
+        GboardCustomFontRuntime.sEmojiOnlyMode = true;
+
+        // Simulate active font
+        GboardCustomFontSettings.writeEnabled(context, true);
+
+        GboardCustomFontRuntime.applyTypefaceToKey(emojiKey, "😀");
+        Assert.assertSame("Emoji key should receive custom emoji typeface",
+                customMockTypeface, emojiKey.getTypeface());
+
+        GboardCustomFontRuntime.applyTypefaceToKey(letterKey, "A");
+        Assert.assertSame("Letter key should retain stock typeface in emoji-only mode",
+                stockTypeface, letterKey.getTypeface());
+    }
 }

@@ -1,3 +1,19 @@
+## [3.15.1](https://github.com/Aa-creat/Gboard-patches/compare/v3.15.0...v3.15.1) (2026-10-23)
+
+### 🐛 Bug Fixes & Improvements
+
+* **Gboard (SoftKey Keycaps Binding):** Hook `SoftKeyView.q` to directly inject custom typefaces into keycap TextViews, eliminating tofu boxes on physical/soft keys while preserving 100% native typography for Latin/Zhuyin keys in Smart Emoji mode.
+* **Gboard (Emoji Picker & Grid Rendering):** Hook `EmojiView.h()` Paint factory and background canvas worker `nts.b` TextPaint to ensure pre-rendered emoji bitmaps and fallbacks use the imported emoji typeface.
+* **Gboard (Keyboard Lifecycle Font Loading):** Hook `SoftKeyboardView.onAttachedToWindow()` to ensure immediate font runtime initialization as soon as the soft keyboard opens.
+* **Gboard (Dynamic In-App Font Switch):** Resolve cold-start latch bug (`sApplied`) so font toggles and file imports in in-app settings apply dynamically without needing process restarts.
+
+### 🐛 修復與效能改進
+
+* **Gboard (鍵帽字型綁定):** 掛鉤 `SoftKeyView.q` 直接為鍵帽 TextView 注入字型，徹底解決鍵盤實體按鍵顯示 tofu 缺字問題；智慧模式下注音與英數 100% 保持系統原生排版。
+* **Gboard (表情符號選單彩現):** 掛鉤 `EmojiView.h()` Paint 工廠與後台繪圖 TextPaint (`nts.b`)，確保表情符號面板網格點陣圖與回退文字均使用外部匯入字型。
+* **Gboard (生命週期即時載入):** 掛鉤 `SoftKeyboardView.onAttachedToWindow()`，鍵盤彈出瞬間即時套用字型運行環境。
+* **Gboard (動態熱切換):** 修復冷啟動 `sApplied` 狀態鎖死問題，在設定中隨時匯入或開關字型均能動態重載生效。
+
 ## [3.15.0](https://github.com/Aa-creat/Gboard-patches/compare/v3.14.1...v3.15.0) (2026-10-23)
 
 ### ✨ New Features

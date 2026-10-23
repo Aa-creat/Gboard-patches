@@ -2,6 +2,7 @@ package dev.jason.gboardpatches.extension.font;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Log;
@@ -49,6 +50,8 @@ public final class GboardCustomFontRuntime {
             Collections.synchronizedMap(new WeakHashMap<View, Typeface>());
 
     private static volatile Typeface sCustomTypeface = null;
+    private static volatile Typeface sEmojiTypeface = null;
+    private static volatile Typeface sCompositeEmojiTypeface = null;
     private static volatile boolean sApplied = false;
     public static volatile boolean sEmojiOnlyMode = true;
 
@@ -56,7 +59,17 @@ public final class GboardCustomFontRuntime {
     }
 
     /**
-     * Cold-start injection point: called before any Gboard view is created.
+     * Re-applies font configuration, resetting the applied latch.
+     */
+    public static void reload(Context context) {
+        synchronized (GboardCustomFontRuntime.class) {
+            sApplied = false;
+            applyCustomFont(context);
+        }
+    }
+
+    /**
+     * Cold-start / lifecycle injection point: called before or during Gboard view creation.
      */
     public static void applyCustomFont(Context context) {
         if (context == null || sApplied) {
@@ -78,7 +91,9 @@ public final class GboardCustomFontRuntime {
 
                 if (!GboardCustomFontSettings.isCustomFontActive(appContext)) {
                     Log.d(TAG, "Custom font is not active in settings");
-                    sApplied = true;
+                    sCustomTypeface = null;
+                    sEmojiTypeface = null;
+                    sCompositeEmojiTypeface = null;
                     return;
                 }
 
@@ -92,10 +107,12 @@ public final class GboardCustomFontRuntime {
                 Typeface regularTypeface;
                 Typeface boldTypeface;
                 Typeface emojiTypeface = emojiFile.isFile() ? loadTypeface(emojiFile) : null;
+                sEmojiTypeface = emojiTypeface;
 
                 if (isEmojiOnly && emojiFile.isFile()) {
                     // Smart Emoji Mode: Build composite font preserving system CJK/Latin typography
-                    regularTypeface = createCompositeEmojiTypeface(emojiFile);
+                    sCompositeEmojiTypeface = createCompositeEmojiTypeface(emojiFile);
+                    regularTypeface = sCompositeEmojiTypeface != null ? sCompositeEmojiTypeface : emojiTypeface;
                     boldTypeface = regularTypeface != null ? Typeface.create(regularTypeface, Typeface.BOLD) : null;
                     Log.i(TAG, "Loaded composite Smart Emoji typeface");
                 } else {
@@ -111,10 +128,9 @@ public final class GboardCustomFontRuntime {
                     replaceSystemTypefaces(regularTypeface, boldTypeface, emojiTypeface);
                     Log.i(TAG, "Successfully injected custom font and emoji into Typeface system maps");
                 }
+                sApplied = true;
             } catch (Throwable throwable) {
                 Log.e(TAG, "Failed to apply custom font", throwable);
-            } finally {
-                sApplied = true;
             }
         }
     }
@@ -298,13 +314,83 @@ public final class GboardCustomFontRuntime {
         return sCustomTypeface;
     }
 
+    public static Typeface getEmojiTypeface() {
+        return sEmojiTypeface;
+    }
+
+    /**
+     * Applies the custom emoji/text typeface to an arbitrary Paint/TextPaint.
+     * Used by EmojiView.h() and background emoji bitmap rendering workers.
+     */
+    public static void applyTypefaceToPaint(Paint paint) {
+        if (paint == null) {
+            return;
+        }
+        Typeface tf = sEmojiTypeface != null ? sEmojiTypeface : sCustomTypeface;
+        if (tf != null) {
+            paint.setTypeface(tf);
+        }
+    }
+
+    /**
+     * Direct keycaps hook: invoked immediately after SoftKeyView.q sets key label text.
+     * In Smart Emoji mode, only emojis use the custom emoji font while stock font is preserved
+     * for Latin, Zhuyin, and symbols. In Global mode, all keys get the custom typeface.
+     */
+    public static void applyTypefaceToKey(View view, CharSequence text) {
+        if (!(view instanceof TextView)) {
+            return;
+        }
+        TextView tv = (TextView) view;
+        Context context = tv.getContext();
+        applyCustomFont(context);
+
+        if (!GboardCustomFontSettings.isCustomFontActive(context)) {
+            return;
+        }
+
+        if (!ORIGINAL_TYPEFACES.containsKey(tv)) {
+            ORIGINAL_TYPEFACES.put(tv, tv.getTypeface());
+        }
+
+        if (sEmojiOnlyMode) {
+            if (containsEmoji(text)) {
+                Typeface tf = sEmojiTypeface != null ? sEmojiTypeface : sCustomTypeface;
+                if (tf != null) {
+                    tv.setTypeface(tf);
+                }
+            } else {
+                Typeface original = ORIGINAL_TYPEFACES.get(tv);
+                if (original != null) {
+                    tv.setTypeface(original);
+                }
+            }
+        } else {
+            if (sCustomTypeface != null) {
+                tv.setTypeface(sCustomTypeface);
+            }
+        }
+    }
+
+    /**
+     * SoftKeyboardView lifecycle hook: guarantees runtime is loaded as soon as keyboard appears.
+     */
+    public static void onSoftKeyboardViewAttached(View view) {
+        if (view != null) {
+            applyCustomFont(view.getContext());
+        }
+    }
+
     public static void setCustomTypefaceForTesting(Typeface typeface) {
         sCustomTypeface = typeface;
+        sEmojiTypeface = typeface;
         sApplied = (typeface != null);
     }
 
     public static void resetForTesting() {
         sCustomTypeface = null;
+        sEmojiTypeface = null;
+        sCompositeEmojiTypeface = null;
         sApplied = false;
         sEmojiOnlyMode = true;
         ORIGINAL_TYPEFACES.clear();
@@ -328,12 +414,12 @@ public final class GboardCustomFontRuntime {
     }
 
     public static boolean isEmojiCodePoint(int cp) {
-        return (cp >= 0x1F300 && cp <= 0x1FAFF)
-                || (cp >= 0x1F600 && cp <= 0x1F64F)
-                || (cp >= 0x1F680 && cp <= 0x1F6FF)
+        return (cp >= 0x1F000 && cp <= 0x1FAFF)
+                || (cp >= 0x2300 && cp <= 0x23FF)
                 || (cp >= 0x2600 && cp <= 0x27BF)
+                || (cp >= 0x2B00 && cp <= 0x2BFF)
                 || (cp >= 0xFE00 && cp <= 0xFE0F)
-                || (cp >= 0x1F900 && cp <= 0x1F9FF)
-                || (cp >= 0xE0020 && cp <= 0xE007F);
+                || (cp >= 0xE0020 && cp <= 0xE007F)
+                || (cp == 0x3030 || cp == 0x303D || cp == 0x3297 || cp == 0x3299);
     }
 }
