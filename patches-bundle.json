@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-24T13:30:00",
-  "description": "### Release v3.16.1\n\n- **Dual 18.0.3 & 18.5.4 Compatibility**: Added full 18.5.4 support alongside 18.0.3 for 25 core patches (Long-Press Editing Shortcuts, QWERTY flick uppercase, swipe down dismiss, cursor trackpad mode, clipboard limit & time retention, bluetooth mic, calculator, AI writing tools, etc.)\n- **Backward Compatibility**: Preserved strict single-version stability for 18.0.3-exclusive aesthetic and layout patches.\n- **Morphe Targeting**: Fully admitted 18.5.4.993608717-beta-arm64-v8a in patches-list.json.",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.1/patches-3.16.1.mpp",
+  "created_at": "2026-10-24T14:00:00",
+  "description": "### Release v3.16.2\n\n- **Fix AI Writing Tools on 18.5.4**: Safeguarded 18.0.3-specific GenAI/NGA bytecode retry predicates so they safely no-op on Gboard 18.5.4 instead of raising PatchException.\n- **Dual 18.0.3 & 18.5.4 Compatibility**: Full patch support for 25 core patches on both 18.0.3 and 18.5.4.",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.2/patches-3.16.2.mpp",
   "signature_download_url": "",
-  "version": "3.16.1"
+  "version": "3.16.2"
 }

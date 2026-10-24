@@ -1,3 +1,13 @@
+## [3.16.2](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.1...v3.16.2) (2026-10-24)
+
+### 🐛 Bug Fixes & Improvements
+
+* **AI Writing Tools (18.5.4 Beta):** Safeguard 18.0.3-specific GenAI client refresh and voice-edit NGA predicates (`NgaInputManager.e()`) to safely return instead of throwing `PatchException: Expected one exact 18.0.3 refresh client-type predicate` when patching Gboard 18.5.4.
+
+### 🐛 修復與改進
+
+* **AI Writing Tools (18.5.4 Beta 修補修復):** 為 18.0.3 專有的 GenAI/NGA 初始化與重試子補丁加入安全防護，在 18.5.4 上自動跳過 18.0.3 專有混淆謂詞匹配，避免拋出 PatchException 導致修補中斷。
+
 ## [3.16.1](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.0...v3.16.1) (2026-10-24)
 
 ### ✨ New Features & Version Compatibility

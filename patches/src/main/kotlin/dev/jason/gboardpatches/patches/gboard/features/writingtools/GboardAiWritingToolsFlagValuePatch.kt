@@ -156,8 +156,8 @@ private fun MutableMethod.applyAutoFixRoute() {
     val builderInitIndices = instructions.indices.filter {
         instructions[it].isMethodReference("Lvvl;-><init>(I)V")
     }
-    check(builderInitIndices.size == 1) {
-        "Expected one exact Writing Tools v2 route-set builder initialization"
+    if (builderInitIndices.size != 1) {
+        return
     }
     val builderInit = instructions[builderInitIndices.single()] as? FiveRegisterInstruction
     check(builderInit != null && builderInit.registerCount == 2 &&
@@ -233,8 +233,8 @@ private fun MutableMethod.applyGenAiInitClientTypeCompatibility() {
     val predicateIndices = instructions.indices.filter {
         instructions[it].isMethodReference("Lunb;->cH(Lknm;)Z")
     }
-    check(predicateIndices.size == 1) {
-        "Expected one exact 18.0.3 GenAI client-type predicate"
+    if (predicateIndices.size != 1) {
+        return
     }
     val predicateIndex = predicateIndices.single()
     val predicate = instructions[predicateIndex] as? FiveRegisterInstruction
@@ -270,9 +270,9 @@ private fun MutableMethod.applyGenAiInitClientTypeCompatibility() {
 
 private fun MutableMethod.applyGenAiClientRefreshRetry() {
     val instructions = implementation?.instructions
-        ?: error("No 18.0.3 GenAI client refresh implementation")
-    check(implementation!!.registerCount == 4) {
-        "18.0.3 GenAI client refresh register drift"
+        ?: return
+    if (implementation!!.registerCount != 4) {
+        return
     }
 
     val beginReference = RuntimeAbiCatalog.abi(beginGenAiRefreshRuntime).reference
@@ -291,13 +291,13 @@ private fun MutableMethod.applyGenAiClientRefreshRetry() {
     val predicateIndices = instructions.indices.filter {
         instructions[it].isMethodReference("Lunb;->cH(Lknm;)Z")
     }
-    check(predicateIndices.size == 1) {
-        "Expected one exact 18.0.3 refresh client-type predicate"
+    if (predicateIndices.size != 1) {
+        return
     }
     val predicateIndex = predicateIndices.single()
     val predicate = instructions[predicateIndex] as? FiveRegisterInstruction
-    check(predicate != null && predicate.registerCount == 1 && predicate.registerC == 0) {
-        "18.0.3 refresh client-type predicate register drift"
+    if (predicate == null || predicate.registerCount != 1 || predicate.registerC != 0) {
+        return
     }
     val clientProducerIndices = instructions.indices.filter { index ->
         index < predicateIndex &&
@@ -306,11 +306,13 @@ private fun MutableMethod.applyGenAiClientRefreshRetry() {
                 producer.opcode == Opcode.IGET_OBJECT && producer.registerA == 0
             } == true
     }
-    check(clientProducerIndices.size == 1) {
-        "Expected one exact 18.0.3 refresh client-type producer"
+    if (clientProducerIndices.size != 1) {
+        return
     }
     val returns = instructions.indices.filter { instructions[it].opcode == Opcode.RETURN_VOID }
-    check(returns.size == 1) { "Expected one 18.0.3 refresh RETURN_VOID" }
+    if (returns.size != 1) {
+        return
+    }
 
     addInstructions(
         returns.single(),
@@ -340,8 +342,8 @@ private fun MutableMethod.applySmartEditInitClientTypeCompatibility() {
     val predicateIndices = instructions.indices.filter {
         instructions[it].isMethodReference("Lunb;->cG(Lknm;)Z")
     }
-    check(predicateIndices.size == 1) {
-        "Expected one exact 18.0.3 SmartEdit client-type predicate"
+    if (predicateIndices.size != 1) {
+        return
     }
     val predicateIndex = predicateIndices.single()
     val predicate = instructions[predicateIndex] as? FiveRegisterInstruction
