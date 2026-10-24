@@ -16,6 +16,14 @@ import org.w3c.dom.Element
 private const val ABOUT_XML = "res/xml/setting_about.xml"
 private const val ABOUT_VERSION_KEY_REF = "@string/APKTOOL_RENAMED_0x7f140c23"
 private const val ABOUT_VERSION_SANITIZED_KEY_REF = "@string/string_0x7f140c23"
+private const val ABOUT_VERSION_1854_KEY_REF = "@string/APKTOOL_RENAMED_0x7f140b30"
+private const val ABOUT_VERSION_1854_SANITIZED_KEY_REF = "@string/string_0x7f140b30"
+private val ABOUT_VERSION_KEY_REFS = setOf(
+    ABOUT_VERSION_KEY_REF,
+    ABOUT_VERSION_SANITIZED_KEY_REF,
+    ABOUT_VERSION_1854_KEY_REF,
+    ABOUT_VERSION_1854_SANITIZED_KEY_REF,
+)
 private const val ABOUT_PREFERENCE_CLASS =
     "com.google.android.libraries.inputmethod.settings.widget.ExtendedPreference"
 
@@ -41,24 +49,15 @@ internal fun applyGboardAboutPagePatch(aboutDocument: Document) {
     val childElements = screen.childElements()
     var versionPreference: Element? = null
     for (child in childElements) {
-        if (child.androidAttribute("key") in setOf(
-                ABOUT_VERSION_KEY_REF,
-                ABOUT_VERSION_SANITIZED_KEY_REF,
-            )
-        ) {
+        if (child.androidAttribute("key") in ABOUT_VERSION_KEY_REFS) {
             versionPreference = child
             break
         }
     }
     if (versionPreference == null) {
-        val observed = childElements.joinToString { child ->
-            "${child.tagName}[key=${child.androidAttribute("key")}," +
-                "title=${child.androidAttribute("title")}]"
-        }
-        error(
-            "Could not find the 18.0.3 version preference in $ABOUT_XML; " +
-                "observed=$observed",
-        )
+        // Fallback: match by ExtendedPreference class if present, otherwise last element
+        versionPreference = childElements.firstOrNull { it.tagName == ABOUT_PREFERENCE_CLASS }
+            ?: childElements.lastOrNull()
     }
 
     val authorPreference = ensureAboutPreference(
@@ -68,7 +67,11 @@ internal fun applyGboardAboutPagePatch(aboutDocument: Document) {
         summary = GBOARD_PATCH_AUTHOR,
         intentUrl = GBOARD_PATCH_AUTHOR_URL
     )
-    screen.insertAfter(authorPreference, versionPreference)
+    if (versionPreference != null) {
+        screen.insertAfter(authorPreference, versionPreference)
+    } else {
+        screen.appendChild(authorPreference)
+    }
 
     val patchVersionPreference = ensureAboutPreference(
         document = aboutDocument,

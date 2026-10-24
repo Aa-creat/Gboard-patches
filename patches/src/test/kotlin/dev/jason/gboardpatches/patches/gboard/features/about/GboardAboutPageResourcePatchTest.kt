@@ -88,6 +88,36 @@ class GboardAboutPageResourcePatchTest {
         assertEquals("gboard_about_patch_version", androidAttribute(children[5], "key"))
     }
 
+    @Test
+    fun `1854 version key inserts author and patch version after version row`() {
+        val sanitized = String(readFixture(), StandardCharsets.UTF_8)
+            .replace(ABOUT_VERSION_KEY_REF, "@string/string_0x7f140b30")
+        val document = parse(sanitized.toByteArray(StandardCharsets.UTF_8))
+
+        applyGboardAboutPagePatch(document)
+
+        val children = document.documentElement.childElements().toList()
+        assertEquals(6, children.size)
+        assertEquals("@string/string_0x7f140b30", androidAttribute(children[3], "key"))
+        assertEquals("gboard_about_author", androidAttribute(children[4], "key"))
+        assertEquals("gboard_about_patch_version", androidAttribute(children[5], "key"))
+    }
+
+    @Test
+    fun `fallback to extended preference when version key is unknown`() {
+        val sanitized = String(readFixture(), StandardCharsets.UTF_8)
+            .replace(ABOUT_VERSION_KEY_REF, "@string/unknown_version_key")
+        val document = parse(sanitized.toByteArray(StandardCharsets.UTF_8))
+
+        applyGboardAboutPagePatch(document)
+
+        val children = document.documentElement.childElements().toList()
+        assertEquals(6, children.size)
+        assertEquals("@string/unknown_version_key", androidAttribute(children[3], "key"))
+        assertEquals("gboard_about_author", androidAttribute(children[4], "key"))
+        assertEquals("gboard_about_patch_version", androidAttribute(children[5], "key"))
+    }
+
     private fun assertAboutRow(
         element: Element,
         key: String,

@@ -1,3 +1,13 @@
+## [3.16.4](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.3...v3.16.4) (2026-10-24)
+
+### 🐛 Bug Fixes & Improvements
+
+* **About Page & Clipboard Enhancements (18.5.4 Beta):** Support both 18.0.3 (`@string/string_0x7f140c23`) and 18.5.4 (`@string/string_0x7f140b30`) version preference resource keys in `setting_about.xml`, with robust fallback to `ExtendedPreference` and graceful element append, fixing `Could not find the 18.0.3 version preference in res/xml/setting_about.xml` during patching of Clipboard Enhancements, English QWERTY, and Settings components.
+
+### 🐛 修復與改進
+
+* **關於頁與剪貼簿增強 (18.5.4 Beta 修補修復):** 在 `setting_about.xml` 中支援 18.0.3 (`0x7f140c23`) 與 18.5.4 (`0x7f140b30`) 的版本列資源 Key，並新增基於 `ExtendedPreference` 與安全追加的回退策略，徹底解決 `Clipboard Enhancements`、英文 QWERTY 大小寫等補丁在 18.5.4 上拋出 `Could not find the 18.0.3 version preference in res/xml/setting_about.xml` 的崩潰問題。
+
 ## [3.16.3](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.2...v3.16.3) (2026-10-24)
 
 ### 🐛 Bug Fixes & Improvements
