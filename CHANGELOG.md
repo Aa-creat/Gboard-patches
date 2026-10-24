@@ -1,3 +1,19 @@
+## [3.16.1](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.0...v3.16.1) (2026-10-24)
+
+### ✨ New Features & Version Compatibility
+
+* **Dual 18.0.3 & 18.5.4 Beta Compatibility:** Ported 25 core flagship patches to support both Gboard `18.0.3` and `18.5.4.993608717-beta-arm64-v8a` (`versionCode: 176049710`).
+* **Interactive & Gesture Enhancements:** Long-Press Editing Shortcuts (all 6 actions), English QWERTY Up-Flick Uppercase, Swipe Down to Dismiss Keyboard, Cursor Trackpad Mode, Latin Globe Key Delay.
+* **Clipboard & System Patches:** Clipboard character limit override, 1-hour auto-prune retention bypass, Bluetooth microphone enforcement, Simple Calculator, Signature Bypass, Package Rename.
+* **Morphe Targeting Verification:** Fully integrated and verified `18.5.4.993608717-beta-arm64-v8a` in `patches-list.json`.
+
+### ✨ 新功能與版本適配
+
+* **雙版本 18.0.3 與 18.5.4 Beta 兼容:** 深度移植 25 項核心實用補丁，使其同時支援 Gboard `18.0.3` 與 `18.5.4.993608717-beta-arm64-v8a`。
+* **按鍵手勢與交互類:** 長按編輯快捷鍵（全選/剪下/複製/貼上/復原/重做）、英文 QWERTY 上滑大寫、下滑關閉鍵盤、光標觸控板手勢、地球鍵延時。
+* **剪貼板與系統增強:** 剪貼板字符數上限突破、剪貼板時間保留（防 1 小時自動清除）、強制藍牙麥克風、計算機、簽名放行、共存改名等。
+* **Morphe 發布清單校驗:** 更新 `patches-list.json`，在 Morphe 管理器中正式點亮 18.5.4 支援。
+
 ## [3.16.0](https://github.com/Aa-creat/Gboard-patches/compare/v3.15.1...v3.16.0) (2026-10-23)
 
 ### ✨ New Features & Version Compatibility

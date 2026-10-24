@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-23T21:30:00",
-  "description": "### Release v3.16.0\n\n- **Gboard 18.5.4 Beta Compatibility**: Full support and targeting for Gboard `18.5.4.993608717-beta-arm64-v8a`\n- **Universal Target Admission**: Verified core view bindings (`SoftKeyView`, `SoftKeyboardView`, `EmojiView`, `AutoCenterScaleTextView`) on Gboard 18.5.4\n- **Signature Bypass & Package Rename**: Extended multi-version compatibility across 18.0.3 and 18.5.4\n- **Dual-Track Target Stability**: Preserves all 43 flagship patches on 18.0.3 while admitting 18.5.4 for Morphe Manager patch workflow",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.0/patches-3.16.0.mpp",
+  "created_at": "2026-10-24T13:30:00",
+  "description": "### Release v3.16.1\n\n- **Dual 18.0.3 & 18.5.4 Compatibility**: Added full 18.5.4 support alongside 18.0.3 for 25 core patches (Long-Press Editing Shortcuts, QWERTY flick uppercase, swipe down dismiss, cursor trackpad mode, clipboard limit & time retention, bluetooth mic, calculator, AI writing tools, etc.)\n- **Backward Compatibility**: Preserved strict single-version stability for 18.0.3-exclusive aesthetic and layout patches.\n- **Morphe Targeting**: Fully admitted 18.5.4.993608717-beta-arm64-v8a in patches-list.json.",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.1/patches-3.16.1.mpp",
   "signature_download_url": "",
-  "version": "3.16.0"
+  "version": "3.16.1"
 }
