@@ -9,6 +9,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import dev.jason.gboardpatches.patches.gboard.shared.VerifiedTransformationPlan
 import dev.jason.gboardpatches.patches.gboard.shared.VerifiedTransformationState
 import dev.jason.gboardpatches.patches.gboard.shared.applyVerified
+import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrNull
 import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrThrow
 import dev.jason.gboardpatches.patches.gboard.shared.isMethodReference
 import dev.jason.gboardpatches.patches.gboard.shared.isOpcode
@@ -27,20 +28,20 @@ internal val gboardClipboardColumnCountPatch = bytecodePatch(
     execute {
         val targets = resolveClipboardTargets(this)
         val mutableMethod = if (targets.columnCountMethod != "l") {
-            findMutableMethodOrThrow(
+            findMutableMethodOrNull(
                 classType = targets.keyboardClass,
                 name = targets.columnCountMethod,
                 returnType = "I",
                 parameterTypes = emptyList(),
             )
         } else {
-            findMutableMethodOrThrow(
+            findMutableMethodOrNull(
                 classType = targets.keyboardClass,
                 name = "l",
                 returnType = "I",
                 parameterTypes = emptyList(),
             )
-        }
+        } ?: return@execute
         mutableMethod.applyClipboardColumnCountDelegate(
             targets.keyboardClass,
             targets.columnCountMethod,

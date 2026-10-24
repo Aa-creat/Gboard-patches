@@ -22,6 +22,9 @@ internal val gboardSplitKeyboardAccessPointPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardSplitKeyboard1803Targets.accessPointName.resolveOrNull(this) == null) {
+            return@execute
+        }
         mutableFieldOrThrow(GboardSplitKeyboard1803Targets.accessPointName)
         findMutableMethodOrThrow(GboardSplitKeyboard1803Targets.accessPointState)
             .applySplitKeyboardAccessPointStateDelegate()

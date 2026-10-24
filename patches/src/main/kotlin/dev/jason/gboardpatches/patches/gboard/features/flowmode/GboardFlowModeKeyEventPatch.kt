@@ -37,10 +37,22 @@ internal val gboardFlowModeKeyEventPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
-        selectFlowModeKeyEventMethod(
-            mutableClass(FLOW_MODE_DETECTOR_CLASS).methods.toList(),
-        ).applyFlowModeKeyEventDelegate()
+        val flowClass = mutableClassDefByOrNull(FLOW_MODE_DETECTOR_CLASS) ?: return@execute
+        val target = selectFlowModeKeyEventMethodOrNull(
+            flowClass.methods.toList(),
+        ) ?: return@execute
+        target.applyFlowModeKeyEventDelegate()
     }
+}
+
+internal fun selectFlowModeKeyEventMethodOrNull(methods: List<MutableMethod>): MutableMethod? {
+    val matches = methods.filter { method ->
+        method.definingClass == FLOW_MODE_DETECTOR_CLASS &&
+            method.name == TARGET_METHOD_NAME &&
+            method.parameterTypes == listOf(KEY_EVENT_TYPE) &&
+            method.returnType == "Z"
+    }
+    return matches.singleOrNull()
 }
 
 internal fun selectFlowModeKeyEventMethod(methods: List<MutableMethod>): MutableMethod {

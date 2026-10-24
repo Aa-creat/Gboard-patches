@@ -17,6 +17,9 @@ internal val gboardZhuyinCustomSymbolsRecyclerPatch = bytecodePatch(
     dependsOn(gboardZhuyinCustomSymbolsExtensionPatch)
 
     execute {
+        if (mutableClassDefByOrNull(EMOTICON_RECYCLER_ADAPTER_CLASS) == null) {
+            return@execute
+        }
         patchConstructor()
         patchViewType()
         patchCreateViewHolder()

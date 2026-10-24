@@ -34,6 +34,9 @@ internal val gboardRoundedKeyboardBytecodePatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardVersionBindings.roundedKeyboardRadiiValuesField.resolveOrNull(this) == null) {
+            return@execute
+        }
         val admission = GboardVersionBindings.roundedKeyboardAdmission
         val styleResolver = GboardVersionBindings.roundedKeyboardStyleResolver
         check(admission.returnType == "Z" && admission.parameterTypes ==

@@ -63,6 +63,18 @@ internal fun BytecodePatchContext.findMutableMethodOrThrow(
     } ?: error("Could not find $classType->$name(${parameterTypes.joinToString("")})$returnType")
 }
 
+internal fun BytecodePatchContext.findMutableMethodOrNull(
+    classType: String,
+    name: String,
+    returnType: String,
+    parameterTypes: List<String>,
+): MutableMethod? {
+    val mutableClass = mutableClassDefByOrNull(classType) ?: return null
+    return mutableClass.methods.firstOrNull {
+        it.name == name && it.returnType == returnType && it.parameterTypes == parameterTypes
+    }
+}
+
 internal fun BytecodePatchContext.findMutableMethodOrThrow(
     binding: GboardMethodTarget,
 ): MutableMethod = binding.resolve(this)

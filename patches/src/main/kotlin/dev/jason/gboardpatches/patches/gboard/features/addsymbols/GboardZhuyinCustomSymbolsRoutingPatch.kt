@@ -30,6 +30,9 @@ internal val gboardZhuyinCustomSymbolsRoutingPatch = bytecodePatch(
     dependsOn(gboardZhuyinCustomSymbolsExtensionPatch)
 
     execute {
+        if (GboardVersionBindings.keyboardExtensionManager.resolveOrNull(this) == null) {
+            return@execute
+        }
         patchExtensionManager()
         patchProviderRequest()
         patchProviderWrapper()

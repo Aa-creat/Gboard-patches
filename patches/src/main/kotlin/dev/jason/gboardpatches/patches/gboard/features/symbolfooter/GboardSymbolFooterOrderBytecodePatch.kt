@@ -35,6 +35,9 @@ internal val gboardSymbolFooterOrderBytecodePatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (mutableClassDefByOrNull(EXPRESSION_CORPUS_MANAGER_CLASS) == null) {
+            return@execute
+        }
         val methods = mutableClass(EXPRESSION_CORPUS_MANAGER_CLASS).methods.filter {
             it.name == TARGET_METHOD_NAME &&
                 it.returnType == TARGET_RETURN_TYPE &&

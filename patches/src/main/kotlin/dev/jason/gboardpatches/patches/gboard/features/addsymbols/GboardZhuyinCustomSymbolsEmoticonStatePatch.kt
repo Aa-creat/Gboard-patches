@@ -24,6 +24,9 @@ internal val gboardZhuyinCustomSymbolsEmoticonStatePatch = bytecodePatch(
     dependsOn(gboardZhuyinCustomSymbolsExtensionPatch)
 
     execute {
+        if (mutableClassDefByOrNull(EMOTICON_KEYBOARD_CLASS) == null) {
+            return@execute
+        }
         patchConstructor()
         patchBodyReady()
         patchCategoryNameLookup()

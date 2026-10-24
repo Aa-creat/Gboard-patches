@@ -23,6 +23,9 @@ internal val gboardOcrRuntimePatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardOcrPatchTargets.configLabel.resolveOrNull(this) == null) {
+            return@execute
+        }
         findMutableMethodOrThrow(GboardOcrPatchTargets.configLabel)
             .applyOcrObjectReturnDelegate(RuntimeCallId.OCR_RUNTIME_APPLY_CONFIG_LABEL)
         findMutableMethodOrThrow(GboardOcrPatchTargets.languageHint)

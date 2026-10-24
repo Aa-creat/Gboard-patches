@@ -24,6 +24,9 @@ internal val gboardManualIncognitoLifecyclePatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardManualIncognitoTargets.onStartInput.resolveOrNull(this) == null) {
+            return@execute
+        }
         findMutableMethodOrThrow(GboardManualIncognitoTargets.onStartInput)
             .applyManualIncognitoEntryDelegate(
                 RuntimeCallId.MANUAL_INCOGNITO_RUNTIME_ON_INPUT_STARTING,

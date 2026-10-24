@@ -35,6 +35,9 @@ internal val gboardZhuyinTraditionalSimplifiedTogglePopupPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardVersionBindings.zhuyinTogglePopupAction.resolveOrNull(this) == null) {
+            return@execute
+        }
         GboardVersionBindings.zhuyinTogglePopupAction
             .ownerClass(this)
             .applyZhuyinTogglePopupActionPatch()

@@ -23,6 +23,9 @@ internal val gboardCustomThemeOfficialImportPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardVersionBindings.customThemePlusHandler.resolveOrNull(this) == null) {
+            return@execute
+        }
         val (plusHandler, resultHandler) = validateCustomThemeTargetContract()
         plusHandler.applyCustomThemeGuard(
             RuntimeCallId.CUSTOM_THEME_RUNTIME_INTERCEPT_PLUS,

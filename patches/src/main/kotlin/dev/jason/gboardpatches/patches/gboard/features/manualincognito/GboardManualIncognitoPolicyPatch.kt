@@ -25,6 +25,9 @@ internal val gboardManualIncognitoPolicyPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardManualIncognitoTargets.clipboardListener.resolveOrNull(this) == null) {
+            return@execute
+        }
         findMutableMethodOrThrow(GboardManualIncognitoTargets.clipboardListener)
             .applyManualIncognitoAfterBooleanCall(
                 owner = "Lowq;",

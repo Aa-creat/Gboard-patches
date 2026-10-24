@@ -53,11 +53,22 @@ internal val gboardSettingsHomepageBytecodePatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
-        val target = selectSettingsActivityOnCreate(
-            mutableClass(SETTINGS_ACTIVITY_CLASS).methods.toList(),
-        )
+        val target = selectSettingsActivityOnCreateOrNull(
+            mutableClassDefByOrNull(SETTINGS_ACTIVITY_CLASS)?.methods?.toList().orEmpty(),
+        ) ?: return@execute
         target.applySettingsHomepageOverride()
     }
+}
+
+internal fun selectSettingsActivityOnCreateOrNull(methods: List<MutableMethod>): MutableMethod? {
+    val matches = methods.filter { method ->
+        method.definingClass == SETTINGS_ACTIVITY_CLASS &&
+            method.name == TARGET_METHOD_NAME &&
+            method.parameterTypes == TARGET_PARAMETER_TYPES &&
+            method.returnType == TARGET_RETURN_TYPE &&
+            method.accessFlags == TARGET_ACCESS_FLAGS
+    }
+    return matches.singleOrNull()
 }
 
 internal fun selectSettingsActivityOnCreate(methods: List<MutableMethod>): MutableMethod {

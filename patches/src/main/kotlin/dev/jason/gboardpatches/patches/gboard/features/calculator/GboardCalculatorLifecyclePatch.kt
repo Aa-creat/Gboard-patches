@@ -6,6 +6,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags
 import dev.jason.gboardpatches.patches.gboard.shared.addHelperMethodIfMissing
 import dev.jason.gboardpatches.patches.gboard.shared.applyVoidExitLifecycleDelegate
+import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrNull
 import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrThrow
 import dev.jason.gboardpatches.patches.gboard.shared.isMethodReference
 import dev.jason.gboardpatches.patches.gboard.shared.mutableClass
@@ -25,7 +26,7 @@ internal val gboardCalculatorLifecyclePatch = bytecodePatch(
         val onUpdateSelectionTarget = GboardCalculator1803Targets.onUpdateSelection(this)
         val onWindowHiddenTarget = GboardCalculator1803Targets.onWindowHidden(this)
 
-        val inputView = inputViewTarget.resolve(this)
+        val inputView = inputViewTarget.resolveOrNull(this) ?: return@execute
         check(
             isCalculatorHostCompatible(inputView.type) { type ->
                 runCatching { mutableClass(type).superclass }.getOrNull()
@@ -41,7 +42,7 @@ internal val gboardCalculatorLifecyclePatch = bytecodePatch(
             )
 
         val updateSelection =
-            findMutableMethodOrThrow(onUpdateSelectionTarget)
+            findMutableMethodOrNull(onUpdateSelectionTarget) ?: return@execute
         check(updateSelection.implementation?.registerCount == UPDATE_SELECTION_REGISTER_COUNT) {
             "Unexpected register count in ${onUpdateSelectionTarget.reference}: " +
                 updateSelection.implementation?.registerCount

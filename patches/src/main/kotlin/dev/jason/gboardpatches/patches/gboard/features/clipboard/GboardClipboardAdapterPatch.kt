@@ -11,6 +11,7 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import dev.jason.gboardpatches.patches.gboard.shared.VerifiedTransformationPlan
 import dev.jason.gboardpatches.patches.gboard.shared.VerifiedTransformationState
 import dev.jason.gboardpatches.patches.gboard.shared.applyVerified
+import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrNull
 import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrThrow
 import dev.jason.gboardpatches.patches.gboard.shared.gboardPatchesExtensionCarrierPatch
 import dev.jason.gboardpatches.patches.gboard.shared.isMethodReference
@@ -32,12 +33,12 @@ internal val gboardClipboardAdapterTrimPatch = bytecodePatch(
 
     execute {
         val targets = resolveClipboardTargets(this)
-        val mutableMethod = findMutableMethodOrThrow(
+        val mutableMethod = findMutableMethodOrNull(
             classType = targets.adapterClass,
             name = "F",
             returnType = "V",
             parameterTypes = emptyList(),
-        )
+        ) ?: return@execute
         mutableMethod.applyClipboardAdapterTrimDelegate(targets.adapterClass)
     }
 }
@@ -49,7 +50,7 @@ internal val gboardClipboardItemBindPatch = bytecodePatch(
 
     execute {
         val targets = resolveClipboardTargets(this)
-        val mutableMethod = findMutableMethodOrThrow(
+        val mutableMethod = findMutableMethodOrNull(
             classType = targets.adapterClass,
             name = "p",
             returnType = "V",
@@ -58,7 +59,7 @@ internal val gboardClipboardItemBindPatch = bytecodePatch(
             } else {
                 listOf(RECYCLER_VIEW_HOLDER_CLASS, "I")
             },
-        )
+        ) ?: return@execute
         val patchedMethod = mutableMethod.applyClipboardItemBindDelegate(
             targets.adapterClass,
             targets.viewHolderClass,

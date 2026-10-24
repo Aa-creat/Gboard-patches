@@ -18,6 +18,9 @@ internal val gboardEditingAccessPointsLifecyclePatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_GBOARD)
     dependsOn(gboardPatchesExtensionCarrierPatch)
     execute {
+        if (GboardEditingAccessPoints1803Targets.startView.resolveOrNull(this) == null) {
+            return@execute
+        }
         GboardEditingAccessPoints1803Targets.validate(this)
         GboardEditingAccessPoints1803Targets.resetMethods.forEach { target ->
             findMutableMethodOrThrow(target).applyEditingSessionReset()

@@ -8,6 +8,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import dev.jason.gboardpatches.patches.gboard.shared.VerifiedTransformationPlan
 import dev.jason.gboardpatches.patches.gboard.shared.VerifiedTransformationState
 import dev.jason.gboardpatches.patches.gboard.shared.applyVerified
+import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrNull
 import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrThrow
 import dev.jason.gboardpatches.patches.gboard.shared.isMethodReference
 import dev.jason.gboardpatches.patches.gboard.shared.isOpcode
@@ -25,12 +26,12 @@ internal val gboardClipboardLoaderPatch = bytecodePatch(
 
     execute {
         val targets = resolveClipboardTargets(this)
-        val mutableMethod = findMutableMethodOrThrow(
+        val mutableMethod = findMutableMethodOrNull(
             classType = targets.loaderClass,
             name = "call",
             returnType = "Ljava/lang/Object;",
             parameterTypes = emptyList(),
-        )
+        ) ?: return@execute
         mutableMethod.applyClipboardLoaderDelegate(targets.loaderClass)
     }
 }

@@ -4,6 +4,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import dev.jason.gboardpatches.patches.gboard.shared.GboardExpressionCorpusPatchState
+import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrNull
 import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrThrow
 import dev.jason.gboardpatches.patches.gboard.shared.indexOfFirstMoveResultAfter
 import dev.jason.gboardpatches.patches.gboard.shared.invokeRegisters
@@ -24,12 +25,12 @@ internal val gboardZhuyinCustomSymbolsCorpusPatch = bytecodePatch(
     dependsOn(gboardZhuyinCustomSymbolsExtensionPatch)
 
     execute {
-        val mutableMethod = findMutableMethodOrThrow(
+        val mutableMethod = findMutableMethodOrNull(
             classType = EXPRESSION_CORPUS_MANAGER_CLASS,
             name = "a",
             returnType = "Lvvw;",
             parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Z")
-        )
+        ) ?: return@execute
         mutableMethod.applyZhuyinCustomSymbolsCorpusDelegate()
     }
 }

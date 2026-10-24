@@ -9,6 +9,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrNull
 import dev.jason.gboardpatches.patches.gboard.shared.findMutableMethodOrThrow
 import dev.jason.gboardpatches.patches.gboard.shared.runtimeabi.RuntimeCallEmitter
 import dev.jason.gboardpatches.patches.gboard.shared.runtimeabi.RuntimeCallId
@@ -25,12 +26,12 @@ internal val gboardZhuyinCustomSymbolsHistoryPatch = bytecodePatch(
     dependsOn(gboardZhuyinCustomSymbolsExtensionPatch)
 
     execute {
-        val clickMethod = findMutableMethodOrThrow(
+        val clickMethod = findMutableMethodOrNull(
             classType = EMOTICON_ITEM_CLICK_CONSUMER_CLASS,
             name = "accept",
             returnType = "V",
             parameterTypes = listOf("Ljava/lang/Object;"),
-        )
+        ) ?: return@execute
         clickMethod.applyZhuyinCustomSymbolsHistoryDelegate()
     }
 }

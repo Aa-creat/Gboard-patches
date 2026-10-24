@@ -20,6 +20,9 @@ internal val gboardAccessPointContributions1803Patch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardAccessPointContributions1803Targets.orderFactory.resolveOrNull(this) == null) {
+            return@execute
+        }
         findMutableMethodOrThrow(GboardAccessPointContributions1803Targets.orderFactory)
             .applyAccessPointOrderCatalogDelegate1803()
         findMutableMethodOrThrow(GboardAccessPointContributions1803Targets.controllerConstructor)

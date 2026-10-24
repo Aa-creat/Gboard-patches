@@ -22,6 +22,9 @@ internal val gboardSplitKeyboardModePatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardSplitKeyboard1803Targets.modeAttach.resolveOrNull(this) == null) {
+            return@execute
+        }
         findMutableMethodOrThrow(GboardSplitKeyboard1803Targets.modeAttach)
             .applySplitKeyboardModeLifecycleDelegate()
         findMutableMethodOrThrow(GboardSplitKeyboard1803Targets.modeEnvironmentReload)

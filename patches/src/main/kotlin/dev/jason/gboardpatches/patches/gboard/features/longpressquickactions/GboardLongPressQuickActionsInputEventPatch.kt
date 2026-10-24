@@ -62,12 +62,12 @@ internal val gboardLongPressQuickActionsInputEventPatch = bytecodePatch(
     execute {
         val method = findMutableMethodOrNull(
             GboardVersionBindings.longPressQuickActionsInputEvent,
-        ) ?: findMutableMethodOrThrow(
+        ) ?: findMutableMethodOrNull(
             "Lcom/google/android/apps/inputmethod/libs/latin5/LatinIme;",
             "p",
             "Z",
             listOf("Lacwt;"),
-        )
+        ) ?: return@execute
         method.applyLongPressQuickActionsInputEventDelegate()
     }
 }

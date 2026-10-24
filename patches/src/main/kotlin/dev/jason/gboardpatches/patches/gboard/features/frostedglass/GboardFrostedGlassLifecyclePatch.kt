@@ -27,6 +27,9 @@ internal val gboardFrostedGlassLifecyclePatch = bytecodePatch(description = "在
     compatibleWith(COMPATIBILITY_GBOARD)
     dependsOn(gboardPatchesExtensionCarrierPatch)
     execute {
+        if (onConfigureWindow.resolveOrNull(this) == null) {
+            return@execute
+        }
         findMutableMethodOrThrow(onWindowShown).addInstructions(0, RuntimeCallEmitter.invoke(RuntimeCallId.FROSTED_GLASS_RUNTIME_ON_INPUT_VIEW_STARTED, "p0 .. p0"))
         findMutableMethodOrThrow(onWindowHidden).applyVoidExitLifecycleDelegate(RuntimeCallId.FROSTED_GLASS_RUNTIME_ON_INPUT_WINDOW_HIDDEN, "p0")
         val configure = findMutableMethodOrThrow(onConfigureWindow)
