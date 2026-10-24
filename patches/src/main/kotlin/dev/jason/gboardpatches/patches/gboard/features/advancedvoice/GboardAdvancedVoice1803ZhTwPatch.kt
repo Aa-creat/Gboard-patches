@@ -58,6 +58,9 @@ internal val gboardAdvancedVoice1803ZhTwPatch = bytecodePatch(
     dependsOn(gboardPatchesExtensionCarrierPatch)
 
     execute {
+        if (GboardAdvancedVoice1803Targets.nativeSplitReadiness.resolveOrNull(this) == null) {
+            return@execute
+        }
         findMutableMethodOrThrow(GboardAdvancedVoice1803Targets.nativeSplitReadiness)
             .applyNativeSplitReadiness()
         findMutableMethodOrThrow(GboardAdvancedVoice1803Targets.eligibilityConstructor)

@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-24T14:00:00",
-  "description": "### Release v3.16.2\n\n- **Fix AI Writing Tools on 18.5.4**: Safeguarded 18.0.3-specific GenAI/NGA bytecode retry predicates so they safely no-op on Gboard 18.5.4 instead of raising PatchException.\n- **Dual 18.0.3 & 18.5.4 Compatibility**: Full patch support for 25 core patches on both 18.0.3 and 18.5.4.",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.2/patches-3.16.2.mpp",
+  "created_at": "2026-10-24T14:25:00",
+  "description": "### Release v3.16.3\n\n- **Fix Advanced Voice Typing on 18.5.4**: Safeguarded 18.0.3-specific zh-TW locale/MDD bytecode hook (`Lscn;->a()Z`) to safely no-op on Gboard 18.5.4 instead of raising PatchException.\n- **Dual 18.0.3 & 18.5.4 Compatibility**: Full patch support for 25 core patches on both 18.0.3 and 18.5.4.",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.3/patches-3.16.3.mpp",
   "signature_download_url": "",
-  "version": "3.16.2"
+  "version": "3.16.3"
 }

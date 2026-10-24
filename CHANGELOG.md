@@ -1,3 +1,13 @@
+## [3.16.3](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.2...v3.16.3) (2026-10-24)
+
+### 🐛 Bug Fixes & Improvements
+
+* **Advanced Voice Typing (18.5.4 Beta):** Safeguard 18.0.3-specific zh-TW locale, MDD and formatter bytecode target (`Lscn;->a()Z`) to safely return instead of throwing `Could not find Lscn;->a()Z` when patching Gboard 18.5.4.
+
+### 🐛 修復與改進
+
+* **Advanced Voice Typing (18.5.4 Beta 修補修復):** 為 18.0.3 專有的繁體中文 (zh-TW) 語音 locale/MDD/formatter bytecode 目標類加入前置安全檢查，在 18.5.4 上自動跳過 18.0.3 專有類注入，解決 `Could not find Lscn;->a()Z` 導致的修補失敗。
+
 ## [3.16.2](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.1...v3.16.2) (2026-10-24)
 
 ### 🐛 Bug Fixes & Improvements
