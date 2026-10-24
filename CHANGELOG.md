@@ -1,3 +1,19 @@
+## [3.16.8](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.7...v3.16.8) (2026-10-24)
+
+### 🐛 Bug Fixes & Improvements
+
+* **Long-Press Editing Shortcuts (`long_press_editing_shortcuts`):**
+  - **Fix 18.5.4 Keyboard Crash (`VerifyError`):** Resolved a critical ART verifier rejection (`java.lang.VerifyError: Verifier rejected class com.google.android.apps.inputmethod.libs.latin5.LatinIme: register v31 has type Reference: LatinIme but expected Reference: InputMethodService`) on Gboard 18.5.4 Beta.
+  - **Accurate InputMethodService Event Dispatcher Binding:** In Gboard 18.5.4, `LatinIme` extends `AbstractIme` rather than `InputMethodService`. The event interceptor has been corrected to hook into the actual `InputMethodService` base dispatcher `Laeut;->aw(Lacwt;)Z`, matching the exact stock semantic entry and type signature.
+  - **Refactor Reflection Handles:** Corrected the reflection handles to target `aeut.aw` instead of `LatinIme.p`, fully restoring keyboard functionality without startup crashes.
+
+### 🐛 修復與改進
+
+* **長按快捷編輯 (`long_press_editing_shortcuts`) 徹底修復 18.5.4 鍵盤閃退:**
+  - **根治 ART 字節碼校驗崩潰 (`VerifyError`):** 修復了 Gboard 18.5.4 彈出鍵盤時必然閃退的重大問題（報錯 `VerifyError: register v31 has type Reference: LatinIme but expected Reference: InputMethodService`）。
+  - **精準綁定 18.5.4 InputMethodService 事件派發入口:** Gboard 18.5.4 中 `LatinIme` 繼承自 `AbstractIme` 而非 `InputMethodService`，原先錯誤將其作為 `InputMethodService` 傳遞導致 ART 校驗拒絕加載類。現已將攔截點正確移至真正的 `InputMethodService` 派發入口 `Laeut;->aw(Lacwt;)Z`，完全符合底層類型約定。
+  - **反射句柄全面修正:** 同步更新運行時反射，鍵盤彈起與快捷鍵派發全部恢復 100% 穩定流暢運行！
+
 ## [3.16.7](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.6...v3.16.7) (2026-10-24)
 
 ### 🐛 Bug Fixes & Improvements

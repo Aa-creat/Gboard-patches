@@ -86,12 +86,11 @@ public final class GboardLongPressQuickActions1803ReflectionHandles {
             Class<?> metadataBuilderClass = resolve(classLoader, "agih");
             Class<?> intentionClass = resolve(classLoader, "agem");
             Class<?> eventClass = resolve(classLoader, "acwt");
-            Class<?> inputMethodServiceClass = resolve(classLoader,
-                    "com.google.android.apps.inputmethod.libs.latin5.LatinIme");
+            Class<?> inputMethodServiceClass = resolve(classLoader, "aeut");
             Class<?> pointerTrackerClass = resolve(classLoader, "agrt");
 
             softKeyBindMethod = softKeyViewClass.getDeclaredMethod("s", actionSetClass, long.class);
-            inputEventMethod = inputMethodServiceClass.getDeclaredMethod("p", eventClass);
+            inputEventMethod = inputMethodServiceClass.getDeclaredMethod("aw", eventClass);
             pointerOwnerMethod = pointerTrackerClass.getDeclaredMethod(
                     "B", softKeyViewClass, float.class, float.class, long.class, int.class);
             validateInputEventBinding(inputMethodServiceClass, inputEventMethod);

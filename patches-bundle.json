@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-24T18:05:00",
-  "description": "### Release v3.16.7\n\n- **Fix Gboard 18.5.4 Coexistence Conflict & Package Rename**: Fixed an issue where Gboard 18.5.4 failed to rename `androidx-startup` ContentProvider authorities (`com.google.android.inputmethod.latin.androidx-startup` and `com.google.android.inputmethod.latin.train.androidx-startup`), which caused system installer conflicts with official Google Gboard (`INSTALL_FAILED_CONFLICTING_PROVIDER`).\n- **Seamless Multi-Version Coexistence**: 18.0.3, 18.5.4 Beta, and official Google Gboard can now be installed side-by-side with complete stability.",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.7/patches-3.16.7.mpp",
+  "created_at": "2026-10-24T19:15:00",
+  "description": "### Release v3.16.8\n\n- **Fix Gboard 18.5.4 Keyboard Crash (VerifyError)**: Fixed a critical Dalvik/ART `VerifyError` (`Verifier rejected class com.google.android.apps.inputmethod.libs.latin5.LatinIme: register v31 has type Reference: LatinIme but expected Reference: InputMethodService`) that caused the keyboard to crash immediately upon opening on Gboard 18.5.4.\n- **Correct InputMethodService Event Dispatch Hook**: Correctly rebound the `Long-Press Editing Shortcuts` input event dispatcher to `Laeut;->aw(Lacwt;)Z` (the actual InputMethodService dispatcher) instead of `LatinIme.p`, fully resolving keyboard startup crashes.",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.8/patches-3.16.8.mpp",
   "signature_download_url": "",
-  "version": "3.16.7"
+  "version": "3.16.8"
 }

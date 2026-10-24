@@ -63,8 +63,8 @@ internal val gboardLongPressQuickActionsInputEventPatch = bytecodePatch(
         val method = findMutableMethodOrNull(
             GboardVersionBindings.longPressQuickActionsInputEvent,
         ) ?: findMutableMethodOrNull(
-            "Lcom/google/android/apps/inputmethod/libs/latin5/LatinIme;",
-            "p",
+            "Laeut;",
+            "aw",
             "Z",
             listOf("Lacwt;"),
         ) ?: return@execute
@@ -143,20 +143,13 @@ private fun List<Instruction>.hasLongPressInputStockEntry(
     if (size < startIndex + 4) return false
     val firstMove = this[startIndex] as? TwoRegisterInstruction
     val zero = this[startIndex + 1] as? NarrowLiteralInstruction
-    val is1803 = this[startIndex].isOpcode("MOVE_OBJECT_FROM16") &&
+    return this[startIndex].isOpcode("MOVE_OBJECT_FROM16") &&
         firstMove?.registerA == 1 && firstMove.registerB == eventRegister &&
         this[startIndex + 1].isOpcode("CONST_4") &&
         (this[startIndex + 1] as? OneRegisterInstruction)?.registerA == 2 &&
         zero?.narrowLiteral == 0 &&
         this[startIndex + 2].isRegisterOperation("IF_NEZ", 1) &&
         this[startIndex + 3].isRegisterOperation("RETURN", 2)
-    if (is1803) return true
-
-    val secondMove = this.getOrNull(startIndex + 1) as? TwoRegisterInstruction
-    return this[startIndex].isOpcode("MOVE_OBJECT_FROM16") &&
-        this[startIndex + 1].isOpcode("MOVE_OBJECT_FROM16") &&
-        secondMove?.registerA == 0 && secondMove.registerB == eventRegister &&
-        this[startIndex + 2].isOpcode("CONST_STRING")
 }
 
 private data class InputEventRegisterLayout(
