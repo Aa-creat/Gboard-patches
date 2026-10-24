@@ -48,6 +48,7 @@ internal data class GboardPackageRenameMapping(
     val attributeName: String,
     val originalValue: String,
     val renamedValue: String,
+    val isOptional: Boolean = false,
 ) {
     val qualifiedAttributeName: String
         get() = if (namespaceUri == null) attributeName else "android:$attributeName"
@@ -119,6 +120,20 @@ internal fun gboardPackageRenameMappings(
         "name",
         "com.google.android.gms.phenotype.registration.xml:$GBOARD_PACKAGE_NAME",
         "com.google.android.gms.phenotype.registration.xml:$targetPackage",
+    ),
+    androidMapping(
+        "provider",
+        "authorities",
+        "$GBOARD_PACKAGE_NAME.androidx-startup",
+        "$targetPackage.androidx-startup",
+        isOptional = true,
+    ),
+    androidMapping(
+        "provider",
+        "authorities",
+        "$GBOARD_PACKAGE_NAME.train.androidx-startup",
+        "$targetPackage.train.androidx-startup",
+        isOptional = true,
     ),
     androidMapping(
         "provider",
@@ -223,7 +238,7 @@ internal fun applyGboardPackageRename(
         gboardPackageRenameMappings(targetPackageName)
     }
 
-    val selectedAttributes = mappings.map { mapping ->
+    val selectedMappingsWithAttributes = mappings.mapNotNull { mapping ->
         val matchingElements = manifestDocument.getElementsByTagName("*")
             .elements()
             .filter { element -> element.localElementName() == mapping.elementName }
@@ -246,14 +261,16 @@ internal fun applyGboardPackageRename(
             PackageState.ORIGINAL -> renamedMatches
             PackageState.RENAMED -> originalMatches
         }
-        check(expectedMatches.size == 1 && oppositeMatches.isEmpty()) {
-            "Expected exactly one ${state.label} ${mapping.elementName} " +
+        val allowedCount = if (mapping.isOptional) 0..1 else 1..1
+        check(expectedMatches.size in allowedCount && oppositeMatches.isEmpty()) {
+            "Expected ${if (mapping.isOptional) "at most one" else "exactly one"} ${state.label} ${mapping.elementName} " +
                 "${mapping.qualifiedAttributeName} mapping from '${mapping.originalValue}' " +
                 "to '${mapping.renamedValue}', found original=${originalMatches.size}, " +
                 "renamed=${renamedMatches.size}"
         }
-        expectedMatches.single()
+        expectedMatches.singleOrNull()?.let { attribute -> attribute to mapping }
     }
+    val selectedAttributes = selectedMappingsWithAttributes.map { it.first }
 
     val settingsIdentity = validateSettingsIdentity(
         manifestDocument = manifestDocument,
@@ -279,7 +296,7 @@ internal fun applyGboardPackageRename(
     }
 
     sanitizeStandaloneSplitManifest(manifestDocument)
-    selectedAttributes.zip(mappings).forEach { (attribute, mapping) ->
+    selectedMappingsWithAttributes.forEach { (attribute, mapping) ->
         attribute.value = mapping.renamedValue
     }
     settingsIdentity.providerAuthority?.value =
@@ -387,12 +404,14 @@ private fun mapping(
     attributeName: String,
     originalValue: String,
     renamedValue: String,
+    isOptional: Boolean = false,
 ) = GboardPackageRenameMapping(
     elementName = elementName,
     namespaceUri = namespaceUri,
     attributeName = attributeName,
     originalValue = originalValue,
     renamedValue = renamedValue,
+    isOptional = isOptional,
 )
 
 private fun androidMapping(
@@ -400,12 +419,14 @@ private fun androidMapping(
     attributeName: String,
     originalValue: String,
     renamedValue: String,
+    isOptional: Boolean = false,
 ) = mapping(
     elementName = elementName,
     namespaceUri = ANDROID_NS,
     attributeName = attributeName,
     originalValue = originalValue,
     renamedValue = renamedValue,
+    isOptional = isOptional,
 )
 
 private fun Element.attribute(mapping: GboardPackageRenameMapping): Attr? =

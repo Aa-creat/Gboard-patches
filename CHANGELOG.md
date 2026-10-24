@@ -1,3 +1,17 @@
+## [3.16.7](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.6...v3.16.7) (2026-10-24)
+
+### 🐛 Bug Fixes & Improvements
+
+* **Package Rename (`package_rename`):**
+  - **Fix 18.5.4 AndroidX Startup Provider Authorities Conflict:** Gboard 18.5.4 introduced AndroidX App Startup with two new ContentProviders (`com.google.android.inputmethod.latin.androidx-startup` and `com.google.android.inputmethod.latin.train.androidx-startup`). Previously, these two authorities were missing from the package rename whitelist and mappings, triggering an `Unexpected package-derived manifest value` error and causing the package rename to abort or fail, which subsequently caused Android's installer to fail with `INSTALL_FAILED_CONFLICTING_PROVIDER` ("该应用已安装与Google版本冲突").
+  - **Full Dual-Version Support:** Both Gboard 18.0.3 and 18.5.4 now seamlessly rewrite all ContentProvider authorities and manifest attributes, guaranteeing complete conflict-free multi-version coexistence with official Gboard.
+
+### 🐛 修復與改進
+
+* **Package Rename (`package_rename`) 完美適配 18.5.4 共存安裝:**
+  - **徹底修復 18.5.4 AndroidX Startup Provider 衝突導致安裝失敗:** Gboard 18.5.4 引入了 AndroidX Startup 組件，新增了兩個 Content Provider (`.androidx-startup` 與 `.train.androidx-startup`)。先前的包名替換規則中未涵蓋這兩項，導致觸發未預期屬性檢查異常，且因 authorities 未能同步重命名，系統安裝器在遇到與 Google 官方原版 Provider 權限衝突時拋出 `INSTALL_FAILED_CONFLICTING_PROVIDER`，提示「該應用已安裝（與Google版本衝突）」。
+  - **雙版本無縫重命名與多版本共存:** 現已將該組件納入動態兼容重命名機制，保證無論在 18.0.3 還是 18.5.4 下均能 100% 乾淨完整替換所有 Package 與 Provider Authorities，徹底解決與官方版本衝突的問題！
+
 ## [3.16.6](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.5...v3.16.6) (2026-10-24)
 
 ### ✨ New Features & Enhancements

@@ -159,7 +159,7 @@ class GboardPackageRenameTransformTest {
     }
 
     @Test
-    fun `mapping inventory is the exact fifteen target attributes`() {
+    fun `mapping inventory is the exact seventeen target attributes`() {
         val actual = GBOARD_PACKAGE_RENAME_MAPPINGS.map { mapping ->
             listOf(
                 mapping.elementName,
@@ -170,7 +170,7 @@ class GboardPackageRenameTransformTest {
         }
 
         assertEquals(EXPECTED_MAPPINGS, actual)
-        assertEquals(15, actual.size)
+        assertEquals(17, actual.size)
     }
 
     @Test
@@ -184,7 +184,8 @@ class GboardPackageRenameTransformTest {
         assertEquals(FINAL_PACKAGE, manifest.documentElement.getAttribute("package"))
         GBOARD_PACKAGE_RENAME_MAPPINGS.forEach { mapping ->
             assertEquals(0, mappingAttributes(manifest, mapping, mapping.originalValue).size)
-            assertEquals(1, mappingAttributes(manifest, mapping, mapping.renamedValue).size)
+            val expectedRenamedCount = if (mapping.isOptional) 0 else 1
+            assertEquals(expectedRenamedCount, mappingAttributes(manifest, mapping, mapping.renamedValue).size)
         }
         assertFalse(serialize(manifest).contains(DOUBLE_PREFIX))
         assertEquals(originalComponents, componentNames(manifest))
@@ -419,7 +420,8 @@ class GboardPackageRenameTransformTest {
 
         assertEquals(FINAL_PACKAGE, manifest.documentElement.getAttribute("package"))
         GBOARD_PACKAGE_RENAME_MAPPINGS.forEach { mapping ->
-            assertEquals(1, mappingAttributes(manifest, mapping, mapping.renamedValue).size)
+            val expectedRenamedCount = if (mapping.isOptional) 0 else 1
+            assertEquals(expectedRenamedCount, mappingAttributes(manifest, mapping, mapping.renamedValue).size)
         }
     }
 
@@ -431,7 +433,8 @@ class GboardPackageRenameTransformTest {
 
         assertEquals(FINAL_PACKAGE, manifest.documentElement.getAttribute("package"))
         GBOARD_PACKAGE_RENAME_MAPPINGS.forEach { mapping ->
-            assertEquals(1, mappingAttributes(manifest, mapping, mapping.renamedValue).size)
+            val expectedRenamedCount = if (mapping.isOptional) 0 else 1
+            assertEquals(expectedRenamedCount, mappingAttributes(manifest, mapping, mapping.renamedValue).size)
         }
     }
 
@@ -540,6 +543,93 @@ class GboardPackageRenameTransformTest {
         )
     }
 
+    @Test
+    fun `stock target transforms every selected attribute exactly once on 1854`() {
+        val manifest = loadManifest1854()
+        val originalComponents = componentNames(manifest)
+
+        val result = applyGboardPackageRename(manifest, loadSettingsDocuments())
+
+        assertEquals(GboardPackageRenameResult.RENAMED, result)
+        assertEquals(FINAL_PACKAGE, manifest.documentElement.getAttribute("package"))
+        GBOARD_PACKAGE_RENAME_MAPPINGS.forEach { mapping ->
+            assertEquals(0, mappingAttributes(manifest, mapping, mapping.originalValue).size)
+            assertEquals(1, mappingAttributes(manifest, mapping, mapping.renamedValue).size)
+        }
+        assertFalse(serialize(manifest).contains(DOUBLE_PREFIX))
+        assertEquals(originalComponents, componentNames(manifest))
+        assertEquals("com.android.inputmethod.latin", originalPackageName(manifest))
+
+        val declaredPermissions = androidAttributeValues(manifest, "permission", "name")
+        assertEquals(
+            setOf(
+                "$FINAL_PACKAGE.pixelbundle.RECEIVER",
+                "$FINAL_PACKAGE.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+            ),
+            declaredPermissions.toSet(),
+        )
+        val receiverPermissions = androidAttributeValues(manifest, "receiver", "permission")
+        val renamedReceiverPermission = "$FINAL_PACKAGE.pixelbundle.RECEIVER"
+        assertEquals(1, receiverPermissions.count { it == renamedReceiverPermission })
+        assertFalse(receiverPermissions.contains("$SOURCE_PACKAGE.pixelbundle.RECEIVER"))
+        assertTrue(renamedReceiverPermission in declaredPermissions)
+        assertEquals(
+            setOf(
+                FINAL_PACKAGE,
+                "$FINAL_PACKAGE.androidx-startup",
+                "$FINAL_PACKAGE.train.androidx-startup",
+                "$FINAL_PACKAGE.clipboard_content",
+                "$FINAL_PACKAGE.inputactionprovider",
+                "$FINAL_PACKAGE.swissarmyknifefileprovider",
+                "$FINAL_PACKAGE.fileprovider",
+                "$FINAL_PACKAGE.tracing",
+                "$FINAL_PACKAGE.wdb",
+                "$FINAL_PACKAGE.mlkitinitprovider",
+            ),
+            androidAttributeValues(manifest, "provider", "authorities").toSet(),
+        )
+    }
+
+    @Test
+    fun `second application on 1854 is an exact semantic no-op`() {
+        val manifest = loadManifest1854()
+        val settings = loadSettingsDocuments()
+        applyGboardPackageRename(manifest, settings)
+        val before = listOf(manifest, *settings.toTypedArray()).map(::serialize)
+
+        val result = applyGboardPackageRename(manifest, settings)
+
+        assertEquals(GboardPackageRenameResult.ALREADY_RENAMED, result)
+        assertEquals(before, listOf(manifest, *settings.toTypedArray()).map(::serialize))
+        assertFalse(before.any { xml -> xml.contains(DOUBLE_PREFIX) })
+    }
+
+    @Test
+    fun `custom target package name on 1854 renames cleanly`() {
+        val manifest = loadManifest1854()
+        val settings = loadSettingsDocuments()
+        val customPackage = "dev.jason.com.google.android.inputmethod.latin.beta"
+        val result = applyGboardPackageRename(manifest, settings, targetPackageName = customPackage)
+
+        assertEquals(GboardPackageRenameResult.RENAMED, result)
+        assertEquals(customPackage, manifest.documentElement.getAttribute("package"))
+        assertEquals(
+            setOf(
+                customPackage,
+                "$customPackage.androidx-startup",
+                "$customPackage.train.androidx-startup",
+                "$customPackage.clipboard_content",
+                "$customPackage.inputactionprovider",
+                "$customPackage.swissarmyknifefileprovider",
+                "$customPackage.fileprovider",
+                "$customPackage.tracing",
+                "$customPackage.wdb",
+                "$customPackage.mlkitinitprovider",
+            ),
+            androidAttributeValues(manifest, "provider", "authorities").toSet(),
+        )
+    }
+
     private fun assertFinalSettingsIdentity(
         manifest: Document,
         settings: List<Document>,
@@ -578,6 +668,11 @@ class GboardPackageRenameTransformTest {
 
     private fun loadManifest(): Document = parse(
         readFixtureBytes(MANIFEST_FIXTURE),
+        namespaceAware = true,
+    )
+
+    private fun loadManifest1854(): Document = parse(
+        readFixtureBytes(MANIFEST_1854_FIXTURE),
         namespaceAware = true,
     )
 
@@ -704,6 +799,8 @@ class GboardPackageRenameTransformTest {
             "dev.jason.gboardpatches.extension.settings.GboardPatchesSettingsProvider"
         const val MANIFEST_FIXTURE =
             "/gboard/18.0.3/package-rename/AndroidManifest.normalized.xml"
+        const val MANIFEST_1854_FIXTURE =
+            "/gboard/18.5.4/package-rename/AndroidManifest.normalized.xml"
         const val SETTINGS_FIXTURE = "/gboard/18.0.3/package-rename/settings.xml"
         const val SETTINGS_LEGACY_FIXTURE =
             "/gboard/18.0.3/package-rename/settings_legacy.xml"
@@ -735,6 +832,18 @@ class GboardPackageRenameTransformTest {
                 "android:name",
                 "com.google.android.gms.phenotype.registration.xml:$SOURCE_PACKAGE",
                 "com.google.android.gms.phenotype.registration.xml:$FINAL_PACKAGE",
+            ),
+            listOf(
+                "provider",
+                "android:authorities",
+                "$SOURCE_PACKAGE.androidx-startup",
+                "$FINAL_PACKAGE.androidx-startup",
+            ),
+            listOf(
+                "provider",
+                "android:authorities",
+                "$SOURCE_PACKAGE.train.androidx-startup",
+                "$FINAL_PACKAGE.train.androidx-startup",
             ),
             listOf("provider", "android:authorities", SOURCE_PACKAGE, FINAL_PACKAGE),
             listOf(

@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-24T17:05:00",
-  "description": "### Release v3.16.6\n\n- **Manual Custom Package Name & App Name in Package Rename**: Upgraded the `Package Rename` patch options to allow completely free-form manual editing for both package name (`custom_package_name`, default: `dev.jason.com.google.android.inputmethod.latin`) and application display name (`app_display_name`).\n- **Multi-Version Coexistence**: Enables installing and running official Gboard, 18.0.3 Patches, and 18.5.4 Beta Patches simultaneously on the same device without conflicts or crashes.",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.6/patches-3.16.6.mpp",
+  "created_at": "2026-10-24T18:05:00",
+  "description": "### Release v3.16.7\n\n- **Fix Gboard 18.5.4 Coexistence Conflict & Package Rename**: Fixed an issue where Gboard 18.5.4 failed to rename `androidx-startup` ContentProvider authorities (`com.google.android.inputmethod.latin.androidx-startup` and `com.google.android.inputmethod.latin.train.androidx-startup`), which caused system installer conflicts with official Google Gboard (`INSTALL_FAILED_CONFLICTING_PROVIDER`).\n- **Seamless Multi-Version Coexistence**: 18.0.3, 18.5.4 Beta, and official Google Gboard can now be installed side-by-side with complete stability.",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.7/patches-3.16.7.mpp",
   "signature_download_url": "",
-  "version": "3.16.6"
+  "version": "3.16.7"
 }
