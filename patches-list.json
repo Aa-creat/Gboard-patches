@@ -1,5 +1,5 @@
 {
-  "version": "3.16.5",
+  "version": "3.16.6",
   "patches": [
     {
       "name": "AI Writing Tools",
@@ -404,7 +404,7 @@
     },
     {
       "name": "Package Rename",
-      "description": "將套件名稱改成 dev.jason.com.google.android.inputmethod.latin，並可自訂 App 名稱，以便共存安裝\nRename the package to dev.jason.com.google.android.inputmethod.latin and allow a custom app name so it can be installed alongside the official Gboard.",
+      "description": "將套件名稱改成自訂值，並可自訂 App 名稱，以便共存安裝\nRename the package to a custom value and allow a custom app name so it can be installed alongside other Gboard installs.",
       "use": true,
       "dependencies": [],
       "compatiblePackages": {
@@ -415,19 +415,22 @@
       },
       "options": [
         {
+          "key": "custom_package_name",
+          "title": "共存套件名稱 / Package name",
+          "description": "自訂共存安裝的套件名稱（Package name）\nCustom package name for coexistence installation",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "dev.jason.com.google.android.inputmethod.latin",
+          "values": null
+        },
+        {
           "key": "app_display_name",
           "title": "App 名稱 / App name",
-          "description": "",
+          "description": "自訂 Gboard 應用程式名稱\nCustom Gboard application name",
           "required": true,
           "type": "kotlin.String",
           "default": "GboardWu",
-          "values": {
-            "Gboard": "Gboard",
-            "Gboard Dev": "Gboard Dev",
-            "Gboard Patches": "Gboard Patches",
-            "Gboard Mod": "Gboard Mod",
-            "GboardWu": "GboardWu"
-          }
+          "values": null
         }
       ]
     },

@@ -24,14 +24,23 @@ class GboardPackageRenamePatchContractTest {
         assertEquals("Package Rename", patch.name)
         assertEquals(PACKAGE_RENAME_DESCRIPTION, patch.description)
         assertTrue(patch.default)
-        assertEquals(setOf(APP_DISPLAY_NAME_OPTION_KEY), patch.options.keys)
+        assertEquals(setOf(CUSTOM_PACKAGE_NAME_OPTION_KEY, APP_DISPLAY_NAME_OPTION_KEY), patch.options.keys)
+
+        val packageOption = patch.options[CUSTOM_PACKAGE_NAME_OPTION_KEY]
+        assertEquals(CUSTOM_PACKAGE_NAME_OPTION_DESCRIPTION, packageOption.description)
+        assertEquals(GBOARD_PATCHED_PACKAGE_NAME, packageOption.default)
+        assertEquals(GBOARD_PATCHED_PACKAGE_NAME, packageOption.value)
+        assertTrue(packageOption.required)
+        assertEquals("kotlin.String", packageOption.type.toString())
+        assertEquals(null, packageOption.values)
+
         val option = patch.options[APP_DISPLAY_NAME_OPTION_KEY]
         assertEquals(APP_DISPLAY_NAME_OPTION_DESCRIPTION, option.description)
         assertEquals(APP_DISPLAY_NAME_DEFAULT, option.default)
         assertEquals(APP_DISPLAY_NAME_DEFAULT, option.value)
         assertTrue(option.required)
         assertEquals("kotlin.String", option.type.toString())
-        assertEquals(APP_DISPLAY_NAME_PRESETS, option.values)
+        assertEquals(null, option.values)
         assertEquals(1, patch.dependencies.size)
         assertSame(gboardPackageRenameResourcePatch, patch.dependencies.single())
         assertEquals("com.google.android.inputmethod.latin", GBOARD_PACKAGE_NAME)
@@ -60,20 +69,24 @@ class GboardPackageRenamePatchContractTest {
         assertEquals(PACKAGE_RENAME_DESCRIPTION, row.get("description").asString)
         assertTrue(row.getAsJsonArray("dependencies").isEmpty)
         val options = row.getAsJsonArray("options")
-        assertEquals(1, options.size())
-        val option = options.single().asJsonObject
+        assertEquals(2, options.size())
+
+        val packageOption = options[0].asJsonObject
+        assertEquals(CUSTOM_PACKAGE_NAME_OPTION_KEY, packageOption.get("key").asString)
+        assertEquals(CUSTOM_PACKAGE_NAME_OPTION_TITLE, packageOption.get("title").asString)
+        assertEquals(CUSTOM_PACKAGE_NAME_OPTION_DESCRIPTION, packageOption.get("description").asString)
+        assertEquals(GBOARD_PATCHED_PACKAGE_NAME, packageOption.get("default").asString)
+        assertTrue(packageOption.get("required").asBoolean)
+        assertEquals("kotlin.String", packageOption.get("type").asString)
+
+        val option = options[1].asJsonObject
         assertEquals(APP_DISPLAY_NAME_OPTION_KEY, option.get("key").asString)
         assertEquals(APP_DISPLAY_NAME_OPTION_TITLE, option.get("title").asString)
         assertEquals(APP_DISPLAY_NAME_OPTION_DESCRIPTION, option.get("description").asString)
         assertEquals(APP_DISPLAY_NAME_DEFAULT, option.get("default").asString)
         assertTrue(option.get("required").asBoolean)
         assertEquals("kotlin.String", option.get("type").asString)
-        assertEquals(
-            APP_DISPLAY_NAME_PRESETS.entries.map { entry -> entry.key to entry.value },
-            option.getAsJsonObject("values").entrySet().map { entry ->
-                entry.key to entry.value.asString
-            },
-        )
+
         val packages = row.getAsJsonObject("compatiblePackages")
         assertEquals(setOf(GBOARD_PACKAGE_NAME), packages.keySet())
         assertEquals(
@@ -110,21 +123,17 @@ class GboardPackageRenamePatchContractTest {
         const val TARGET_VERSION = "18.0.3.954559732-release-arm64-v8a"
         const val TARGET_1854_VERSION = "18.5.4.993608717-beta-arm64-v8a"
         const val PACKAGE_RENAME_DESCRIPTION =
-            "將套件名稱改成 dev.jason.com.google.android.inputmethod.latin，並可自訂 App 名稱，以便共存安裝\n" +
-                "Rename the package to dev.jason.com.google.android.inputmethod.latin " +
-                "and allow a custom app name so it can be installed alongside " +
-                "the official Gboard."
+            "將套件名稱改成自訂值，並可自訂 App 名稱，以便共存安裝\n" +
+                "Rename the package to a custom value and allow a custom app name so it can be installed alongside other Gboard installs."
+        const val CUSTOM_PACKAGE_NAME_OPTION_KEY = "custom_package_name"
+        const val CUSTOM_PACKAGE_NAME_OPTION_TITLE = "共存套件名稱 / Package name"
+        const val CUSTOM_PACKAGE_NAME_OPTION_DESCRIPTION =
+            "自訂共存安裝的套件名稱（Package name）\n" +
+                "Custom package name for coexistence installation"
         const val APP_DISPLAY_NAME_OPTION_KEY = "app_display_name"
         const val APP_DISPLAY_NAME_OPTION_TITLE = "App 名稱 / App name"
-        const val APP_DISPLAY_NAME_OPTION_DESCRIPTION = ""
+        const val APP_DISPLAY_NAME_OPTION_DESCRIPTION = "自訂 Gboard 應用程式名稱\nCustom Gboard application name"
         const val APP_DISPLAY_NAME_DEFAULT = "GboardWu"
-        val APP_DISPLAY_NAME_PRESETS = linkedMapOf(
-            "Gboard" to "Gboard",
-            "Gboard Dev" to "Gboard Dev",
-            "Gboard Patches" to "Gboard Patches",
-            "Gboard Mod" to "Gboard Mod",
-            "GboardWu" to "GboardWu",
-        )
         const val BINDINGS_PROFILE_PATH =
             "patches/src/main/resources/gboard/gboard-version-bindings.json"
     }

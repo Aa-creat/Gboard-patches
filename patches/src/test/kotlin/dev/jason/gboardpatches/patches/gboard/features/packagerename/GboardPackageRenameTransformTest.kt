@@ -110,6 +110,42 @@ class GboardPackageRenameTransformTest {
     }
 
     @Test
+    fun `package name validator accepts valid package names and rejects invalid`() {
+        listOf(
+            "dev.jason.com.google.android.inputmethod.latin",
+            "dev.jason.com.google.android.inputmethod.latin.beta",
+            "com.google.android.inputmethod.latin.v1854",
+            "com.test.gboard",
+        ).forEach { value ->
+            assertTrue(value, isValidGboardPackageName(value))
+        }
+
+        listOf(
+            null,
+            "",
+            "   ",
+            "invalid",
+            "com..invalid",
+            "com.123invalid",
+            "-com.invalid",
+            "com.invalid-name",
+        ).forEach { value ->
+            assertFalse(value.toString(), isValidGboardPackageName(value))
+        }
+    }
+
+    @Test
+    fun `custom target package name renames manifest and settings cleanly`() {
+        val manifest = loadManifest()
+        val settings = loadSettingsDocuments()
+        val customPackage = "dev.jason.com.google.android.inputmethod.latin.beta"
+        val result = applyGboardPackageRename(manifest, settings, targetPackageName = customPackage)
+
+        assertEquals(GboardPackageRenameResult.RENAMED, result)
+        assertEquals(customPackage, manifest.documentElement.getAttribute("package"))
+    }
+
+    @Test
     fun `application display name requires exactly one application element`() {
         val manifest = loadManifest()
         manifest.documentElement.appendChild(manifest.createElement("application"))

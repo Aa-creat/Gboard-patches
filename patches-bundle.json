@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-24T16:15:00",
-  "description": "### Release v3.16.5\n\n- **Comprehensive Bytecode Patch Safeguards**: Added safe resolution guards across all bytecode patches (Enable OCR / Scan Text, Split Keyboard, Incognito Mode Toggle, Calculator, Clipboard, Editing Shortcuts, Settings Homepage, etc.) to gracefully skip unsupported 18.0.3 bytecode on Gboard 18.5.4 rather than failing with PatchException.\n- **Full 28 Selected Patches Hardening**: Ensures all 28 patches selected by users succeed seamlessly on Gboard 18.5.4 Beta.",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.5/patches-3.16.5.mpp",
+  "created_at": "2026-10-24T17:05:00",
+  "description": "### Release v3.16.6\n\n- **Manual Custom Package Name & App Name in Package Rename**: Upgraded the `Package Rename` patch options to allow completely free-form manual editing for both package name (`custom_package_name`, default: `dev.jason.com.google.android.inputmethod.latin`) and application display name (`app_display_name`).\n- **Multi-Version Coexistence**: Enables installing and running official Gboard, 18.0.3 Patches, and 18.5.4 Beta Patches simultaneously on the same device without conflicts or crashes.",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v3.16.6/patches-3.16.6.mpp",
   "signature_download_url": "",
-  "version": "3.16.5"
+  "version": "3.16.6"
 }

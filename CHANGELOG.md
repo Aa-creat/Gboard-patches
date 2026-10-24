@@ -1,3 +1,19 @@
+## [3.16.6](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.5...v3.16.6) (2026-10-24)
+
+### ✨ New Features & Enhancements
+
+* **Package Rename (`package_rename`):**
+  - **Customizable Package Name:** Added a new option `custom_package_name` (default: `dev.jason.com.google.android.inputmethod.latin`) allowing users to freely specify any custom Android package name in Morphe Manager.
+  - **Free-Form App Display Name:** Removed the fixed 5-item dropdown restriction on `app_display_name`, converting it into an open text input field so users can type any custom application name (e.g., `Gboard 18.5.4`, `Gboard Beta`).
+  - **Multi-Version Coexistence Support:** Easily allows running official Gboard, 18.0.3 Patches, and 18.5.4 Beta Patches simultaneously on the same device without installation conflicts or keyboard crashes.
+
+### ✨ 新功能與改進
+
+* **Package Rename (`package_rename`) 升級為完全手動自訂:**
+  - **自訂共存包名 (Package Name):** 新增 `custom_package_name` 選項（預設值為 `dev.jason.com.google.android.inputmethod.latin`），可在 Morphe Manager 中自由手動輸入任意自訂套件名稱。
+  - **自由手動輸入 App 名稱:** 解除 `app_display_name` 原本只能在 5 個預設下拉選單中選擇的限制，改為完全自由輸入的文字框，可自訂任意名稱（例如 `Gboard 18.5.4`、`Gboard Beta` 等）。
+  - **三版本完全獨立共存:** 方便使用者在同一部手機上同時安裝並保留「官方原版 Gboard」、「18.0.3 Patches」與「18.5.4 Patches」，互不干擾、隨意切換測試！
+
 ## [3.16.5](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.4...v3.16.5) (2026-10-24)
 
 ### 🐛 Bug Fixes & Improvements

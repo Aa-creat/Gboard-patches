@@ -67,8 +67,10 @@ import dev.jason.gboardpatches.patches.gboard.features.manualincognito.gboardMan
 import dev.jason.gboardpatches.patches.gboard.features.manualincognito.gboardManualIncognitoPolicyPatch
 import dev.jason.gboardpatches.patches.gboard.features.ocr.gboardOcrFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.packagerename.applyGboardApplicationDisplayName
+import dev.jason.gboardpatches.patches.gboard.features.packagerename.gboardCustomPackageNameOverride
 import dev.jason.gboardpatches.patches.gboard.features.packagerename.gboardPackageRenameResourcePatch
 import dev.jason.gboardpatches.patches.gboard.features.packagerename.isValidGboardAppDisplayName
+import dev.jason.gboardpatches.patches.gboard.features.packagerename.isValidGboardPackageName
 import dev.jason.gboardpatches.patches.gboard.features.quickinsert.gboardQuickInsertFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.quickinsert.gboardQuickInsertFlagValuePatch
 import dev.jason.gboardpatches.patches.gboard.features.roundedkeyboard.gboardRoundedKeyboardFeatureMarkerPatch
@@ -102,6 +104,7 @@ import dev.jason.gboardpatches.patches.gboard.features.zhuyinbottomrow.gboardZhu
 import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD
 import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD_1803_1854
 import dev.jason.gboardpatches.patches.shared.Constants.COMPATIBILITY_GBOARD_UNIVERSAL
+import dev.jason.gboardpatches.patches.shared.Constants.GBOARD_PATCHED_PACKAGE_NAME
 
 private fun gboardPublicResourcePatch(
     featureId: String,
@@ -790,28 +793,35 @@ val gboardZhuyinBottomRowWeightPatch = gboardPublicResourcePatch(
 val gboardPackageRenamePatch = gboardPublicResourcePatch(
     featureId = "package_rename",
     name = "Package Rename",
-    description = "將套件名稱改成 dev.jason.com.google.android.inputmethod.latin，並可自訂 App 名稱，以便共存安裝\n" +
-        "Rename the package to dev.jason.com.google.android.inputmethod.latin and allow " +
-        "a custom app name so it can be installed alongside the official Gboard.",
+    description = "將套件名稱改成自訂值，並可自訂 App 名稱，以便共存安裝\n" +
+        "Rename the package to a custom value and allow a custom app name so it can be installed alongside other Gboard installs.",
     default = true
 ) {
     compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
+    val customPackageName = stringOption(
+        key = "custom_package_name",
+        default = GBOARD_PATCHED_PACKAGE_NAME,
+        title = "共存套件名稱 / Package name",
+        description = "自訂共存安裝的套件名稱（Package name）\n" +
+            "Custom package name for coexistence installation",
+        required = true,
+    ) { value ->
+        isValidGboardPackageName(value)
+    }
+
     val appDisplayName = stringOption(
         key = "app_display_name",
         default = "GboardWu",
-        values = linkedMapOf(
-            "Gboard" to "Gboard",
-            "Gboard Dev" to "Gboard Dev",
-            "Gboard Patches" to "Gboard Patches",
-            "Gboard Mod" to "Gboard Mod",
-            "GboardWu" to "GboardWu",
-        ),
         title = "App 名稱 / App name",
-        description = "",
+        description = "自訂 Gboard 應用程式名稱\nCustom Gboard application name",
         required = true,
     ) { value ->
         isValidGboardAppDisplayName(value)
+    }
+
+    execute {
+        gboardCustomPackageNameOverride = customPackageName.value ?: GBOARD_PATCHED_PACKAGE_NAME
     }
 
     dependsOn(
