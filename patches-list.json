@@ -1,5 +1,5 @@
 {
-  "version": "3.16.8",
+  "version": "3.16.0",
   "patches": [
     {
       "name": "AI Writing Tools",
@@ -21,8 +21,7 @@
       "dependencies": [],
       "compatiblePackages": {
         "com.google.android.inputmethod.latin": [
-          "18.0.3.954559732-release-arm64-v8a",
-          "18.5.4.993608717-beta-arm64-v8a"
+          "18.0.3.954559732-release-arm64-v8a"
         ]
       },
       "options": []
@@ -73,8 +72,7 @@
       "dependencies": [],
       "compatiblePackages": {
         "com.google.android.inputmethod.latin": [
-          "18.0.3.954559732-release-arm64-v8a",
-          "18.5.4.993608717-beta-arm64-v8a"
+          "18.0.3.954559732-release-arm64-v8a"
         ]
       },
       "options": []
@@ -184,7 +182,8 @@
       "dependencies": [],
       "compatiblePackages": {
         "com.google.android.inputmethod.latin": [
-          "18.0.3.954559732-release-arm64-v8a"
+          "18.0.3.954559732-release-arm64-v8a",
+          "18.5.4.993608717-beta-arm64-v8a"
         ]
       },
       "options": []
@@ -285,7 +284,8 @@
       "dependencies": [],
       "compatiblePackages": {
         "com.google.android.inputmethod.latin": [
-          "18.0.3.954559732-release-arm64-v8a"
+          "18.0.3.954559732-release-arm64-v8a",
+          "18.5.4.993608717-beta-arm64-v8a"
         ]
       },
       "options": []
@@ -346,7 +346,8 @@
       "dependencies": [],
       "compatiblePackages": {
         "com.google.android.inputmethod.latin": [
-          "18.0.3.954559732-release-arm64-v8a"
+          "18.0.3.954559732-release-arm64-v8a",
+          "18.5.4.993608717-beta-arm64-v8a"
         ]
       },
       "options": []
@@ -516,7 +517,8 @@
       "dependencies": [],
       "compatiblePackages": {
         "com.google.android.inputmethod.latin": [
-          "18.0.3.954559732-release-arm64-v8a"
+          "18.0.3.954559732-release-arm64-v8a",
+          "18.5.4.993608717-beta-arm64-v8a"
         ]
       },
       "options": []

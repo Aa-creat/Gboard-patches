@@ -197,7 +197,7 @@ val gboardManualIncognitoModePatch = gboardPublicResourcePatch(
         "Add an Incognito toggle to the Access Point toolbar and configure clipboard and voice typing availability while Incognito mode is active.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -216,7 +216,7 @@ val gboardEditingAccessPointsPatch = gboardPublicResourcePatch(
         "Add Select All, Copy, Cut and Paste to the menu.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
     dependsOn(
         gboardPatchesSettingsPatch,
         gboardEditingAccessPointsFeatureMarkerPatch,
@@ -233,7 +233,7 @@ val gboardFloatingWebSearchPatch = gboardPublicResourcePatch(
         "Open a floating web page directly from Gboard to quickly search for the information you need.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -317,7 +317,7 @@ val gboardEmojiSizePatch = gboardPublicResourcePatch(
     description = "變更表情符號大小\nChange emoji size.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
+    compatibleWith(COMPATIBILITY_GBOARD)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -351,7 +351,7 @@ val gboardAccessPointsMenuStylePatch = gboardPublicResourcePatch(
         "Switch between the new and legacy Access Points menu styles.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
+    compatibleWith(COMPATIBILITY_GBOARD)
 
     dependsOn(
         gboardPatchesSettingsPatch,
@@ -562,7 +562,7 @@ val gboardDeveloperOptionsPatch = gboardPublicResourcePatch(
     description = "啟用 開發人員選項 與 Flag 編輯器，你可以自己修改Flag的值\nEnable Developer options and the Flag Editor, allowing you to modify flag values.",
     default = true
 ) {
-    compatibleWith(COMPATIBILITY_GBOARD)
+    compatibleWith(COMPATIBILITY_GBOARD_1803_1854)
 
     dependsOn(
         gboardPatchesSettingsPatch,

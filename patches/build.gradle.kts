@@ -287,7 +287,7 @@ tasks {
     register<JavaExec>("generatePatchesList") {
         description = "Build patch with patch list"
 
-        dependsOn(build, patchMetadataSourceSet.classesTaskName)
+        dependsOn(assemble, patchMetadataSourceSet.classesTaskName)
 
         classpath = patchMetadataSourceSet.runtimeClasspath
         mainClass.set("dev.jason.gboardpatches.util.PatchListGeneratorKt")

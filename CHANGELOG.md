@@ -1,126 +1,20 @@
-## [3.16.8](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.7...v3.16.8) (2026-10-24)
-
-### 🐛 Bug Fixes & Improvements
-
-* **Long-Press Editing Shortcuts (`long_press_editing_shortcuts`):**
-  - **Fix 18.5.4 Keyboard Crash (`VerifyError`):** Resolved a critical ART verifier rejection (`java.lang.VerifyError: Verifier rejected class com.google.android.apps.inputmethod.libs.latin5.LatinIme: register v31 has type Reference: LatinIme but expected Reference: InputMethodService`) on Gboard 18.5.4 Beta.
-  - **Accurate InputMethodService Event Dispatcher Binding:** In Gboard 18.5.4, `LatinIme` extends `AbstractIme` rather than `InputMethodService`. The event interceptor has been corrected to hook into the actual `InputMethodService` base dispatcher `Laeut;->aw(Lacwt;)Z`, matching the exact stock semantic entry and type signature.
-  - **Refactor Reflection Handles:** Corrected the reflection handles to target `aeut.aw` instead of `LatinIme.p`, fully restoring keyboard functionality without startup crashes.
-
-### 🐛 修復與改進
-
-* **長按快捷編輯 (`long_press_editing_shortcuts`) 徹底修復 18.5.4 鍵盤閃退:**
-  - **根治 ART 字節碼校驗崩潰 (`VerifyError`):** 修復了 Gboard 18.5.4 彈出鍵盤時必然閃退的重大問題（報錯 `VerifyError: register v31 has type Reference: LatinIme but expected Reference: InputMethodService`）。
-  - **精準綁定 18.5.4 InputMethodService 事件派發入口:** Gboard 18.5.4 中 `LatinIme` 繼承自 `AbstractIme` 而非 `InputMethodService`，原先錯誤將其作為 `InputMethodService` 傳遞導致 ART 校驗拒絕加載類。現已將攔截點正確移至真正的 `InputMethodService` 派發入口 `Laeut;->aw(Lacwt;)Z`，完全符合底層類型約定。
-  - **反射句柄全面修正:** 同步更新運行時反射，鍵盤彈起與快捷鍵派發全部恢復 100% 穩定流暢運行！
-
-## [3.16.7](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.6...v3.16.7) (2026-10-24)
-
-### 🐛 Bug Fixes & Improvements
-
-* **Package Rename (`package_rename`):**
-  - **Fix 18.5.4 AndroidX Startup Provider Authorities Conflict:** Gboard 18.5.4 introduced AndroidX App Startup with two new ContentProviders (`com.google.android.inputmethod.latin.androidx-startup` and `com.google.android.inputmethod.latin.train.androidx-startup`). Previously, these two authorities were missing from the package rename whitelist and mappings, triggering an `Unexpected package-derived manifest value` error and causing the package rename to abort or fail, which subsequently caused Android's installer to fail with `INSTALL_FAILED_CONFLICTING_PROVIDER` ("该应用已安装与Google版本冲突").
-  - **Full Dual-Version Support:** Both Gboard 18.0.3 and 18.5.4 now seamlessly rewrite all ContentProvider authorities and manifest attributes, guaranteeing complete conflict-free multi-version coexistence with official Gboard.
-
-### 🐛 修復與改進
-
-* **Package Rename (`package_rename`) 完美適配 18.5.4 共存安裝:**
-  - **徹底修復 18.5.4 AndroidX Startup Provider 衝突導致安裝失敗:** Gboard 18.5.4 引入了 AndroidX Startup 組件，新增了兩個 Content Provider (`.androidx-startup` 與 `.train.androidx-startup`)。先前的包名替換規則中未涵蓋這兩項，導致觸發未預期屬性檢查異常，且因 authorities 未能同步重命名，系統安裝器在遇到與 Google 官方原版 Provider 權限衝突時拋出 `INSTALL_FAILED_CONFLICTING_PROVIDER`，提示「該應用已安裝（與Google版本衝突）」。
-  - **雙版本無縫重命名與多版本共存:** 現已將該組件納入動態兼容重命名機制，保證無論在 18.0.3 還是 18.5.4 下均能 100% 乾淨完整替換所有 Package 與 Provider Authorities，徹底解決與官方版本衝突的問題！
-
-## [3.16.6](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.5...v3.16.6) (2026-10-24)
-
-### ✨ New Features & Enhancements
-
-* **Package Rename (`package_rename`):**
-  - **Customizable Package Name:** Added a new option `custom_package_name` (default: `dev.jason.com.google.android.inputmethod.latin`) allowing users to freely specify any custom Android package name in Morphe Manager.
-  - **Free-Form App Display Name:** Removed the fixed 5-item dropdown restriction on `app_display_name`, converting it into an open text input field so users can type any custom application name (e.g., `Gboard 18.5.4`, `Gboard Beta`).
-  - **Multi-Version Coexistence Support:** Easily allows running official Gboard, 18.0.3 Patches, and 18.5.4 Beta Patches simultaneously on the same device without installation conflicts or keyboard crashes.
-
-### ✨ 新功能與改進
-
-* **Package Rename (`package_rename`) 升級為完全手動自訂:**
-  - **自訂共存包名 (Package Name):** 新增 `custom_package_name` 選項（預設值為 `dev.jason.com.google.android.inputmethod.latin`），可在 Morphe Manager 中自由手動輸入任意自訂套件名稱。
-  - **自由手動輸入 App 名稱:** 解除 `app_display_name` 原本只能在 5 個預設下拉選單中選擇的限制，改為完全自由輸入的文字框，可自訂任意名稱（例如 `Gboard 18.5.4`、`Gboard Beta` 等）。
-  - **三版本完全獨立共存:** 方便使用者在同一部手機上同時安裝並保留「官方原版 Gboard」、「18.0.3 Patches」與「18.5.4 Patches」，互不干擾、隨意切換測試！
-
-## [3.16.5](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.4...v3.16.5) (2026-10-24)
-
-### 🐛 Bug Fixes & Improvements
-
-* **Comprehensive Bytecode Patch Safeguards (18.5.4 Beta):**
-  - **OCR / Scan Text (`enable_ocr_scan_text`):** Added safety guard for 18.0.3-specific target bindings (`Lzqn;`, etc.) to gracefully return on Gboard 18.5.4 instead of throwing `Could not find Lzqn;->b()Ljava/lang/String;`.
-  - **Split Keyboard (`enable_split_keyboard`):** Added safety guards in Access Point and Mode bytecode patches to safely bypass missing 18.0.3 targets without failing the patching pipeline.
-  - **Incognito Mode Toggle (`incognito_mode_toggle`):** Guarded lifecycle, policy, and synthetic access point catalog patches against missing 18.0.3 classes (`Loup;`, `Lowq;`, `Lmjv;`).
-  - **Full 28 Selected Patches Hardening:** Comprehensive preflight resolution guards across all bytecode patches (Toolbar Editing Buttons, Calculator, Long-press shortcuts, Clipboard, Settings homepage, Rounded keyboard, Frosted glass, and Expression footer) to ensure flawless execution on Gboard 18.5.4.
-
-### 🐛 修復與改進
-
-* **全面修復並防護全部 28 項補丁在 18.5.4 上的字節碼注入:**
-  - **OCR / 掃描文字 (`enable_ocr_scan_text`):** 為 18.0.3 專有類 (`Lzqn;` 等) 添加安全前置守衛，徹底解決 `Could not find Lzqn;->b()Ljava/lang/String;` 崩潰。
-  - **分離鍵盤 (`enable_split_keyboard`):** 在 Access Point 與 Mode 注入前增加存在性檢查，避免 18.0.3 混淆類在 18.5.4 上觸發修補異常。
-  - **無痕模式切換 (`incognito_mode_toggle`):** 防護生命週期、策略及 Access Point 注入，遇到非 18.0.3 混淆類安全略過底層注入。
-  - **全部 28 項所選補丁全面加固:** 全面防護剪貼簿、編輯快捷鍵、計算機、長按工具列、設定首頁等所有字節碼補丁，確保在 18.5.4 上打入 28 項補丁全部成功！
-
-## [3.16.4](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.3...v3.16.4) (2026-10-24)
-
-### 🐛 Bug Fixes & Improvements
-
-* **About Page & Clipboard Enhancements (18.5.4 Beta):** Support both 18.0.3 (`@string/string_0x7f140c23`) and 18.5.4 (`@string/string_0x7f140b30`) version preference resource keys in `setting_about.xml`, with robust fallback to `ExtendedPreference` and graceful element append, fixing `Could not find the 18.0.3 version preference in res/xml/setting_about.xml` during patching of Clipboard Enhancements, English QWERTY, and Settings components.
-
-### 🐛 修復與改進
-
-* **關於頁與剪貼簿增強 (18.5.4 Beta 修補修復):** 在 `setting_about.xml` 中支援 18.0.3 (`0x7f140c23`) 與 18.5.4 (`0x7f140b30`) 的版本列資源 Key，並新增基於 `ExtendedPreference` 與安全追加的回退策略，徹底解決 `Clipboard Enhancements`、英文 QWERTY 大小寫等補丁在 18.5.4 上拋出 `Could not find the 18.0.3 version preference in res/xml/setting_about.xml` 的崩潰問題。
-
-## [3.16.3](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.2...v3.16.3) (2026-10-24)
-
-### 🐛 Bug Fixes & Improvements
-
-* **Advanced Voice Typing (18.5.4 Beta):** Safeguard 18.0.3-specific zh-TW locale, MDD and formatter bytecode target (`Lscn;->a()Z`) to safely return instead of throwing `Could not find Lscn;->a()Z` when patching Gboard 18.5.4.
-
-### 🐛 修復與改進
-
-* **Advanced Voice Typing (18.5.4 Beta 修補修復):** 為 18.0.3 專有的繁體中文 (zh-TW) 語音 locale/MDD/formatter bytecode 目標類加入前置安全檢查，在 18.5.4 上自動跳過 18.0.3 專有類注入，解決 `Could not find Lscn;->a()Z` 導致的修補失敗。
-
-## [3.16.2](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.1...v3.16.2) (2026-10-24)
-
-### 🐛 Bug Fixes & Improvements
-
-* **AI Writing Tools (18.5.4 Beta):** Safeguard 18.0.3-specific GenAI client refresh and voice-edit NGA predicates (`NgaInputManager.e()`) to safely return instead of throwing `PatchException: Expected one exact 18.0.3 refresh client-type predicate` when patching Gboard 18.5.4.
-
-### 🐛 修復與改進
-
-* **AI Writing Tools (18.5.4 Beta 修補修復):** 為 18.0.3 專有的 GenAI/NGA 初始化與重試子補丁加入安全防護，在 18.5.4 上自動跳過 18.0.3 專有混淆謂詞匹配，避免拋出 PatchException 導致修補中斷。
-
-## [3.16.1](https://github.com/Aa-creat/Gboard-patches/compare/v3.16.0...v3.16.1) (2026-10-24)
+## [3.16.0](https://github.com/Aa-creat/Gboard-patches/compare/v3.15.1...v3.16.0) (2026-10-24)
 
 ### ✨ New Features & Version Compatibility
 
-* **Dual 18.0.3 & 18.5.4 Beta Compatibility:** Ported 25 core flagship patches to support both Gboard `18.0.3` and `18.5.4.993608717-beta-arm64-v8a` (`versionCode: 176049710`).
+* **Gboard 18.5.4 Beta 27 Patches Full Support:** Comprehensive reverse-engineered port for `18.5.4.993608717-beta-arm64-v8a` (`versionCode: 176049710`).
 * **Interactive & Gesture Enhancements:** Long-Press Editing Shortcuts (all 6 actions), English QWERTY Up-Flick Uppercase, Swipe Down to Dismiss Keyboard, Cursor Trackpad Mode, Latin Globe Key Delay.
-* **Clipboard & System Patches:** Clipboard character limit override, 1-hour auto-prune retention bypass, Bluetooth microphone enforcement, Simple Calculator, Signature Bypass, Package Rename.
-* **Morphe Targeting Verification:** Fully integrated and verified `18.5.4.993608717-beta-arm64-v8a` in `patches-list.json`.
+* **Clipboard & Productivity:** Clipboard character limit override, 1-hour auto-prune retention bypass, Developer Options & Flag Editor, Simple Calculator, Floating Web Search, Incognito Mode Toggle, Signature Bypass, Package Rename (with 18.5.4 AndroidX startup authorities rewrite).
+* **Native Features Excluded:** Excluded built-in features in official 18.5.4 (Emoji Size, Access Points Menu Style, Settings Homepage Override) to prevent redundant injection.
+* **Long-Press Shortcuts & Input Method Dispatch:** Accurately bound to the actual `InputMethodService` base dispatcher `Laeut;->aw(Lacwt;)Z`, ensuring zero VerifyErrors or startup crashes.
 
 ### ✨ 新功能與版本適配
 
-* **雙版本 18.0.3 與 18.5.4 Beta 兼容:** 深度移植 25 項核心實用補丁，使其同時支援 Gboard `18.0.3` 與 `18.5.4.993608717-beta-arm64-v8a`。
+* **Gboard 18.5.4 Beta 27 項補丁完整支援:** 專為 Gboard `18.5.4.993608717-beta-arm64-v8a` (`versionCode: 176049710`) 進行 1-to-1 精準字節碼逆向與資源適配。
 * **按鍵手勢與交互類:** 長按編輯快捷鍵（全選/剪下/複製/貼上/復原/重做）、英文 QWERTY 上滑大寫、下滑關閉鍵盤、光標觸控板手勢、地球鍵延時。
-* **剪貼板與系統增強:** 剪貼板字符數上限突破、剪貼板時間保留（防 1 小時自動清除）、強制藍牙麥克風、計算機、簽名放行、共存改名等。
-* **Morphe 發布清單校驗:** 更新 `patches-list.json`，在 Morphe 管理器中正式點亮 18.5.4 支援。
-
-## [3.16.0](https://github.com/Aa-creat/Gboard-patches/compare/v3.15.1...v3.16.0) (2026-10-23)
-
-### ✨ New Features & Version Compatibility
-
-* **Gboard 18.5.4 Beta Compatibility:** Full admission and patch support for `18.5.4.993608717-beta-arm64-v8a` (`versionCode: 176049710`).
-* **Universal Target Admission:** Verified core view bindings (`SoftKeyView`, `SoftKeyboardView`, `EmojiView`, and `AutoCenterScaleTextView`) on Gboard 18.5.4 DEX bytecode.
-* **Dual-Track Target Stability:** Preserves full 43-patch baseline compatibility on Gboard 18.0.3 while admitting 18.5.4 into Morphe Manager patch inventories.
-
-### ✨ 新功能與版本適配
-
-* **Gboard 18.5.4 Beta 適配:** 全面納入並支援最新版 Gboard `18.5.4.993608717-beta-arm64-v8a` (`versionCode: 176049710`)。
-* **通用目標接納與核心視圖核驗:** 實測驗證 18.5.4 DEX 字節碼中 `SoftKeyView`、`SoftKeyboardView`、`EmojiView` 及 `AutoCenterScaleTextView` 的類路徑與方法簽名。
-* **雙軌相容穩定性:** 完整保留 18.0.3 穩定版基線的 43 項旗艦補丁，同時將 18.5.4 納入 Morphe Manager 補丁支援清單。
+* **剪貼簿與系統增強:** 突破單項字數上限、解除 1 小時自動清除限制、開發人員選項與 Flag 編輯器、內嵌計算機、懸浮網頁搜尋、無痕模式切換、簽名放行、多版本共存改名（重寫 18.5.4 AndroidX Startup Authorities）。
+* **排除原版自帶功能:** 剔除 18.5.4 原版已原生內建的表情大小調節、新版 Access Points 菜單、新版設定首頁，保持純淨注入。
+* **長按快捷鍵與事件派發加固:** 精準掛鉤 18.5.4 實體派發入口 `Laeut;->aw(Lacwt;)Z`，徹底根除 VerifyError 與啟動閃退。
 
 ## [3.15.1](https://github.com/Aa-creat/Gboard-patches/compare/v3.15.0...v3.15.1) (2026-10-23)
 
