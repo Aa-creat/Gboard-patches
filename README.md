@@ -19,11 +19,24 @@
 
 Gboard Patches is a public Morphe source for a curated set of Gboard enhancements, including both global usability improvements and Taiwan-focused features for local input habits and day-to-day use.
 
+> [!NOTE]
+> **Fork 特性说明（隐私纯净与字体增强版）**：
+> 1. **零信息外泄隐患**：彻底移除 Web Clipboard、LAN FTP Server 及 QuickJS 网络脚本执行功能，不向 Manifest 申请多余网络监听服务，顶排滑动栏为纯离线短语快捷栏。
+> 2. **自有功能增强**：整合 **Custom Font & Modern Emoji**（自定义字体与 Emoji 回退补丁），解决键盘按键与 Emoji 缺字/豆腐块问题，支持应用内动态管理。
+> 3. **长期跟进与协作规范**：详见维护指南 [FORK_MAINTENANCE_GUIDE.md](docs/FORK_MAINTENANCE_GUIDE.md)。
+
 ## Included Patches
 
 ### Project-Built Features
 
 Features designed and built by this project rather than simply unlocking an existing Gboard flag.
+
+<details>
+  <summary><code>Custom Font & Modern Emoji</code></summary>
+
+  匯入自訂字型或無屏蔽版 Emoji 字體，並在 Gboard Patches 設定中隨時選取切換與保護文字樣式。
+  Embeds or imports custom fonts & modern Emoji with smart text fallback, manageable inside Gboard Patches Settings.
+</details>
 
 <details>
   <summary><code>Clipboard Enhancements</code></summary>
