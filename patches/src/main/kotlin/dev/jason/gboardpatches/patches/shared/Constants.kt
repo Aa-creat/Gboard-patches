@@ -25,4 +25,6 @@ internal object Constants {
             )
         },
     )
+
+    val COMPATIBILITY_GBOARD_UNIVERSAL = COMPATIBILITY_GBOARD
 }

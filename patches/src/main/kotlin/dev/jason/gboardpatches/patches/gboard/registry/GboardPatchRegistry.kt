@@ -4,8 +4,13 @@ import app.morphe.patcher.patch.Patch
 import dev.jason.gboardpatches.patches.gboard.features.editingaccesspoints.gboardEditingAccessPointsFeatureMarkerPatch
 import dev.jason.gboardpatches.patches.gboard.features.editingaccesspoints.gboardEditingAccessPointsLifecyclePatch
 import app.morphe.patcher.patch.ResourcePatchBuilder
+import app.morphe.patcher.patch.booleanOption
+import app.morphe.patcher.patch.filePathOption
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.patch.stringOption
+import java.io.File
+import dev.jason.gboardpatches.patches.gboard.features.font.gboardCustomFontBytecodePatch
+import dev.jason.gboardpatches.patches.gboard.features.font.gboardCustomFontFeatureMarkerPatch
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import dev.jason.gboardpatches.patches.gboard.features.accessibilitylayout.gboardAccessibilityLayoutFeatureMarkerPatch
@@ -803,8 +808,61 @@ val gboardSignatureBypassPatch = gboardPublicResourcePatch(
     )
 }
 
+@Suppress("unused")
+val gboardCustomFontPatch = gboardPublicResourcePatch(
+    featureId = "custom_font",
+    name = "Custom Font & Modern Emoji",
+    description = "匯入自訂字型或無屏蔽版 Emoji 字體，並在 Gboard Patches 設定中隨時選取切換與保護文字樣式\n" +
+        "Embeds or imports custom fonts & modern Emoji with smart text fallback, manageable inside Gboard Patches Settings.",
+    default = false
+) {
+    compatibleWith(COMPATIBILITY_GBOARD)
+
+    val fontFile = filePathOption(
+        key = "font_file",
+        title = "Pre-bundled Font (.ttf/.otf)",
+        description = "Optional: Select a TTF/OTF font file (e.g. NotoColorEmoji.ttf or AppleColorEmoji.ttf) to pre-bundle. You can also import fonts anytime inside Gboard Patches Settings.",
+        required = false,
+        allowedExtensions = listOf("ttf", "otf"),
+    )
+
+    val emojiOnly = booleanOption(
+        key = "emoji_only",
+        title = "Emoji-Only Mode",
+        description = "When enabled, custom font applies exclusively to Emoji glyphs while keeping stock typography for regular keys.",
+        default = true,
+        required = false,
+    )
+
+    dependsOn(
+        gboardPatchesExtensionCarrierPatch,
+        gboardCustomFontBytecodePatch,
+        gboardCustomFontFeatureMarkerPatch,
+        resourcePatch {
+            finalize {
+                val path = fontFile.value
+                if (!path.isNullOrBlank()) {
+                    val fontBytes = File(path).readBytes()
+                    get("assets/gboard/custom-font.ttf").apply {
+                        parentFile.mkdirs()
+                        writeBytes(fontBytes)
+                    }
+
+                    if (emojiOnly.value == false) {
+                        get("assets/gboard/font-mode-global.marker").apply {
+                            parentFile.mkdirs()
+                            writeText("global")
+                        }
+                    }
+                }
+            }
+        },
+    )
+}
+
 object GboardPublishedPatchCatalog {
     val morpheRegistrations: Set<Patch<*>> = linkedSetOf(
+        gboardCustomFontPatch,
         gboardZhuyinSlideInputPatch,
         gboardEnglishQwertySlideUppercaseTogglePatch,
         gboardLongPressQuickActionsPatch,

@@ -110,6 +110,37 @@
       "options": []
     },
     {
+      "name": "Custom Font & Modern Emoji",
+      "description": "匯入自訂字型或無屏蔽版 Emoji 字體，並在 Gboard Patches 設定中隨時選取切換與保護文字樣式\nEmbeds or imports custom fonts & modern Emoji with smart text fallback, manageable inside Gboard Patches Settings.",
+      "use": false,
+      "dependencies": [],
+      "compatiblePackages": {
+        "com.google.android.inputmethod.latin": [
+          "18.5.4.993608717-release-arm64-v8a"
+        ]
+      },
+      "options": [
+        {
+          "key": "font_file",
+          "title": "Pre-bundled Font (.ttf/.otf)",
+          "description": "Optional: Select a TTF/OTF font file (e.g. NotoColorEmoji.ttf or AppleColorEmoji.ttf) to pre-bundle. You can also import fonts anytime inside Gboard Patches Settings.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        },
+        {
+          "key": "emoji_only",
+          "title": "Emoji-Only Mode",
+          "description": "When enabled, custom font applies exclusively to Emoji glyphs while keeping stock typography for regular keys.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Custom Symbols",
       "description": "新增獨立的特殊符號分頁，長按逗號->愛心\nAdd a dedicated custom symbols tab and replace the long-press comma entry with a heart shortcut.",
       "use": true,
