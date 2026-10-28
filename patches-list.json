@@ -260,6 +260,7 @@
       },
       "options": []
     },
+    {
       "name": "Floating Web Search",
       "description": "直接從 Gboard 開啟懸浮網頁，快速搜尋需要的資訊。\nOpen a floating web page directly from Gboard to quickly search for the information you need.",
       "use": true,
@@ -457,7 +458,7 @@
     },
     {
       "name": "Swipeable Custom Top Row",
-      "description": "滑動鍵盤第一排，在原生列與可自訂文字快捷鍵列之間切換\nSwipe the keyboard top row to switch between the stock row and a customizable text shortcuts row.",
+      "description": "滑動鍵盤第一排，在原生列與可自訂文字/JavaScript 列之間切換\nSwipe the keyboard top row to switch between the stock row and a customizable text/JavaScript row.",
       "use": true,
       "dependencies": [],
       "compatiblePackages": {
@@ -503,6 +504,7 @@
       },
       "options": []
     },
+    {
       "name": "Zhuyin Bottom Row Key Sizes",
       "description": "調整注音鍵盤底排按鍵大小\nAdjust Zhuyin keyboard bottom-row key sizes.",
       "use": true,

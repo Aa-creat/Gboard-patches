@@ -97,6 +97,11 @@ android {
         buildConfigField("String", "PATCH_VERSION", "\"${project.version}\"")
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     sourceSets.named("main") {
         java.directories.add(generatedSettingsTextJavaDir.get().asFile.absolutePath)
         java.directories.add(generatedCustomThemeBindingsJavaDir.get().asFile.absolutePath)

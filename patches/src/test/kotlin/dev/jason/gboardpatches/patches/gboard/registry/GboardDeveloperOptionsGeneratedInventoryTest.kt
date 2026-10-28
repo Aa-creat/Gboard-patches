@@ -40,6 +40,7 @@ class GboardDeveloperOptionsGeneratedInventoryTest {
             "Clipboard Item Edit",
             "Chinese Online Voice Input",
             "Enable Undo/Redo feature",
+            "Web Clipboard",
         )
         val SURVIVING_PATCH_NAMES = listOf(
             "AI Writing Tools",
@@ -47,6 +48,7 @@ class GboardDeveloperOptionsGeneratedInventoryTest {
             "Advanced Voice Typing",
             "Clipboard Enhancements",
             "Clipboard Custom Character Limit",
+            "Custom Font & Modern Emoji",
             "Custom Symbols",
             "Developer options",
             "Emojis, stickers & GIFs Tab Order",
@@ -61,7 +63,6 @@ class GboardDeveloperOptionsGeneratedInventoryTest {
             "Settings Homepage Override",
             "Swipeable Custom Top Row",
             "Use Bluetooth Microphone",
-            "Web Clipboard",
             "Zhuyin Bottom Row Key Sizes",
             "Zhuyin Quick Traditional/Simplified Toggle",
             "Zhuyin Slide Input",

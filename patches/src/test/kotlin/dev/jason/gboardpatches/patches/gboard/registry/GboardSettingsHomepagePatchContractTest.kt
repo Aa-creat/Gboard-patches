@@ -32,7 +32,7 @@ class GboardSettingsHomepagePatchContractTest {
         assertTrue(marker.contains(
             "dev.jason.gboardpatches.feature.settings_homepage",
         ))
-        assertTrue(marker.contains("setAndroidAttribute(\"value\", \"true\")"))
+        assertTrue(marker.contains("applyFeatureMarker(SETTINGS_HOMEPAGE_FEATURE_MARKER_NAME)"))
     }
 
     @Test

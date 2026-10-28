@@ -203,7 +203,6 @@
     "voice_formatter_constructor": "method",
     "voice_mdd_constructor": "method",
     "voice_native_readiness": "method",
-    "web_clipboard_create": "method",
     "writing_official_preference": "method",
     "zhuyin_toggle_popup_action": "method",
     "zhuyin_toggle_popup_target": "method",
@@ -1854,7 +1853,7 @@
         }
       ]
     },
-
+    {
       "feature_id": "zhuyin_bottom_row_key_sizes",
       "public_patch_name": "Zhuyin Bottom Row Key Sizes",
       "feature_marker": "dev.jason.gboardpatches.feature.zhuyin_bottom_row_weight",
