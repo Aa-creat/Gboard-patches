@@ -22,10 +22,10 @@ class RuntimeCallEmitterTest {
     fun `emits a static range invocation without exposing an opcode string`() {
         assertEquals(
             "invoke-static/range {v4 .. v4}, " +
-                "Ldev/jason/gboardpatches/extension/webclipboard/" +
-                "GboardWebClipboardCaptureBootstrap;->afterLatinImeOnCreate(Ljava/lang/Object;)V",
+                "Ldev/jason/gboardpatches/extension/toprowswipe/" +
+                "GboardTopRowSwipeRuntime;->afterSoftKeyBound(Ljava/lang/Object;)V",
             RuntimeCallEmitter.invoke(
-                RuntimeCallId.WEB_CLIPBOARD_CAPTURE_BOOTSTRAP_AFTER_LATIN_IME_ON_CREATE,
+                RuntimeCallId.TOP_ROW_SWIPE_RUNTIME_AFTER_SOFT_KEY_BOUND,
                 registers = "v4 .. v4",
             ),
         )

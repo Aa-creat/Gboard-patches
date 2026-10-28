@@ -226,21 +226,12 @@ public final class GboardTopRowSwipeRuntimeTest {
         assertSame(currentOriginal,
                 GboardTopRowSwipeRuntime.resolveOriginalKeyMetadataForPatchInterop(
                         currentGeneration));
-        GboardTopRowSwipeRuntime.QuickJsSlotConfig staleConfig =
-                GboardTopRowSwipeRuntime.quickJsSlotConfig(staleGeneration);
-        GboardTopRowSwipeRuntime.QuickJsSlotConfig currentConfig =
-                GboardTopRowSwipeRuntime.quickJsSlotConfig(currentGeneration);
-        assertNotNull(staleConfig);
-        assertNotNull(currentConfig);
-        assertEquals(2, staleConfig.rowIndex);
-        assertEquals(7, currentConfig.rowIndex);
 
         GboardTopRowSwipeRuntime.ORIGINAL_KEY_METADATA_BY_PATCHED.remove(staleGeneration);
         GboardTopRowSwipeRuntime.TOP_ROW_CUSTOM_PATCHED_METADATA_MARKERS.remove(staleGeneration);
         assertSame(currentOriginal,
                 GboardTopRowSwipeRuntime.resolveOriginalKeyMetadataForPatchInterop(
                         currentGeneration));
-        assertNotNull(GboardTopRowSwipeRuntime.quickJsSlotConfig(currentGeneration));
     }
 
     @Test
@@ -362,45 +353,6 @@ public final class GboardTopRowSwipeRuntimeTest {
         assertEquals(4, slot.rowIndex);
         assertEquals(GboardTopRowSwipeRuntime.TopRowLayoutKind.ENGLISH_QWERTY,
                 slot.layoutKind);
-    }
-
-    @Test
-    public void quickJsConfigCanRecoverFromActiveSessionRow() {
-        Object tracker = new Object();
-        GboardTopRowSwipeRuntime.SESSIONS.put(
-                tracker,
-                new GboardTopRowSwipeRuntime.SwipeSession(
-                        new Object(),
-                        0f,
-                        0f,
-                        GboardTopRowSwipeRuntime.TopRowLayoutKind.ZHUYIN,
-                        6));
-        GboardTopRowSwipeRuntime.SettingsSnapshot snapshot = customJavaScriptSnapshot(
-                6,
-                "return 'ok';",
-                1_500,
-                1000L);
-        GboardTopRowSwipeRuntime.setCurrentPage(
-                GboardTopRowSwipeRuntime.TopRowLayoutKind.ZHUYIN,
-                GboardTopRowSwipeRuntime.TopRowPage.CUSTOM);
-
-        GboardTopRowSwipeRuntime.QuickJsSlotConfig config =
-                GboardTopRowSwipeRuntime.quickJsSlotConfigFromSession(snapshot, tracker);
-
-        assertEquals(6, config.rowIndex);
-        assertEquals(GboardTopRowSwipeRuntime.TopRowLayoutKind.ZHUYIN, config.layoutKind);
-        assertEquals("return 'ok';", config.scriptSource);
-        assertEquals(1_500, config.timeoutMs);
-    }
-
-    @Test
-    public void unresolvedQuickJsMarkerConsumesFailClosed() {
-        assertTrue(GboardQuickJsFeature.maybeConsumeQuickJsTopRowPress(
-                null,
-                null,
-                null,
-                null,
-                true));
     }
 
     @Test
@@ -615,37 +567,6 @@ public final class GboardTopRowSwipeRuntimeTest {
             commits.add(slot.commitText);
         }
         return commits;
-    }
-
-    private static GboardTopRowSwipeRuntime.SettingsSnapshot customJavaScriptSnapshot(
-            int javaScriptSlotIndex,
-            String script,
-            int timeoutMs,
-            long loadedAtElapsedMs) {
-        boolean[] isJavaScripts = new boolean[GboardTopRowSwipeSettings.SLOT_COUNT];
-        isJavaScripts[javaScriptSlotIndex] = true;
-        ArrayList<String> scripts = new ArrayList<String>(GboardTopRowSwipeSettings.SLOT_COUNT);
-        int[] timeouts = new int[GboardTopRowSwipeSettings.SLOT_COUNT];
-        for (int index = 0; index < GboardTopRowSwipeSettings.SLOT_COUNT; index++) {
-            scripts.add(index == javaScriptSlotIndex ? script : "");
-            timeouts[index] = index == javaScriptSlotIndex
-                    ? timeoutMs : GboardTopRowSwipeSettings.DEFAULT_TIMEOUT_MS;
-        }
-        return GboardTopRowSwipeRuntime.settingsSnapshotFromProviderValues(
-                Boolean.TRUE,
-                Boolean.TRUE,
-                Boolean.FALSE,
-                defaultDisplayTexts(),
-                defaultCommitTexts(),
-                isJavaScripts,
-                scripts,
-                timeouts,
-                "",
-                GboardTopRowSwipeSettings.DEFAULT_RESPONSE_BODY_LIMIT_BYTES,
-                GboardTopRowSwipeSettings.DEFAULT_TIMEOUT_MAX_MS,
-                GboardTopRowSwipeSettings.DEFAULT_MEMORY_LIMIT_BYTES,
-                GboardTopRowSwipeSettings.DEFAULT_MAX_STACK_BYTES,
-                loadedAtElapsedMs);
     }
 
     private static String readSource(String path) throws Exception {

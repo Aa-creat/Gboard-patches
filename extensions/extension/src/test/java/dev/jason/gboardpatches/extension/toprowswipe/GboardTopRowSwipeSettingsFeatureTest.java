@@ -35,7 +35,7 @@ public final class GboardTopRowSwipeSettingsFeatureTest {
 
             Assert.assertEquals("自訂第一排按鍵", feature.getEntryTitle());
             Assert.assertEquals(
-                    "左右滑動第一排，打開可自訂文字與 JavaScript slot 的列。",
+                    "左右滑動第一排，打開可自訂文字快捷鍵的列。",
                     feature.getEntrySummary());
 
             GboardPatchesSettingsContract.Screen screen = feature.buildScreen(host);
@@ -50,8 +50,7 @@ public final class GboardTopRowSwipeSettingsFeatureTest {
             Assert.assertFalse(zhuyinRow.isEnabled());
             Assert.assertTrue(zhuyinRow.isChecked());
             Assert.assertEquals(
-                    Arrays.asList("行為", "支援的版面", "JavaScript", "Slot", "匯入匯出", "進階",
-                            "JavaScript 說明"),
+                    Arrays.asList("行為", "支援的版面", "Slot", "匯入匯出", "進階"),
                     sectionTitles(screen.getSections()));
             Assert.assertEquals(
                     "啟用",
@@ -59,9 +58,6 @@ public final class GboardTopRowSwipeSettingsFeatureTest {
             Assert.assertEquals(
                     "注音",
                     screen.getSections().get(1).getItems().get(0).getTitle().toString());
-            Assert.assertEquals(
-                    "全域 JavaScript",
-                    screen.getSections().get(2).getItems().get(0).getTitle().toString());
         } finally {
             Locale.setDefault(originalLocale);
         }

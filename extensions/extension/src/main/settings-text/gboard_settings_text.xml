@@ -361,8 +361,8 @@
         <translation locale="zh-Hant">自訂第一排按鍵</translation>
     </string>
     <string name="gboard_patches_top_row_summary">
-        <translation locale="en">Swipe the top row horizontally to open custom text and JavaScript slots.</translation>
-        <translation locale="zh-Hant">左右滑動第一排，打開可自訂文字與 JavaScript slot 的列。</translation>
+        <translation locale="en">Swipe the top row horizontally to open custom text shortcut slots.</translation>
+        <translation locale="zh-Hant">左右滑動第一排，打開可自訂文字快捷鍵的列。</translation>
     </string>
     <string name="gboard_patches_top_row_header_summary">
         <translation locale="en">Controls the custom first-row page opened by horizontal top-row swipe.</translation>

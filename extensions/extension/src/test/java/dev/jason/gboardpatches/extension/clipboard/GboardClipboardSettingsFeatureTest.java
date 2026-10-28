@@ -17,14 +17,12 @@ import java.util.Map;
 import java.util.Set;
 
 import dev.jason.gboardpatches.extension.settings.GboardPatchesSettingsContract;
-import dev.jason.gboardpatches.extension.webclipboard.WebClipboardPreferences;
 
 public final class GboardClipboardSettingsFeatureTest {
     @Test
     public void clipboardRootScreenUsesMorpheSectionLayout() {
         InMemorySharedPreferences preferences = new InMemorySharedPreferences();
         GboardClipboardSettings.ensureDefaults(preferences);
-        WebClipboardPreferences.ensureDefaults(preferences);
         CapturingHost host = new CapturingHost(preferences);
 
         GboardPatchesSettingsContract.Screen screen =
@@ -32,7 +30,7 @@ public final class GboardClipboardSettingsFeatureTest {
 
         List<GboardPatchesSettingsContract.Section> sections = screen.getSections();
         Assert.assertEquals(
-                Arrays.asList("General", "Metadata", "Layout", "Retention", "Extensions"),
+                Arrays.asList("General", "Metadata", "Layout", "Retention"),
                 sectionTitles(sections));
         Assert.assertEquals("ToggleRow", sections.get(0).getItems().get(0).getClass().getSimpleName());
         Assert.assertEquals(3, sections.get(0).getItems().size());
@@ -75,52 +73,6 @@ public final class GboardClipboardSettingsFeatureTest {
                 "SelectorRow",
                 findRow(screen, "Clipboard Custom Character Limit")
                         .getClass().getSimpleName());
-        Assert.assertEquals(
-                "NavigationRow",
-                sections.get(4).getItems().get(0).getClass().getSimpleName());
-    }
-
-    @Test
-    public void webClipboardSubpageUsesMorpheSectionsAndConnectedClientsNavigation() {
-        InMemorySharedPreferences preferences = new InMemorySharedPreferences();
-        WebClipboardPreferences.ensureDefaults(preferences);
-        CapturingHost host = new CapturingHost(preferences);
-
-        GboardPatchesSettingsContract.Screen screen =
-                new GboardClipboardSettingsFeature()
-                        .getWebClipboardFeature()
-                        .buildScreen(host);
-
-        List<GboardPatchesSettingsContract.Section> sections = screen.getSections();
-        Assert.assertEquals(
-                Arrays.asList("General", "Security", "Network", "Connected clients"),
-                sectionTitles(sections));
-        Assert.assertEquals("ToggleRow", sections.get(0).getItems().get(0).getClass().getSimpleName());
-        Assert.assertEquals("SelectorRow", findRow(screen, "Pairing code").getClass().getSimpleName());
-        Assert.assertEquals(
-                "NavigationRow",
-                sections.get(3).getItems().get(0).getClass().getSimpleName());
-    }
-
-    @Test
-    public void connectedClientsEmptyStateUsesStatusBlockInsteadOfInlineInfoRow() {
-        InMemorySharedPreferences preferences = new InMemorySharedPreferences();
-        WebClipboardPreferences.ensureDefaults(preferences);
-        CapturingHost host = new CapturingHost(preferences);
-
-        GboardPatchesSettingsContract.Screen webClipboardScreen =
-                new GboardClipboardSettingsFeature()
-                        .getWebClipboardFeature()
-                        .buildScreen(host);
-
-        invokeAction(findRow(webClipboardScreen, "Connected clients"));
-
-        Assert.assertNotNull(host.openedFeature);
-        GboardPatchesSettingsContract.Screen clientsScreen =
-                host.openedFeature.buildScreen(host);
-        Assert.assertEquals(1, clientsScreen.getStatusBlocks().size());
-        Assert.assertEquals("Connected clients: 0", clientsScreen.getStatusBlocks().get(0).getTitle());
-        Assert.assertEquals(0, clientsScreen.getSections().size());
     }
 
     private static List<String> sectionTitles(List<GboardPatchesSettingsContract.Section> sections) {

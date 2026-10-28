@@ -671,14 +671,14 @@ class GboardPackageRenameTransformTest {
         service.setAttributeNS(
             ANDROID_NS,
             "android:name",
-            "dev.jason.gboardpatches.extension.webclipboard.ClipboardSyncService",
+            "dev.jason.gboardpatches.extension.settings.CustomExtensionService",
         )
         application.appendChild(service)
 
         applyGboardPackageRename(manifest, loadSettingsDocuments())
 
         assertEquals(
-            "dev.jason.gboardpatches.extension.webclipboard.ClipboardSyncService",
+            "dev.jason.gboardpatches.extension.settings.CustomExtensionService",
             androidAttribute(service, "name"),
         )
     }

@@ -23,7 +23,7 @@ public final class GboardClipboardSettingsFeature
     private static final String FALLBACK_ENTRY_TITLE = "Clipboard";
     private static final String FALLBACK_ENTRY_SUMMARY =
             "Adjusts clipboard retention, item limits, preview lines, metadata labels, order"
-                    + " index, columns, and the phone-hosted Web Clipboard.";
+                    + " index, and columns.";
     private static final String FALLBACK_ERROR_TITLE = "Clipboard settings unavailable";
     private static final String FALLBACK_ERROR_SUMMARY =
             "The clipboard settings screen failed to load. Reopen Gboard settings and try"
@@ -42,8 +42,6 @@ public final class GboardClipboardSettingsFeature
             new GboardClipboardRetentionSettingsSection();
     private final GboardClipboardContentLimitSettingsRow contentLimitSettingsRow =
             new GboardClipboardContentLimitSettingsRow();
-    private final GboardWebClipboardSettingsFeature webClipboardFeature =
-            new GboardWebClipboardSettingsFeature();
 
     private String headerBadge = FALLBACK_HEADER_BADGE;
     private String entryTitle = FALLBACK_ENTRY_TITLE;
@@ -75,14 +73,9 @@ public final class GboardClipboardSettingsFeature
     public String getEntryTone() {
         return "amber";
     }
-
-    public GboardPatchesSettingsContract.Feature getWebClipboardFeature() {
-        return webClipboardFeature;
-    }
-
     @Override
     public List<GboardPatchesSettingsContract.Feature> getNavigationChildren() {
-        return Collections.singletonList(webClipboardFeature);
+        return Collections.emptyList();
     }
 
     @Override
@@ -91,8 +84,7 @@ public final class GboardClipboardSettingsFeature
         return GboardPatchesFeatureAvailability.hasAnyFeature(
                 context,
                 GboardPatchesFeatureAvailability.FEATURE_CLIPBOARD_ENHANCEMENTS,
-                GboardPatchesFeatureAvailability.FEATURE_CLIPBOARD_CONTENT_LIMIT,
-                GboardPatchesFeatureAvailability.FEATURE_WEB_CLIPBOARD);
+                GboardPatchesFeatureAvailability.FEATURE_CLIPBOARD_CONTENT_LIMIT);
     }
 
     @Override
@@ -114,9 +106,6 @@ public final class GboardClipboardSettingsFeature
                     ? GboardPatchesFeatureAvailability.hasFeature(
                             context,
                             GboardPatchesFeatureAvailability.FEATURE_CLIPBOARD_CONTENT_LIMIT)
-                    : true;
-            boolean hasWebClipboard = canQueryAvailability
-                    ? webClipboardFeature.isAvailable(context)
                     : true;
             List<GboardPatchesSettingsContract.Section> sections =
                     new ArrayList<GboardPatchesSettingsContract.Section>();
@@ -193,19 +182,6 @@ public final class GboardClipboardSettingsFeature
                 contentLimitSettingsRow.appendRow(retentionRows, host);
                 sections.add(new GboardPatchesSettingsContract.Section(
                         sectionRetention, retentionRows));
-            }
-
-            if (hasWebClipboard) {
-                List<GboardPatchesSettingsContract.Row> extensionRows =
-                        new ArrayList<GboardPatchesSettingsContract.Row>();
-                extensionRows.add(new GboardPatchesSettingsContract.NavigationRow(
-                        webClipboardFeature.getEntryTitle(),
-                        webClipboardFeature.getHostedEntrySummary(context, preferences),
-                        true,
-                        () -> GboardPatchesSettingsContract.openFeature(host, webClipboardFeature)));
-                sections.add(new GboardPatchesSettingsContract.Section(
-                        sectionExtensions,
-                        extensionRows));
             }
 
             if (sections.isEmpty()) {

@@ -281,9 +281,7 @@ public final class GboardTopRowSwipeRuntime {
                             topRowItem.label);
             handles.setKeyLabelTextsMethod.invoke(builder, labelSet.ids,
                     java.util.Arrays.asList(labelSet.texts));
-            String actionPayload = topRowItem.isJavaScript
-                    ? QUICK_JS_PAYLOAD_PREFIX
-                    : topRowItem.commitText;
+            String actionPayload = topRowItem.commitText != null ? topRowItem.commitText : "";
             Object pressAction = handles.buildPlainTextAction(handles.pressActionType,
                     actionPayload, topRowItem.label);
             if (pressAction == null) {
@@ -524,34 +522,12 @@ public final class GboardTopRowSwipeRuntime {
 
     public static boolean maybeConsumeQuickJsTopRowPress(Object gestureDispatcher,
             Object action, Object keyMetadata) {
-        return maybeConsumeQuickJsTopRowPress(
-                gestureDispatcher, null, action, null, keyMetadata);
+        return false;
     }
 
     public static boolean maybeConsumeQuickJsTopRowPress(Object gestureDispatcher,
             Object tracker, Object action, Object actionData, Object keyMetadata) {
-        if (!(action instanceof Enum<?> actionEnum) || !"PRESS".equals(actionEnum.name())) {
-            return false;
-        }
-        try {
-            ClassLoader classLoader = gestureDispatcher != null
-                    ? gestureDispatcher.getClass().getClassLoader() : null;
-            if (classLoader == null) {
-                return false;
-            }
-            GboardTopRowSwipeRuntimeSupport.ReflectionHandles handles =
-                    GboardTopRowSwipeRuntimeSupport.reflectionHandles(classLoader);
-            boolean quickJsMarkerPayload =
-                    hasQuickJsMarkerPayload(handles, actionData, keyMetadata);
-            QuickJsSlotConfig config = quickJsSlotConfig(keyMetadata);
-            if (config == null && quickJsMarkerPayload) {
-                config = quickJsSlotConfigFromSession(handles, tracker, gestureDispatcher);
-            }
-            return GboardQuickJsFeature.maybeConsumeQuickJsTopRowPress(
-                    null, handles, gestureDispatcher, config, quickJsMarkerPayload);
-        } catch (Throwable ignored) {
-            return false;
-        }
+        return false;
     }
 
     static SettingsSnapshot settingsSnapshot(Context context) {
@@ -1334,82 +1310,19 @@ public final class GboardTopRowSwipeRuntime {
     }
 
     static QuickJsSlotConfig quickJsSlotConfig(Object keyMetadata) {
-        PatchedTopRowMetadataState metadataState =
-                TOP_ROW_CUSTOM_PATCHED_METADATA_MARKERS.get(keyMetadata);
-        if (metadataState == null || !metadataState.isJavaScript) {
-            return null;
-        }
-        return new QuickJsSlotConfig(
-                metadataState.layoutKind,
-                metadataState.rowIndex,
-                metadataState.quickJsScriptSource,
-                metadataState.quickJsTimeoutMs);
+        return null;
     }
 
     static QuickJsSlotConfig quickJsSlotConfigFromSession(
             SettingsSnapshot snapshot, Object tracker) {
-        SwipeSession session = SESSIONS.get(tracker);
-        return quickJsSlotConfigFromSession(snapshot, session);
-    }
-
-    private static QuickJsSlotConfig quickJsSlotConfigFromSession(
-            GboardTopRowSwipeRuntimeSupport.ReflectionHandles handles,
-            Object tracker,
-            Object gestureDispatcher) throws Throwable {
-        SwipeSession session = SESSIONS.get(tracker);
-        if (session == null) {
-            return null;
-        }
-        if (session.anchorSoftKeyView != null && handles != null) {
-            try {
-                Object currentKeyMetadata =
-                        handles.softKeyMetadataField.get(session.anchorSoftKeyView);
-                QuickJsSlotConfig config = quickJsSlotConfig(currentKeyMetadata);
-                if (config != null) {
-                    return config;
-                }
-            } catch (Throwable ignored) {
-                // Fall back to the session row and current settings below.
-            }
-        }
-        Context context = session.anchorSoftKeyView instanceof View view
-                ? view.getContext() : null;
-        if (context == null && handles != null) {
-            context = handles.extractGestureDispatcherContext(gestureDispatcher);
-        }
-        return quickJsSlotConfigFromSession(settingsSnapshot(context), session);
-    }
-
-    private static QuickJsSlotConfig quickJsSlotConfigFromSession(
-            SettingsSnapshot snapshot, SwipeSession session) {
-        if (snapshot == null || session == null
-                || session.rowIndex < 0
-                || session.layoutKind == null
-                || session.layoutKind == TopRowLayoutKind.NONE
-                || currentPage(session.layoutKind) != TopRowPage.CUSTOM
-                || !isLayoutEnabled(snapshot, session.layoutKind)) {
-            return null;
-        }
-        TopRowItem item = customTopRowItem(snapshot, session.rowIndex);
-        if (item == null || !item.isJavaScript) {
-            return null;
-        }
-        return new QuickJsSlotConfig(
-                session.layoutKind,
-                session.rowIndex,
-                item.scriptText,
-                item.timeoutMs);
+        return null;
     }
 
     private static boolean hasQuickJsMarkerPayload(
             GboardTopRowSwipeRuntimeSupport.ReflectionHandles handles,
             Object actionData,
             Object keyMetadata) throws Throwable {
-        if (QUICK_JS_PAYLOAD_PREFIX.equals(handles.extractActionDataPayload(actionData))) {
-            return true;
-        }
-        Object pressAction = handles.findExactAction(keyMetadata, handles.pressActionType);
-        return QUICK_JS_PAYLOAD_PREFIX.equals(handles.extractSinglePayloadToken(pressAction));
+        return false;
     }
 
     private static boolean isLayoutEnabled(Context context, TopRowLayoutKind layoutKind) {

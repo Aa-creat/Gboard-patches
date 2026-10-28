@@ -125,28 +125,6 @@ class GboardPortProductCatalogContractTest {
     }
 
     @Test
-    fun webClipboardConsumerInventoryExactlyCoversItsPackagedResources() {
-        val repositoryRoot = repositoryRoot()
-        val webClipboard = features().single { feature ->
-            feature["feature_id"].asString == "web_clipboard"
-        }
-        val declaredResources = webClipboard.getAsJsonArray("consumer_files")
-            .map { it.asString }
-            .filter { consumer -> consumer.startsWith("patches/src/main/resources/") }
-        val packagedResources = WEB_CLIPBOARD_RESOURCE_ROOTS.flatMap { resourceRoot ->
-            Files.walk(repositoryRoot.resolve(resourceRoot)).use { paths ->
-                paths.filter(Files::isRegularFile)
-                    .map { path ->
-                        repositoryRoot.relativize(path).toString().replace('\\', '/')
-                    }
-                    .toList()
-            }
-        }.sorted()
-
-        assertEquals(packagedResources, declaredResources)
-    }
-
-    @Test
     fun admittedBindingUnionExactlyMatchesTheAuthoritative1853Profile() {
         val bindingProfile = JsonParser.parseString(
             Files.readString(
@@ -640,10 +618,6 @@ class GboardPortProductCatalogContractTest {
             "patches/src/main/resources/gboard/gboard-version-bindings.json"
         const val REGISTRY_PATH =
             "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
-        val WEB_CLIPBOARD_RESOURCE_ROOTS = listOf(
-            "patches/src/main/resources/web-clipboard-assets",
-            "patches/src/main/resources/web-clipboard-res",
-        )
         val INVALID_CONSUMER_PATHS = listOf(
             "../patches/src/main/kotlin/Feature.kt",
             "patches/src/main/kotlin/../Feature.kt",
@@ -683,7 +657,6 @@ class GboardPortProductCatalogContractTest {
             "incognito_mode_toggle" to "version-sensitive",
             "inline_suggestions" to "version-sensitive",
             "key_shape_selection" to "version-sensitive",
-            "lan_ftp_server" to "version-neutral-extension",
             "latin_globe_key_ignore_interval" to "version-sensitive",
             "long_press_editing_shortcuts" to "version-sensitive",
             "package_rename" to "generic",
@@ -694,7 +667,6 @@ class GboardPortProductCatalogContractTest {
             "swipe_down_to_dismiss_keyboard" to "version-sensitive",
             "swipeable_custom_top_row" to "version-sensitive",
             "use_bluetooth_microphone" to "version-sensitive",
-            "web_clipboard" to "version-sensitive",
             "zhuyin_bottom_row_key_sizes" to "version-sensitive",
             "zhuyin_quick_traditional_simplified_toggle" to "version-sensitive",
             "zhuyin_slide_input" to "version-sensitive",

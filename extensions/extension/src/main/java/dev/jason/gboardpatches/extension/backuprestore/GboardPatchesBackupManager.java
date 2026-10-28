@@ -20,7 +20,6 @@ import java.util.Set;
 import dev.jason.gboardpatches.extension.BuildConfig;
 import dev.jason.gboardpatches.extension.clipboard.GboardClipboardSettings;
 import dev.jason.gboardpatches.extension.clipboardcontentlimit.GboardClipboardContentLimitSettings;
-import dev.jason.gboardpatches.extension.lanftp.config.LanFtpPreferences;
 import dev.jason.gboardpatches.extension.keyboard.GboardEnglishUppercaseToggleSettings;
 import dev.jason.gboardpatches.extension.keyboard.GboardLatinGlobeKeyIgnoreIntervalSettings;
 import dev.jason.gboardpatches.extension.manualincognito.GboardManualIncognitoSettings;
@@ -28,7 +27,6 @@ import dev.jason.gboardpatches.extension.ocr.GboardOcrSettings;
 import dev.jason.gboardpatches.extension.settingshomepage.GboardSettingsHomepageSettings;
 import dev.jason.gboardpatches.extension.symbolfooter.GboardSymbolFooterOrderSettings;
 import dev.jason.gboardpatches.extension.toprowswipe.GboardTopRowSwipeSettings;
-import dev.jason.gboardpatches.extension.webclipboard.WebClipboardPreferences;
 import dev.jason.gboardpatches.extension.writingtools.GboardAiWritingToolsSettings;
 import dev.jason.gboardpatches.extension.zhuyinbottomrow.GboardZhuyinBottomRowWeightSettings;
 import dev.jason.gboardpatches.extension.settings.GboardPatchesSettings;
@@ -70,12 +68,8 @@ public final class GboardPatchesBackupManager {
             new BackupModuleDescriptor("gboard-patches.latin-globe", "Latin globe key",
                     GboardLatinGlobeKeyIgnoreIntervalSettings.PREF_FILE,
                     LATIN_GLOBE_VALUE_ADAPTER, null),
-            new BackupModuleDescriptor("gboard-patches.lan-ftp", "LAN FTP",
-                    LanFtpPreferences.PREF_FILE, null),
             new BackupModuleDescriptor("gboard-patches.clipboard", "Clipboard",
                     GboardClipboardSettings.PREF_FILE, null),
-            new BackupModuleDescriptor("gboard-patches.web-clipboard", "Web Clipboard",
-                    WebClipboardPreferences.PREF_FILE, null),
             new BackupModuleDescriptor("gboard-patches.ocr", "OCR",
                     GboardOcrSettings.PREF_FILE, null),
             new BackupModuleDescriptor("gboard-patches.symbol-footer", "Symbol footer order",
