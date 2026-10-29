@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-29T22:42:00",
-  "description": "### 🚀 Gboard 18.5.4 (v4.0.0) Release\n\n* **Gboard 18.5.4 Support**: Fully migrated and based on official upstream v4.0.0 for Gboard `18.5.4.993608717-release-arm64-v8a`.\n* **Privacy Hardening**: Completely stripped LAN FTP Server, Web Clipboard, and QuickJS network execution to eliminate any local network information leak risks.\n* **Custom Font & Modern Emoji**: Embedded custom font and modern emoji rendering with smart fallbacks and in-app font importer.\n\n### 🚀 版本發布 (v4.0.0)\n\n* **支援 Gboard 18.5.4**：基於上游官方 v4.0.0 完整升級，原生支援 Gboard 18.5.4。\n* **隱私安全加固**：徹底移除 LAN FTP Server、Web Clipboard 及 QuickJS 網路執行能力，切斷資訊洩露風險。\n* **自訂字型與現代表情符號**：完整整合 Custom Font & Modern Emoji 補丁，支援按鍵字型注入、Emoji 回退與字型匯入。",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v4.0.0/patches-4.0.0.mpp",
+  "created_at": "2026-10-29T23:40:00",
+  "description": "### 🐛 Bug Fixes\n\n* **Font & Emoji:** fix Emoji panel rendering failure on Gboard 18.5.4 by dynamically adapting EmojiView Paint getters and background bitmap renderers.\n* **Font & Emoji:** add automatic fallback to system Emoji typeface when no custom emoji font is provided, ensuring Emoji panel never falls back to plain default typography.\n\n### 🐛 修復\n\n* **字型與 Emoji:** 修復 Gboard 18.5.4 表情符號選單顯示失敗問題，動態適配新版 EmojiView Paint 方法與背景位圖渲染器。\n* **字型與 Emoji:** 增加無外置字體時自動回退至系統 Emoji 字型機制，杜絕 Emoji 選單出現豆腐塊或渲染失敗。",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v4.0.1/patches-4.0.1.mpp",
   "signature_download_url": "",
-  "version": "4.0.0"
+  "version": "4.0.1"
 }

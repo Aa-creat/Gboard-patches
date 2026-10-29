@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import dev.jason.gboardpatches.extension.keyboard.GboardLatinGlobeKeyIgnoreIntervalSettings;
+import dev.jason.gboardpatches.extension.manualincognito.GboardManualIncognitoSettings;
 import dev.jason.gboardpatches.extension.zhuyinbottomrow.GboardZhuyinBottomRowWeightSettings;
 
 @RunWith(RobolectricTestRunner.class)
@@ -59,11 +60,11 @@ public final class GboardPatchesBackupManagerTest {
     }
 
     @Test
-    public void credentialsAndCompleteTopRowScriptsCanBeRestoredSelectively() {
+    public void manualIncognitoAndCompleteTopRowScriptsCanBeRestoredSelectively() {
         Map<String, SharedPreferences> stores = stores();
-        SharedPreferences ftp = stores.get("lan_ftp_settings");
+        SharedPreferences incognito = stores.get(GboardManualIncognitoSettings.PREF_FILE);
         SharedPreferences topRow = stores.get("gboard_top_row_swipe_settings");
-        ftp.edit().putString("pref_lan_ftp_password", "secret-password").commit();
+        incognito.edit().putBoolean(GboardManualIncognitoSettings.PREF_FEATURE_ENABLED, true).commit();
         topRow.edit()
                 .putString("slot_1_script", "return input + '\\n完整腳本';")
                 .putString("slot_1_label", "JS")
@@ -71,18 +72,17 @@ public final class GboardPatchesBackupManagerTest {
                 .commit();
         String exported = GboardPatchesBackupManager.exportBackup(stores);
 
-        ftp.edit().clear().putString("current", "replace").commit();
+        incognito.edit().clear().putString("current", "replace").commit();
         topRow.edit().clear().putString("current", "replace").commit();
         SharedPreferences core = stores.get("gboard_patches_settings");
         core.edit().putString("current", "leave alone").commit();
         GboardPatchesBackupManager.RestoreResult result =
                 GboardPatchesBackupManager.restoreBackup(stores, exported, Set.of(
-                        "gboard-patches.lan-ftp",
+                        "gboard-patches.manual-incognito",
                         "gboard-patches.custom-top-row"));
 
         assertTrue(result.isSuccess());
-        assertEquals("secret-password",
-                ftp.getString("pref_lan_ftp_password", null));
+        assertTrue(incognito.getBoolean(GboardManualIncognitoSettings.PREF_FEATURE_ENABLED, false));
         assertEquals("return input + '\\n完整腳本';",
                 topRow.getString("slot_1_script", null));
         assertEquals("JS", topRow.getString("slot_1_label", null));
@@ -143,7 +143,7 @@ public final class GboardPatchesBackupManagerTest {
 
         assertFalse(result.isSuccess());
         assertTrue(result.isPartialSuccess());
-        assertEquals(14, result.getRestoredStoreCount());
+        assertEquals(12, result.getRestoredStoreCount());
         assertEquals(1, result.getFailedModuleCount());
         for (Map.Entry<String, SharedPreferences> entry : stores.entrySet()) {
             assertEquals(entry.getKey().equals(failingName)
@@ -263,7 +263,7 @@ public final class GboardPatchesBackupManagerTest {
                         GboardPatchesBackupManager.exportBackup(stores()));
         Set<String> ids = new HashSet<>();
 
-        assertEquals(15, plan.getModules().size());
+        assertEquals(13, plan.getModules().size());
         for (GboardPatchesBackupManager.ModulePlan module : plan.getModules()) {
             assertTrue(ids.add(module.getModuleId()));
             assertTrue(module.getModuleName().chars().allMatch(character -> character < 128));

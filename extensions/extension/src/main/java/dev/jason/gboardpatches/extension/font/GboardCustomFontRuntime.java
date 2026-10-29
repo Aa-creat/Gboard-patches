@@ -52,6 +52,7 @@ public final class GboardCustomFontRuntime {
     private static volatile Typeface sCustomTypeface = null;
     private static volatile Typeface sEmojiTypeface = null;
     private static volatile Typeface sCompositeEmojiTypeface = null;
+    private static volatile Typeface sSystemEmojiTypeface = null;
     private static volatile boolean sApplied = false;
     public static volatile boolean sEmojiOnlyMode = true;
 
@@ -318,15 +319,55 @@ public final class GboardCustomFontRuntime {
         return sEmojiTypeface;
     }
 
+    public static Typeface getSystemEmojiTypeface() {
+        if (sSystemEmojiTypeface != null) {
+            return sSystemEmojiTypeface;
+        }
+        synchronized (GboardCustomFontRuntime.class) {
+            if (sSystemEmojiTypeface != null) {
+                return sSystemEmojiTypeface;
+            }
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    for (android.graphics.fonts.Font font : android.graphics.fonts.SystemFonts.getAvailableFonts()) {
+                        File file = font.getFile();
+                        if (file != null && file.getName().toLowerCase(Locale.US).contains("emoji")) {
+                            Typeface tf = new Typeface.Builder(file).build();
+                            if (tf != null) {
+                                sSystemEmojiTypeface = tf;
+                                return sSystemEmojiTypeface;
+                            }
+                        }
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
+            for (String family : EMOJI_FAMILY_NAMES) {
+                try {
+                    Typeface tf = Typeface.create(family, Typeface.NORMAL);
+                    if (tf != null && !tf.equals(Typeface.DEFAULT)) {
+                        sSystemEmojiTypeface = tf;
+                        return sSystemEmojiTypeface;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+            return null;
+        }
+    }
+
     /**
      * Applies the custom emoji/text typeface to an arbitrary Paint/TextPaint.
-     * Used by EmojiView.h() and background emoji bitmap rendering workers.
+     * Used by EmojiView and background emoji bitmap rendering workers.
      */
     public static void applyTypefaceToPaint(Paint paint) {
         if (paint == null) {
             return;
         }
         Typeface tf = sEmojiTypeface != null ? sEmojiTypeface : sCustomTypeface;
+        if (tf == null) {
+            tf = getSystemEmojiTypeface();
+        }
         if (tf != null) {
             paint.setTypeface(tf);
         }
@@ -345,7 +386,7 @@ public final class GboardCustomFontRuntime {
         Context context = tv.getContext();
         applyCustomFont(context);
 
-        if (!GboardCustomFontSettings.isCustomFontActive(context)) {
+        if (!GboardCustomFontSettings.isCustomFontActive(context) && sCustomTypeface == null && sEmojiTypeface == null) {
             return;
         }
 
@@ -391,6 +432,7 @@ public final class GboardCustomFontRuntime {
         sCustomTypeface = null;
         sEmojiTypeface = null;
         sCompositeEmojiTypeface = null;
+        sSystemEmojiTypeface = null;
         sApplied = false;
         sEmojiOnlyMode = true;
         ORIGINAL_TYPEFACES.clear();

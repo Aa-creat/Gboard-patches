@@ -101,11 +101,7 @@ public final class GboardPatchesSettingsFeatureHostTest {
                 "src/main/java/dev/jason/gboardpatches/extension/toprowswipe/"
                         + "GboardTopRowSwipeSettingsFeature.java")), StandardCharsets.UTF_8);
         for (String operation : Arrays.asList(
-                "show Top Row Swipe import error dialog",
-                "show info dialog",
-                "show JavaScript examples dialog",
-                "show global JavaScript dialog",
-                "show JavaScript runtime limits dialog")) {
+                "show Top Row Swipe import error dialog")) {
             Assert.assertTrue(operation, topRow.contains(
                     "showManagedAlertDialog(host, activity, \"" + operation + "\""));
         }

@@ -119,24 +119,46 @@ private fun BytecodePatchContext.patchSoftKeyView() {
 private fun BytecodePatchContext.patchEmojiViewAndRenderer() {
     val emojiViewClass = mutableClassDefByOrNull(EMOJI_VIEW_CLASS) ?: return
 
-    val hMethod = emojiViewClass.methods.firstOrNull { method ->
-        method.name == "h" && method.parameterTypes.isEmpty() && method.returnType == "Landroid/graphics/Paint;"
+    // 1. Hook any method returning Paint (e.g. h() in 18.0.3, i() in 18.5.4)
+    val paintMethods = emojiViewClass.methods.filter { method ->
+        method.parameterTypes.isEmpty() && method.returnType == "Landroid/graphics/Paint;"
     }
-    if (hMethod != null) {
-        val returns = hMethod.returnInstructionIndices().filter { index ->
-            hMethod.implementation!!.instructions[index].isOpcode("RETURN_OBJECT")
+    for (paintMethod in paintMethods) {
+        val returns = paintMethod.returnInstructionIndices().filter { index ->
+            paintMethod.implementation!!.instructions[index].isOpcode("RETURN_OBJECT")
         }
         for (returnIndex in returns.asReversed()) {
-            val returnInst = hMethod.implementation!!.instructions[returnIndex] as? OneRegisterInstruction
+            val returnInst = paintMethod.implementation!!.instructions[returnIndex] as? OneRegisterInstruction
             val retReg = returnInst?.registerA ?: 0
             val applyPaintCall = RuntimeCallEmitter.invoke(
                 RuntimeCallId.CUSTOM_FONT_RUNTIME_APPLY_TYPEFACE_TO_PAINT,
                 "v$retReg"
             )
-            hMethod.addInstructions(returnIndex, applyPaintCall)
+            paintMethod.addInstructions(returnIndex, applyPaintCall)
         }
     }
 
+    // 2. Intercept any call inside EmojiView that overwrites Paint typeface (e.g. EmojiView.h() in 18.5.4)
+    for (method in emojiViewClass.methods) {
+        val instructions = method.implementation?.instructions ?: continue
+        val setTypefaceIndices = instructions.mapIndexedNotNull { index, inst ->
+            val ref = (inst as? ReferenceInstruction)?.reference?.toString() ?: ""
+            if (ref.contains("Landroid/graphics/Paint;->setTypeface(Landroid/graphics/Typeface;)Landroid/graphics/Typeface;")) {
+                val fiveReg = inst as? FiveRegisterInstruction
+                val paintReg = fiveReg?.registerC ?: 0
+                index to paintReg
+            } else null
+        }
+        for ((idx, paintReg) in setTypefaceIndices.asReversed()) {
+            val applyPaintCall = RuntimeCallEmitter.invoke(
+                RuntimeCallId.CUSTOM_FONT_RUNTIME_APPLY_TYPEFACE_TO_PAINT,
+                "v$paintReg"
+            )
+            method.addInstructions(idx + 1, applyPaintCall)
+        }
+    }
+
+    // 3. Hook EmojiView constructors
     for (initMethod in emojiViewClass.methods.filter {
         it.name == "<init>" && it.parameterTypes.isNotEmpty() && it.parameterTypes[0] == "Landroid/content/Context;"
     }) {
@@ -147,10 +169,16 @@ private fun BytecodePatchContext.patchEmojiViewAndRenderer() {
         initMethod.addInstructions(0, initCall)
     }
 
-    val rendererTypeCandidates = listOfNotNull(
-        emojiViewClass.fields.firstOrNull { it.name == "g" }?.type,
-        "Lnts;"
-    ).distinct()
+    // 4. Hook renderer classes (dynamically find any class referenced by EmojiView fields that contains TextPaint)
+    val rendererTypeCandidates = emojiViewClass.fields
+        .map { it.type }
+        .filter { it.startsWith("L") && !it.startsWith("Landroid/") && !it.startsWith("Ljava/") }
+        .filter { candidateType ->
+            val candidateDef = mutableClassDefByOrNull(candidateType) ?: return@filter false
+            candidateDef.fields.any { it.type == "Landroid/text/TextPaint;" }
+        }
+        .plus(listOfNotNull(emojiViewClass.fields.firstOrNull { it.name == "g" }?.type, "Lnts;", "Logg;"))
+        .distinct()
 
     for (rendererType in rendererTypeCandidates) {
         val rendererClass = mutableClassDefByOrNull(rendererType) ?: continue

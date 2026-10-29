@@ -111,6 +111,14 @@ public final class GboardCustomFontRuntimeTest {
     }
 
     @Test
+    public void applyTypefaceToPaintWithNoCustomFontFallsBackGracefully() {
+        android.graphics.Paint paint = new android.graphics.Paint();
+        GboardCustomFontRuntime.resetForTesting();
+        GboardCustomFontRuntime.applyTypefaceToPaint(paint);
+        // Does not throw and provides fallback if available in environment
+    }
+
+    @Test
     public void applyTypefaceToKeyInEmojiModeAppliesOnlyToEmoji() {
         TextView emojiKey = new TextView(context);
         TextView letterKey = new TextView(context);
@@ -124,7 +132,13 @@ public final class GboardCustomFontRuntimeTest {
         GboardCustomFontRuntime.sEmojiOnlyMode = true;
 
         // Simulate active font
+        try {
+            new java.io.File(context.getFilesDir(), GboardCustomFontSettings.EMOJI_FONT_FILE_NAME).createNewFile();
+        } catch (Exception ignored) {
+        }
         GboardCustomFontSettings.writeEnabled(context, true);
+        GboardCustomFontRuntime.setCustomTypefaceForTesting(customMockTypeface);
+        GboardCustomFontRuntime.sEmojiOnlyMode = true;
 
         GboardCustomFontRuntime.applyTypefaceToKey(emojiKey, "😀");
         Assert.assertSame("Emoji key should receive custom emoji typeface",

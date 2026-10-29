@@ -1,3 +1,15 @@
+## [4.0.1](https://github.com/Aa-creat/Gboard-patches/compare/v4.0.0...v4.0.1) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **Font & Emoji:** fix Emoji panel rendering failure on Gboard 18.5.4 by dynamically adapting EmojiView Paint getters and background bitmap renderers.
+* **Font & Emoji:** add automatic fallback to system Emoji typeface when no custom emoji font is provided, ensuring Emoji panel never falls back to plain default typography.
+
+### 🐛 修復
+
+* **字型與 Emoji:** 修復 Gboard 18.5.4 表情符號選單顯示失敗問題，動態適配新版 EmojiView Paint 方法與背景位圖渲染器。
+* **字型與 Emoji:** 增加無外置字體時自動回退至系統 Emoji 字型機制，杜絕 Emoji 選單出現豆腐塊或渲染失敗。
+
 ## [4.0.0](https://github.com/jasonwu1994/Gboard-patches/compare/v3.13.0...v4.0.0) (2026-10-26)
 
 ### 🐛 Bug Fixes
