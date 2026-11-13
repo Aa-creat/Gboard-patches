@@ -128,11 +128,12 @@ public final class GboardSettingsGroupingTest {
                 "new GboardAccessPointCountSettingsFeature(context)");
         Assert.assertFalse(registrySource.contains("GboardKeyboardSettingsGroupFeature"));
         String more = readSource("src/main/java/dev/jason/gboardpatches/extension/settings/GboardMoreSettingsGroupFeature.java");
-        assertInOrder(more, "new GboardLanFtpSettingsFeature(context)",
+        assertInOrder(more,
                 "new GboardSettingsHomepageSettingsFeature()",
                 "new GboardBackupRestoreSettingsFeature(context)",
                 "new GboardDeveloperOptionsSettingsFeature(context)");
         Assert.assertFalse(registrySource.contains("new GboardLanFtpSettingsFeature"));
+        Assert.assertFalse(more.contains("new GboardLanFtpSettingsFeature"));
         Assert.assertFalse(registrySource.contains("new GboardSettingsHomepageSettingsFeature"));
 
     }

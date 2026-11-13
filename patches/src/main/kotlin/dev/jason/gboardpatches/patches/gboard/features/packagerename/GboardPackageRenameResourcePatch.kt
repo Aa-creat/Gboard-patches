@@ -79,7 +79,11 @@ internal const val APP_DISPLAY_NAME_RESOURCE_PATH = "res/values/strings.xml"
 context(context: ResourcePatchContext)
 internal fun applyGboardApplicationDisplayName(displayName: String) = with(context) {
     // Patcher 2.x decodes resources on request; the scan below must see every values file.
-    decode("res/values*/*.xml")
+    try {
+        context.javaClass.getMethod("decode", String::class.java).invoke(context, "res/values*/*.xml")
+    } catch (_: NoSuchMethodException) {
+        // Patcher 1.8.x decodes eagerly; no-op
+    }
     val target = this[APP_DISPLAY_NAME_RESOURCE_PATH, false]
     check(target.isFile) { "Missing existing default string resources at $APP_DISPLAY_NAME_RESOURCE_PATH" }
     val factory = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }

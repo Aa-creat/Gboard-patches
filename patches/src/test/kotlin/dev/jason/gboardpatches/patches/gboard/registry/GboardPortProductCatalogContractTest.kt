@@ -165,7 +165,7 @@ class GboardPortProductCatalogContractTest {
                 }
         }.toSet()
 
-        assertEquals(238, authoritativeKeys.size)
+        assertEquals(237, authoritativeKeys.size)
         assertEquals(authoritativeKeys, requiredKeys)
         assertEquals(
             authoritativeKinds,
