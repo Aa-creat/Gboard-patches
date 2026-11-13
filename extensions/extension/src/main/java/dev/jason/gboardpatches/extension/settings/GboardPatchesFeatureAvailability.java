@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 public final class GboardPatchesFeatureAvailability {
+    public static final String FEATURE_KEYPRESS_HAPTICS =
+            "dev.jason.gboardpatches.feature.keypress_haptics";
     public static final String FEATURE_EDITING_ACCESS_POINTS =
             "dev.jason.gboardpatches.feature.editing_access_points";
     public static final String FEATURE_CLIPBOARD_ENHANCEMENTS =
@@ -83,6 +85,8 @@ public final class GboardPatchesFeatureAvailability {
             "dev.jason.gboardpatches.feature.swipe_dismiss";
     public static final String FEATURE_CUSTOM_FONT =
             "dev.jason.gboardpatches.feature.custom_font";
+
+    public static final String FEATURE_LANGUAGE_MODELS = "dev.jason.gboardpatches.feature.language_models";
 
     private static final String TAG = "GboardPatches";
 

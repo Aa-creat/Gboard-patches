@@ -1,5 +1,6 @@
 package dev.jason.gboardpatches.extension.frostedglass;
 
+import android.os.Build;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -17,6 +18,10 @@ import dev.jason.gboardpatches.extension.settings.GboardSettingsText;
 public final class GboardFrostedGlassSettingsFeature
         implements GboardPatchesSettingsContract.Feature {
     private static final String TAG = "GboardPatches";
+    private static final String FAQ_NOT_WORKING_URL =
+            "https://github.com/jasonwu1994/Gboard-patches/issues/68";
+    private static final String FAQ_FLICKERING_URL =
+            "https://github.com/jasonwu1994/Gboard-patches/issues/58";
     private final String entryTitle;
     private final String entrySummary;
     private final String headerBadge;
@@ -25,6 +30,8 @@ public final class GboardFrostedGlassSettingsFeature
     private final String sectionTitle;
     private final String enabledTitle;
     private final String enabledSummary;
+    private final String transparencyHelpTitle;
+    private final String transparencyHelpSummary;
     private final String radiusTitle;
     private final String radiusSummary;
     private final String radiusHint;
@@ -35,6 +42,15 @@ public final class GboardFrostedGlassSettingsFeature
     private final String opacityTitle;
     private final String opacitySummary;
     private final String opacityHint;
+    private final String keyTransparencyTitle;
+    private final String keyTransparencySummary;
+    private final String keyOpacityTitle;
+    private final String keyOpacitySummary;
+    private final String seamlessTitle;
+    private final String seamlessSummary;
+    private final String faqSection;
+    private final String faqNotWorkingTitle;
+    private final String faqFlickeringTitle;
 
     public GboardFrostedGlassSettingsFeature(Context context) {
         entryTitle = text(context, R.string.gboard_patches_frosted_glass_title);
@@ -45,6 +61,8 @@ public final class GboardFrostedGlassSettingsFeature
         sectionTitle = text(context, R.string.gboard_patches_frosted_glass_section);
         enabledTitle = text(context, R.string.gboard_patches_frosted_glass_enabled_title);
         enabledSummary = text(context, R.string.gboard_patches_frosted_glass_enabled_summary);
+        transparencyHelpTitle = text(context, R.string.gboard_patches_frosted_glass_transparency_help_title);
+        transparencyHelpSummary = text(context, R.string.gboard_patches_frosted_glass_transparency_help_summary);
         radiusTitle = text(context, R.string.gboard_patches_frosted_glass_radius_title);
         radiusSummary = text(context, R.string.gboard_patches_frosted_glass_radius_summary);
         radiusHint = text(context, R.string.gboard_patches_frosted_glass_radius_hint);
@@ -55,6 +73,15 @@ public final class GboardFrostedGlassSettingsFeature
         opacityTitle = text(context, R.string.gboard_patches_frosted_glass_opacity_title);
         opacitySummary = text(context, R.string.gboard_patches_frosted_glass_opacity_summary);
         opacityHint = text(context, R.string.gboard_patches_frosted_glass_opacity_hint);
+        keyTransparencyTitle = text(context, R.string.gboard_patches_frosted_glass_key_transparency_title);
+        keyTransparencySummary = text(context, R.string.gboard_patches_frosted_glass_key_transparency_summary);
+        keyOpacityTitle = text(context, R.string.gboard_patches_frosted_glass_key_opacity_title);
+        keyOpacitySummary = text(context, R.string.gboard_patches_frosted_glass_key_opacity_summary);
+        seamlessTitle = text(context, R.string.gboard_patches_frosted_glass_seamless_nav_bar_title);
+        seamlessSummary = text(context, R.string.gboard_patches_frosted_glass_seamless_nav_bar_summary);
+        faqSection = text(context, R.string.gboard_patches_frosted_glass_faq_section);
+        faqNotWorkingTitle = text(context, R.string.gboard_patches_frosted_glass_faq_not_working_title);
+        faqFlickeringTitle = text(context, R.string.gboard_patches_frosted_glass_faq_flickering_title);
     }
 
     private static String text(Context context, int resourceId) {
@@ -73,7 +100,8 @@ public final class GboardFrostedGlassSettingsFeature
 
     @Override
     public boolean isAvailable(Context context) {
-        return GboardPatchesFeatureAvailability.hasFeature(
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                && GboardPatchesFeatureAvailability.hasFeature(
                 context, GboardPatchesFeatureAvailability.FEATURE_FROSTED_GLASS);
     }
 
@@ -101,6 +129,8 @@ public final class GboardFrostedGlassSettingsFeature
                         GboardPatchesSettingsContract.refresh(host);
                         requestRestart(host);
                     }));
+            rows.add(new GboardPatchesSettingsContract.InfoRow(
+                    transparencyHelpTitle, transparencyHelpSummary, true));
             rows.add(new GboardPatchesSettingsContract.SelectorRow(
                     radiusTitle, radiusSummary, Integer.toString(strength), enabled,
                     () -> GboardPatchesSettingsContract.showPositiveIntegerDialog(host,
@@ -111,49 +141,90 @@ public final class GboardFrostedGlassSettingsFeature
                                 GboardPatchesSettingsContract.refresh(host);
                                 requestRestart(host);
                             })));
-            rows.add(new GboardPatchesSettingsContract.SelectorRow(
-                    transparencyTitle, transparencySummary,
-                    GboardFrostedGlassSettings.TRANSPARENCY_MODE_CUSTOM.equals(transparencyMode)
-                            ? transparencyCustom : transparencyTheme,
-                    enabled,
-                    () -> GboardPatchesSettingsContract.showChoiceDialog(host, transparencyTitle,
-                            new String[]{transparencyTheme, transparencyCustom},
-                            new String[]{GboardFrostedGlassSettings.TRANSPARENCY_MODE_THEME,
-                                    GboardFrostedGlassSettings.TRANSPARENCY_MODE_CUSTOM},
-                            transparencyMode, "", () -> { }, value -> {
-                                GboardFrostedGlassSettings.writeTransparencyMode(context, value);
-                                GboardPatchesSettingsContract.refresh(host);
-                            })));
-            if (GboardFrostedGlassSettings.TRANSPARENCY_MODE_CUSTOM.equals(transparencyMode)) {
-                rows.add(new GboardPatchesSettingsContract.SelectorRow(
-                        opacityTitle, opacitySummary, opacity + "%", enabled,
-                        () -> GboardPatchesSettingsContract.showTextInputDialog(host, opacityTitle, opacityHint,
-                                Integer.toString(opacity),
-                                value -> {
-                                    try {
-                                        int parsed = Integer.parseInt(value.trim());
-                                        GboardFrostedGlassSettings.writeCustomOpacity(
-                                                context, parsed);
-                                        GboardPatchesSettingsContract.refresh(host);
-                                    } catch (NumberFormatException invalid) {
-                                        GboardPatchesSettingsContract.showMessage(host, opacityHint);
-                                    }
-                                })));
-            }
+            addTransparencyRows(rows, host, context, enabled, false, transparencyMode, opacity);
+            addTransparencyRows(rows, host, context, enabled, true,
+                    GboardFrostedGlassSettings.readKeyTransparencyMode(preferences),
+                    GboardFrostedGlassSettings.readKeyCustomOpacity(preferences));
+            rows.add(new GboardPatchesSettingsContract.ToggleRow(
+                    seamlessTitle, seamlessSummary, enabled,
+                    GboardFrostedGlassSettings.readSeamlessNavBarEnabled(preferences), value -> {
+                        if (!GboardFrostedGlassSettings.writeSeamlessNavBarEnabled(context, value)) {
+                            Log.w(TAG, "Failed to persist seamless navigation bar state");
+                        }
+                        GboardPatchesSettingsContract.refresh(host);
+                        requestRestart(host);
+                    }));
             return new GboardPatchesSettingsContract.Screen(
                     entryTitle,
                     headerBadge,
                     entryTitle,
                     "",
                     Collections.emptyList(),
-                    Collections.singletonList(new GboardPatchesSettingsContract.Section(
-                            sectionTitle,
-                            rows)),
+                    java.util.Arrays.asList(
+                            new GboardPatchesSettingsContract.Section(sectionTitle, rows),
+                            faqSection(host)),
                     GboardPatchesSettingsContract.RefreshPolicy.none(),
                     GboardPatchesSettingsContract.PanelStyle.FLAT);
         } catch (Throwable throwable) {
             Log.w(TAG, "Failed to render frosted glass settings", throwable);
             return errorScreen();
+        }
+    }
+
+    /** Stays enabled while the glass is off: these answer why it has no effect. */
+    private GboardPatchesSettingsContract.Section faqSection(
+            GboardPatchesSettingsContract.FeatureHost host) {
+        return new GboardPatchesSettingsContract.Section(faqSection, java.util.Arrays.asList(
+                faqRow(host, faqNotWorkingTitle, FAQ_NOT_WORKING_URL),
+                faqRow(host, faqFlickeringTitle, FAQ_FLICKERING_URL)));
+    }
+
+    private static GboardPatchesSettingsContract.Row faqRow(
+            GboardPatchesSettingsContract.FeatureHost host, String title, String url) {
+        return new GboardPatchesSettingsContract.ActionRow(title, "", true,
+                () -> openFaq(host, url));
+    }
+
+    private static void openFaq(GboardPatchesSettingsContract.FeatureHost host, String url) {
+        try {
+            GboardPatchesSettingsContract.openExternalUrl(host, url);
+        } catch (Throwable failure) {
+            Log.w(TAG, "Unable to open the frosted glass FAQ", failure);
+        }
+    }
+
+    private void addTransparencyRows(java.util.List<GboardPatchesSettingsContract.Row> rows,
+            GboardPatchesSettingsContract.FeatureHost host, Context context, boolean enabled,
+            boolean keys, String mode, int opacity) {
+        String title = keys ? keyTransparencyTitle : transparencyTitle;
+        String customTitle = keys ? keyOpacityTitle : opacityTitle;
+        rows.add(new GboardPatchesSettingsContract.SelectorRow(
+                title, keys ? keyTransparencySummary : transparencySummary,
+                GboardFrostedGlassSettings.TRANSPARENCY_MODE_CUSTOM.equals(mode)
+                        ? transparencyCustom : transparencyTheme,
+                enabled, () -> GboardPatchesSettingsContract.showChoiceDialog(host, title,
+                        new String[]{transparencyTheme, transparencyCustom},
+                        new String[]{GboardFrostedGlassSettings.TRANSPARENCY_MODE_THEME,
+                                GboardFrostedGlassSettings.TRANSPARENCY_MODE_CUSTOM},
+                        mode, "", () -> { }, value -> {
+                            if (keys) GboardFrostedGlassSettings.writeKeyTransparencyMode(context, value);
+                            else GboardFrostedGlassSettings.writeTransparencyMode(context, value);
+                            GboardPatchesSettingsContract.refresh(host);
+                        })));
+        if (GboardFrostedGlassSettings.TRANSPARENCY_MODE_CUSTOM.equals(mode)) {
+            rows.add(new GboardPatchesSettingsContract.SelectorRow(
+                    customTitle, keys ? keyOpacitySummary : opacitySummary, opacity + "%", enabled,
+                    () -> GboardPatchesSettingsContract.showTextInputDialog(host, customTitle,
+                            opacityHint, Integer.toString(opacity), value -> {
+                                try {
+                                    int parsed = Integer.parseInt(value.trim());
+                                    if (keys) GboardFrostedGlassSettings.writeKeyCustomOpacity(context, parsed);
+                                    else GboardFrostedGlassSettings.writeCustomOpacity(context, parsed);
+                                    GboardPatchesSettingsContract.refresh(host);
+                                } catch (NumberFormatException invalid) {
+                                    GboardPatchesSettingsContract.showMessage(host, opacityHint);
+                                }
+                            })));
         }
     }
 

@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0",
+  "version": "4.3.0",
   "patches": [
     {
       "name": "AI Writing Tools",
@@ -177,6 +177,18 @@
       "options": []
     },
     {
+      "name": "Dictionaries & Predictions",
+      "description": "可選擇字典、預測及輸入修正的資源版本\nChoose resource versions for dictionaries, predictions, and input correction.",
+      "use": true,
+      "dependencies": [],
+      "compatiblePackages": {
+        "com.google.android.inputmethod.latin": [
+          "18.5.4.993608717-release-arm64-v8a"
+        ]
+      },
+      "options": []
+    },
+    {
       "name": "Emojis, stickers & GIFs Tab Order",
       "description": "自訂 Gboard「Emojis, stickers & GIFs」底部 tabs 的排序，支援拖曳調整\nCustomize the bottom tab order in Gboard's Emojis, stickers & GIFs panel with drag-and-drop reordering.",
       "use": true,
@@ -286,7 +298,7 @@
     },
     {
       "name": "G Logo on Spacebar",
-      "description": "在空白鍵顯示 G Logo，並隱藏語言名稱\nShow the G Logo on the spacebar and hide the language label.",
+      "description": "自訂空白鍵圖示、圖片、顏色及大小，並隱藏語言名稱\nChoose a built-in or imported spacebar image, its colors and size, and hide the language label.",
       "use": true,
       "dependencies": [],
       "compatiblePackages": {
@@ -335,6 +347,18 @@
     {
       "name": "Key Shape Selection",
       "description": "啟用圓角按鍵，主題詳情 > 按鍵形狀\nEnable Key shape in Theme details.",
+      "use": true,
+      "dependencies": [],
+      "compatiblePackages": {
+        "com.google.android.inputmethod.latin": [
+          "18.5.4.993608717-release-arm64-v8a"
+        ]
+      },
+      "options": []
+    },
+    {
+      "name": "Keypress Vibration Intensity Control",
+      "description": "將按鍵震動由持續時間改為力度控制。\nControl keypress vibration intensity instead of duration.",
       "use": true,
       "dependencies": [],
       "compatiblePackages": {

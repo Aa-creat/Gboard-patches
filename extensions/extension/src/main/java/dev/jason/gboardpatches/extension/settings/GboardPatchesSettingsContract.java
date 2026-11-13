@@ -36,6 +36,8 @@ public final class GboardPatchesSettingsContract {
         default void onHidden(FeatureHost host) {
         }
 
+        default boolean updatesDuringKeyboardPreview() { return false; }
+
         default int getEntryIcon() {
             return GboardPatchesIcons.NONE;
         }
@@ -128,6 +130,12 @@ public final class GboardPatchesSettingsContract {
         default void openBinaryDocument(String[] mimeTypes,
                 BinaryDocumentConsumer documentConsumer) {
             throw new UnsupportedOperationException("Binary document import is unavailable");
+        }
+
+        /** Bounded import; document processing runs on a worker thread. */
+        default void openBinaryDocument(String[] mimeTypes, int maxBytes,
+                BinaryDocumentConsumer documentConsumer) {
+            throw new UnsupportedOperationException("Bounded document import is unavailable");
         }
 
         default void requestTargetRestart() {
@@ -237,6 +245,11 @@ public final class GboardPatchesSettingsContract {
     public static void openBinaryDocument(FeatureHost host, String[] mimeTypes,
             BinaryDocumentConsumer documentConsumer) {
         submit(host, adapter -> adapter.openBinaryDocument(mimeTypes, documentConsumer));
+    }
+
+    public static void openBinaryDocument(FeatureHost host, String[] mimeTypes, int maxBytes,
+            BinaryDocumentConsumer documentConsumer) {
+        submit(host, adapter -> adapter.openBinaryDocument(mimeTypes, maxBytes, documentConsumer));
     }
 
     public static void requestTargetRestart(FeatureHost host) {
@@ -651,6 +664,7 @@ public final class GboardPatchesSettingsContract {
         private final RefreshPolicy refreshPolicy;
         private final PanelStyle panelStyle;
         private final CommandRow primaryAction;
+        private boolean masterToggleFirst;
         private final List<ToolbarAction> toolbarActions;
         private final boolean fullBleed;
 
@@ -747,6 +761,14 @@ public final class GboardPatchesSettingsContract {
         public List<StatusBlock> getStatusBlocks() {
             return statusBlocks;
         }
+
+        /** Places diagnostic controls before their changing results when requested. */
+        public Screen setMasterToggleFirst(boolean first) {
+            masterToggleFirst = first;
+            return this;
+        }
+
+        public boolean isMasterToggleFirst() { return masterToggleFirst; }
 
         public List<Section> getSections() {
             return sections;
@@ -995,6 +1017,13 @@ public final class GboardPatchesSettingsContract {
 
         public Runnable getAction() {
             return action;
+        }
+    }
+
+    /** Search control, separate from read-only dictionary results. */
+    public static final class SearchRow extends CommandRow {
+        public SearchRow(CharSequence title, String summary, Runnable action) {
+            super(title, summary, true, action);
         }
     }
 

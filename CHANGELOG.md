@@ -1,3 +1,242 @@
+## [4.3.0](https://github.com/jasonwu1994/Gboard-patches/compare/v4.2.0...v4.3.0) (2026-11-12)
+
+### ✨ New Features
+
+* **Gboard:** add an FAQ section to the Frosted Glass page, with links for when the effect isn't working and for flickering on Pixel phones.
+* **Gboard:** change the defaults of two settings: English Up-Flick Uppercase is now off and the Access Points menu style is now on. Settings you have already saved are kept.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix the keyboard closing by itself with Frosted Glass enabled ("Software rendering doesn't support drawRenderNode"). If blur fails to draw, the keyboard now falls back to its theme.
+* **Gboard:** make "Extend to navigation bar" work on Android 15 and below. The navigation bar follows the keyboard's transparency, without blur.
+* **Gboard:** make "Extend to navigation bar" work with narrower docked keyboards, such as one-handed mode.
+
+### ✨ 新功能
+
+* **Gboard:** 在「磨砂玻璃」頁面新增 FAQ 區塊，提供「為什麼磨砂玻璃沒有效果？」和「為什麼 Pixel 手機輸入文字時會閃爍？」的說明連結。
+* **Gboard:** 調整兩項設定的預設值：「英文鍵盤上滑大小寫」改為關閉，「Access Points 選單樣式」改為開啟。已儲存的設定不受影響。
+
+### 🐛 修復
+
+* **Gboard:** 修復啟用磨砂玻璃後鍵盤自行關閉的問題（`Software rendering doesn't support drawRenderNode`）。模糊效果繪製失敗時，鍵盤會改回使用主題背景。
+* **Gboard:** 修復「延伸到導覽列」在 Android 15 以下沒有效果的問題。導覽列會跟隨鍵盤的透明度，但沒有模糊效果。
+* **Gboard:** 修復「延伸到導覽列」在單手模式等較窄的固定式鍵盤上沒有效果的問題。
+
+## [4.3.0-dev.1](https://github.com/jasonwu1994/Gboard-patches/compare/v4.2.0...v4.3.0-dev.1) (2026-11-06)
+
+### ✨ New Features
+
+* **Gboard:** add an FAQ section to the Frosted Glass page, with links for when the effect isn't working and for flickering on Pixel phones.
+* **Gboard:** change the defaults of two settings: English Up-Flick Uppercase is now off and the Access Points menu style is now on. Settings you have already saved are kept.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix the keyboard closing by itself with Frosted Glass enabled ("Software rendering doesn't support drawRenderNode"). If blur fails to draw, the keyboard now falls back to its theme.
+* **Gboard:** make "Extend to navigation bar" work on Android 15 and below. The navigation bar follows the keyboard's transparency, without blur.
+* **Gboard:** make "Extend to navigation bar" work with narrower docked keyboards, such as one-handed mode.
+
+### ✨ 新功能
+
+* **Gboard:** 在「磨砂玻璃」頁面新增 FAQ 區塊，提供「為什麼磨砂玻璃沒有效果？」和「為什麼 Pixel 手機輸入文字時會閃爍？」的說明連結。
+* **Gboard:** 調整兩項設定的預設值：「英文鍵盤上滑大小寫」改為關閉，「Access Points 選單樣式」改為開啟。已儲存的設定不受影響。
+
+### 🐛 修復
+
+* **Gboard:** 修復啟用磨砂玻璃後鍵盤自行關閉的問題（`Software rendering doesn't support drawRenderNode`）。模糊效果繪製失敗時，鍵盤會改回使用主題背景。
+* **Gboard:** 修復「延伸到導覽列」在 Android 15 以下沒有效果的問題。導覽列會跟隨鍵盤的透明度，但沒有模糊效果。
+* **Gboard:** 修復「延伸到導覽列」在單手模式等較窄的固定式鍵盤上沒有效果的問題。
+
+## [4.2.0](https://github.com/jasonwu1994/Gboard-patches/compare/v4.1.1...v4.2.0) (2026-11-03)
+
+### ✨ New Features
+
+* **Gboard:** add an option to automatically select all text before copying or cutting when nothing is selected, available through the toolbar, long-press shortcuts, and globe-key drag gestures.
+* **Gboard:** update morphe-patcher to **v2.1.0**.
+* **Gboard:** add a search button to the Patches settings page to quickly find settings.
+* **Gboard:** extend the G Logo on Spacebar patch with custom image support, a full-color Google G icon, and adjustable icon sizes.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix paste shortcuts from the toolbar, long-press actions, and globe-key drag gestures in terminal input fields such as Termux.
+
+### ✨ 新功能
+
+* **Gboard:** 新增「未選取文字時自動全選」選項，支援透過工具列、長按及地球鍵拖曳快捷操作，全選並複製或剪下文字。
+* **Gboard:** 將 morphe-patcher 更新至 **v2.1.0**。
+* **Gboard:** 在 Patches 設定頁面新增搜尋按鈕，方便快速尋找設定項目。
+* **Gboard:** 「G Logo on Spacebar」Patch 新增自訂圖片與「Google G（全彩）」圖示，並支援自訂圖示大小。
+
+### 🐛 修復
+
+* **Gboard:** 修復工具列、長按及地球鍵拖曳快捷貼上在 Termux 等終端機輸入介面中無法正常運作的問題。
+
+## [4.2.0-dev.5](https://github.com/jasonwu1994/Gboard-patches/compare/v4.2.0-dev.4...v4.2.0-dev.5) (2026-11-03)
+
+### ✨ New Features
+
+* **Gboard:** extend the G Logo on Spacebar patch with custom image support, a full-color Google G icon, and adjustable icon sizes.
+
+### ✨ 新功能
+
+* **Gboard:** 「G Logo on Spacebar」Patch 新增自訂圖片與「Google G（全彩）」圖示，並支援自訂圖示大小。
+
+## [4.2.0-dev.4](https://github.com/jasonwu1994/Gboard-patches/compare/v4.2.0-dev.2...v4.2.0-dev.4) (2026-11-02)
+
+### ✨ New Features
+
+* **Gboard:** update morphe-patcher to **v2.1.0**.
+* **Gboard:** add a search button to the Patches settings page to quickly find settings.
+
+### ✨ 新功能
+
+* **Gboard:** 將 morphe-patcher 更新至 **v2.1.0**。
+* **Gboard:** 在 Patches 設定頁面新增搜尋按鈕，方便快速尋找設定項目。
+
+## [4.2.0-dev.2](https://github.com/jasonwu1994/Gboard-patches/compare/v4.1.1...v4.2.0-dev.2) (2026-10-31)
+
+### ✨ New Features
+
+* **Gboard:** add an option to automatically select all text before copying or cutting when nothing is selected, available through the toolbar, long-press shortcuts, and globe-key drag gestures.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix paste shortcuts from the toolbar, long-press actions, and globe-key drag gestures in terminal input fields such as Termux.
+
+### ✨ 新功能
+
+* **Gboard:** 新增「未選取文字時自動全選」選項，支援透過工具列、長按及地球鍵拖曳快捷操作，全選並複製或剪下文字。
+
+### 🐛 修復
+
+* **Gboard:** 修復工具列、長按及地球鍵拖曳快捷貼上在 Termux 等終端機輸入介面中無法正常運作的問題。
+
+## [4.1.1](https://github.com/jasonwu1994/Gboard-patches/compare/v4.1.0...v4.1.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix a crash when opening the keyboard on Android 13 and earlier.
+* **Gboard:** fix Android stopping Web Clipboard after 6 hours and a crash when restarting the service.
+
+### 🐛 修復
+
+* **Gboard:** 修復在 Android 13 及更早版本上開啟鍵盤時閃退的問題。
+* **Gboard:** 修復 Web Clipboard 執行 6 小時後被 Android 停止，以及重新啟動服務時閃退的問題。
+
+## [4.1.1-dev.1](https://github.com/jasonwu1994/Gboard-patches/compare/v4.1.0...v4.1.1-dev.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix a crash when opening the keyboard on Android 13 and earlier.
+* **Gboard:** fix Android stopping Web Clipboard after 6 hours and a crash when restarting the service.
+
+### 🐛 修復
+
+* **Gboard:** 修復在 Android 13 及更早版本上開啟鍵盤時閃退的問題。
+* **Gboard:** 修復 Web Clipboard 執行 6 小時後被 Android 停止，以及重新啟動服務時閃退的問題。
+
+## [4.1.0](https://github.com/jasonwu1994/Gboard-patches/compare/v4.0.0...v4.1.0) (2026-10-30)
+
+### ✨ New Features
+
+* **Gboard:** add the Dictionaries & Predictions patch to customize resource versions for dictionaries, text predictions, and input correction models, greatly improving the typing experience.
+* **Gboard:** add Key Opacity to Frosted Glass, allowing keys to follow the theme or use a custom percentage independently of background opacity.
+* **Gboard:** add Extend to Navigation Bar to Frosted Glass, extending the blur effect into the bottom navigation area for a seamless appearance and automatically adjusting navigation button colors.
+* **Gboard:** add the Keypress Vibration Intensity Control patch to control keypress vibration strength instead of duration.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix the lingering colored light bar and missing word suggestions after official Rambler voice input ends.
+* **Gboard:** fix duplicate countdown updates and card recycling issues when clipboard items are hidden or kept permanently, and reduce unnecessary settings reads to lower resource usage.
+* **Gboard:** fix the Split Keyboard patch so the split state is preserved after closing and reopening the keyboard.
+* **Gboard:** fix an issue that prevented the Developer options page from opening.
+* **Gboard:** reduce excessive power consumption in Frosted Glass by eliminating redundant calculations during drawing and layout updates.
+* **Gboard:** fix background color blocks remaining after tapping suggestions when custom key opacity is enabled.
+
+### ✨ 新功能
+
+* **Gboard:** 新增Dictionaries & Predictions Patch，可自訂字典、文字預測與輸入修正的模型資源版本，將大幅提升輸入體驗。
+* **Gboard:** 磨砂玻璃新增「按鍵透明度」設定，可跟隨主題或自訂百分比，並與背景透明度分開調整。
+* **Gboard:** 磨砂玻璃新增「延伸到導覽列」設定，將模糊效果延伸至底部導覽區，讓鍵盤與導覽列融為一體，並自動調整導覽按鈕的顏色。
+* **Gboard:** 新增 Keypress Vibration Intensity Control Patch，將按鍵震動從持續時間控制改為力度控制。
+
+### 🐛 修復
+
+* **Gboard:** 修復官方 Rambler 語音輸入結束後，彩色光帶殘留及候選字詞消失的問題。
+* **Gboard:** 修復剪貼簿隱藏與永久保留時的重複倒數更新及卡片回收問題，並減少不必要的設定讀取，降低額外資源消耗。
+* **Gboard:** 修復「分離式鍵盤」(split keyboard) Patch 在關閉並重新開啟鍵盤後，無法保留分離狀態的問題。
+* **Gboard:** 修復無法開啟「開發人員選項」（Developer options）頁面的問題。
+* **Gboard:** 修復磨砂玻璃耗電偏高的問題，移除繪製與重新排版時的重複運算，降低資源消耗。
+* **Gboard:** 修復啟用自訂按鍵透明度時，點選候選詞後背景色塊仍然殘留的問題。
+
+## [4.1.0-dev.4](https://github.com/jasonwu1994/Gboard-patches/compare/v4.1.0-dev.3...v4.1.0-dev.4) (2026-10-30)
+
+### ✨ New Features
+
+* **Gboard:** add the Keypress Vibration Intensity Control patch to control keypress vibration strength instead of duration.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix background color blocks remaining after tapping suggestions when custom key opacity is enabled.
+
+### ✨ 新功能
+
+* **Gboard:** 新增 Keypress Vibration Intensity Control Patch，將按鍵震動從持續時間控制改為力度控制。
+
+### 🐛 修復
+
+* **Gboard:** 修復啟用自訂按鍵透明度時，點選候選詞後背景色塊仍然殘留的問題。
+
+## [4.1.0-dev.3](https://github.com/jasonwu1994/Gboard-patches/compare/v4.1.0-dev.2...v4.1.0-dev.3) (2026-10-30)
+
+### ✨ New Features
+
+* **Gboard:** add Key Opacity to Frosted Glass, allowing keys to follow the theme or use a custom percentage independently of background opacity.
+* **Gboard:** add Extend to Navigation Bar to Frosted Glass, extending the blur effect into the bottom navigation area for a seamless appearance and automatically adjusting navigation button colors.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** reduce excessive power consumption in Frosted Glass by eliminating redundant calculations during drawing and layout updates.
+
+### ✨ 新功能
+
+* **Gboard:** 磨砂玻璃新增「按鍵透明度」設定，可跟隨主題或自訂百分比，並與背景透明度分開調整。
+* **Gboard:** 磨砂玻璃新增「延伸到導覽列」設定，將模糊效果延伸至底部導覽區，讓鍵盤與導覽列融為一體，並自動調整導覽按鈕的顏色。
+
+### 🐛 修復
+
+* **Gboard:** 修復磨砂玻璃耗電偏高的問題，移除繪製與重新排版時的重複運算，降低資源消耗。
+
+## [4.1.0-dev.2](https://github.com/jasonwu1994/Gboard-patches/compare/v4.1.0-dev.1...v4.1.0-dev.2) (2026-10-28)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix an issue that prevented the Developer options page from opening.
+
+### 🐛 修復
+
+* **Gboard:** 修復無法開啟「開發人員選項」（Developer options）頁面的問題。
+
+## [4.1.0-dev.1](https://github.com/jasonwu1994/Gboard-patches/compare/v4.0.0...v4.1.0-dev.1) (2026-10-28)
+
+### ✨ New Features
+
+* **Gboard:** add the Dictionaries & Predictions patch to customize resource versions for dictionaries, text predictions, and input correction models, greatly improving the typing experience.
+
+### 🐛 Bug Fixes
+
+* **Gboard:** fix the lingering colored light bar and missing word suggestions after official Rambler voice input ends.
+* **Gboard:** fix duplicate countdown updates and card recycling issues when clipboard items are hidden or kept permanently, and reduce unnecessary settings reads to lower resource usage.
+* **Gboard:** fix the Split Keyboard patch so the split state is preserved after closing and reopening the keyboard.
+
+### ✨ 新功能
+
+* **Gboard:** 新增Dictionaries & Predictions Patch，可自訂字典、文字預測與輸入修正的模型資源版本，將大幅提升輸入體驗。
+
+### 🐛 修復
+
+* **Gboard:** 修復官方 Rambler 語音輸入結束後，彩色光帶殘留及候選字詞消失的問題。
+* **Gboard:** 修復剪貼簿隱藏與永久保留時的重複倒數更新及卡片回收問題，並減少不必要的設定讀取，降低額外資源消耗。
+* **Gboard:** 修復「分離式鍵盤」(split keyboard) Patch 在關閉並重新開啟鍵盤後，無法保留分離狀態的問題。
 ## [4.0.1](https://github.com/Aa-creat/Gboard-patches/compare/v4.0.0...v4.0.1) (2026-10-29)
 
 ### 🐛 Bug Fixes

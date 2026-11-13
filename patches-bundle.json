@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-29T23:40:00",
-  "description": "### 🐛 Bug Fixes\n\n* **Font & Emoji:** fix Emoji panel rendering failure on Gboard 18.5.4 by dynamically adapting EmojiView Paint getters and background bitmap renderers.\n* **Font & Emoji:** add automatic fallback to system Emoji typeface when no custom emoji font is provided, ensuring Emoji panel never falls back to plain default typography.\n\n### 🐛 修復\n\n* **字型與 Emoji:** 修復 Gboard 18.5.4 表情符號選單顯示失敗問題，動態適配新版 EmojiView Paint 方法與背景位圖渲染器。\n* **字型與 Emoji:** 增加無外置字體時自動回退至系統 Emoji 字型機制，杜絕 Emoji 選單出現豆腐塊或渲染失敗。",
-  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v4.0.1/patches-4.0.1.mpp",
+  "created_at": "2026-11-12T23:35:35",
+  "description": "### ✨ New Features\n\n* **Gboard:** add an FAQ section to the Frosted Glass page, with links for when the effect isn't working and for flickering on Pixel phones.\n* **Gboard:** change the defaults of two settings: English Up-Flick Uppercase is now off and the Access Points menu style is now on. Settings you have already saved are kept.\n\n### 🐛 Bug Fixes\n\n* **Gboard:** fix the keyboard closing by itself with Frosted Glass enabled (\"Software rendering doesn't support drawRenderNode\"). If blur fails to draw, the keyboard now falls back to its theme.\n* **Gboard:** make \"Extend to navigation bar\" work on Android 15 and below. The navigation bar follows the keyboard's transparency, without blur.\n* **Gboard:** make \"Extend to navigation bar\" work with narrower docked keyboards, such as one-handed mode.\n\n### ✨ 新功能\n\n* **Gboard:** 在「磨砂玻璃」頁面新增 FAQ 區塊，提供「為什麼磨砂玻璃沒有效果？」和「為什麼 Pixel 手機輸入文字時會閃爍？」的說明連結。\n* **Gboard:** 調整兩項設定的預設值：「英文鍵盤上滑大小寫」改為關閉，「Access Points 選單樣式」改為開啟。已儲存的設定不受影響。\n\n### 🐛 修復\n\n* **Gboard:** 修復啟用磨砂玻璃後鍵盤自行關閉的問題（`Software rendering doesn't support drawRenderNode`）。模糊效果繪製失敗時，鍵盤會改回使用主題背景。\n* **Gboard:** 修復「延伸到導覽列」在 Android 15 以下沒有效果的問題。導覽列會跟隨鍵盤的透明度，但沒有模糊效果。\n* **Gboard:** 修復「延伸到導覽列」在單手模式等較窄的固定式鍵盤上沒有效果的問題。",
+  "download_url": "https://github.com/Aa-creat/Gboard-patches/releases/download/v4.3.0/patches-4.3.0.mpp",
   "signature_download_url": "",
-  "version": "4.0.1"
+  "version": "4.3.0"
 }
