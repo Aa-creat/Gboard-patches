@@ -18,6 +18,7 @@ public final class GboardCustomFontSettings {
     public static final String KEY_MODE = "gboard_custom_font_mode";
     public static final String KEY_EMOJI_FILENAME = "gboard_custom_font_emoji_filename";
     public static final String KEY_TEXT_FILENAME = "gboard_custom_font_text_filename";
+    public static final String KEY_FONT_PATH = "gboard_custom_font_path";
 
     public static final String MODE_EMOJI_ONLY = "emoji_only";
     public static final String MODE_GLOBAL = "global";
@@ -221,13 +222,43 @@ public final class GboardCustomFontSettings {
     public static boolean clearAll(Context context) {
         boolean ok = clearEmojiFont(context);
         ok &= clearTextFont(context);
+        File temp = new File(context.getFilesDir(), TEMP_FONT_FILE_NAME);
+        if (temp.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            temp.delete();
+        }
         preferences(context).edit()
                 .remove(KEY_ENABLED)
                 .remove(KEY_MODE)
                 .remove(KEY_EMOJI_FILENAME)
                 .remove(KEY_TEXT_FILENAME)
+                .remove(KEY_FONT_PATH)
                 .apply();
         GboardCustomFontRuntime.reload(context);
         return ok;
+    }
+
+    public static boolean resetToDefaultFont(Context context) {
+        return clearAll(context);
+    }
+
+    public static String getActiveFontSummary(Context context) {
+        if (context == null || !hasAnyFont(context)) {
+            return "Default System Font";
+        }
+        boolean hasEmoji = hasEmojiFont(context);
+        boolean hasText = hasTextFont(context);
+        if (hasEmoji && hasText) {
+            File emojiFile = getEmojiFontFile(context);
+            File textFile = getTextFontFile(context);
+            return getEmojiFontDisplayName(context) + " (" + formatFileSize(emojiFile.length()) + "), "
+                    + getTextFontDisplayName(context) + " (" + formatFileSize(textFile.length()) + ")";
+        } else if (hasEmoji) {
+            File emojiFile = getEmojiFontFile(context);
+            return getEmojiFontDisplayName(context) + " (" + formatFileSize(emojiFile.length()) + ")";
+        } else {
+            File textFile = getTextFontFile(context);
+            return getTextFontDisplayName(context) + " (" + formatFileSize(textFile.length()) + ")";
+        }
     }
 }

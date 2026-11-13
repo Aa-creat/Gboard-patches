@@ -96,4 +96,27 @@ public final class GboardSettingsSearchMatcherTest {
         assertEquals(1, GboardSettingsSearchMatcher.editDistance("bulr", "blur", 2));
         assertEquals(2, GboardSettingsSearchMatcher.editDistance("abcd", "abef", 2));
     }
+
+    @Test
+    public void customFontKeywordsMatchTitleAndSummary() {
+        String titleEn = "Custom Font & Modern Emoji";
+        String titleZh = "自訂字型與現代表情符號";
+        String summaryZh = "導入外部 Emoji 與字型解決豆腐塊（解决豆腐块）與缺字。支援自定義字體、自定义字体、表情符號替換。";
+        String summaryEn = "Import custom font and modern emoji to fix missing glyphs and tofu issues.";
+
+        assertTrue(title("font", titleEn) > 0);
+        assertTrue(title("emoji", titleEn) > 0);
+        assertTrue(title("modern emoji", titleEn) > 0);
+        GboardSettingsSearchMatcher.Text preparedSummaryEn = GboardSettingsSearchMatcher.prepare(summaryEn);
+        assertEquals(GboardSettingsSearchMatcher.SUMMARY, GboardSettingsSearchMatcher.scoreSummary("tofu", preparedSummaryEn));
+
+        assertTrue(title("表情", titleZh) > 0);
+        assertTrue(title("字型", titleZh) > 0);
+        GboardSettingsSearchMatcher.Text preparedSummaryZh = GboardSettingsSearchMatcher.prepare(summaryZh);
+        assertEquals(GboardSettingsSearchMatcher.SUMMARY, GboardSettingsSearchMatcher.scoreSummary("自定义字体", preparedSummaryZh));
+        assertEquals(GboardSettingsSearchMatcher.SUMMARY, GboardSettingsSearchMatcher.scoreSummary("字体", preparedSummaryZh));
+        assertEquals(GboardSettingsSearchMatcher.SUMMARY, GboardSettingsSearchMatcher.scoreSummary("解决豆腐块", preparedSummaryZh));
+        assertEquals(GboardSettingsSearchMatcher.SUMMARY, GboardSettingsSearchMatcher.scoreSummary("豆腐块", preparedSummaryZh));
+        assertEquals(GboardSettingsSearchMatcher.SUMMARY, GboardSettingsSearchMatcher.scoreSummary("豆腐塊", preparedSummaryZh));
+    }
 }

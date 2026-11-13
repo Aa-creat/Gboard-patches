@@ -16,12 +16,12 @@ import dev.jason.gboardpatches.extension.settings.GboardSettingsText;
 public final class GboardCustomFontSettingsFeature implements GboardPatchesSettingsContract.Feature {
     private static final String PREVIEW_ASSET = "settings-previews/customtheme/enabled.png";
 
+    private final Context context;
     private final String entryTitle;
-    private final String entrySummary;
 
     public GboardCustomFontSettingsFeature(Context context) {
+        this.context = context;
         entryTitle = "自訂字型與現代表情符號";
-        entrySummary = "導入外部 Emoji/字型解決缺字與屏蔽，支援應用內隨時匯入並保護中文原生樣式";
     }
 
     @Override
@@ -31,7 +31,7 @@ public final class GboardCustomFontSettingsFeature implements GboardPatchesSetti
 
     @Override
     public String getEntrySummary() {
-        return entrySummary;
+        return GboardCustomFontSettings.getActiveFontSummary(context);
     }
 
     @Override
@@ -183,21 +183,19 @@ public final class GboardCustomFontSettingsFeature implements GboardPatchesSetti
                 }
         ));
 
-        // Row 5: Clear action
-        if (hasAny) {
-            slotRows.add(new GboardPatchesSettingsContract.DangerRow(
-                    "清除已匯入字型",
-                    "刪除本機已匯入的 Emoji 與文字字型，還原為系統原廠字型",
-                    true,
-                    () -> {
-                        GboardCustomFontSettings.clearAll(context);
-                        GboardPatchesSettingsContract.refresh(host);
-                        showToast(context, "已清除自訂字型並還原為原廠字體");
-                    },
-                    "確認清除自訂字型？",
-                    "這將會刪除 Gboard 私有目錄內儲存的所有外部字型檔案，並恢復為原廠字體。"
-            ));
-        }
+        // Row 5: Reset to default font
+        slotRows.add(new GboardPatchesSettingsContract.ActionRow(
+                "恢復系統預設字型",
+                hasAny
+                        ? "清除已匯入的自訂字型與路徑，恢復為系統預設字體"
+                        : "目前已是系統預設字型",
+                hasAny,
+                () -> {
+                    GboardCustomFontSettings.resetToDefaultFont(context);
+                    GboardPatchesSettingsContract.refresh(host);
+                    showToast(context, "已恢復系統預設字型");
+                }
+        ));
 
         // Row 6: Restart Gboard
         slotRows.add(new GboardPatchesSettingsContract.ActionRow(

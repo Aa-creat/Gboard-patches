@@ -96,6 +96,37 @@ public final class GboardCustomFontSettingsFeatureTest {
         Assert.assertTrue(titles.contains("字型替換範圍與模式"));
         Assert.assertTrue(titles.contains("Emoji 字型檔案 (核心必選)"));
         Assert.assertTrue(titles.contains("文字字型檔案 (進階可選)"));
+        Assert.assertTrue(titles.contains("恢復系統預設字型"));
         Assert.assertTrue(titles.contains("立即重啟 Gboard 生效"));
+    }
+
+    @Test
+    public void entrySummaryShowsDefaultSystemFontWhenClean() {
+        GboardCustomFontSettingsFeature feature = new GboardCustomFontSettingsFeature(context);
+        Assert.assertEquals("Default System Font", feature.getEntrySummary());
+    }
+
+    @Test
+    public void resetToDefaultFontActionCleansState() {
+        Bundle meta = new Bundle();
+        meta.putBoolean(GboardPatchesFeatureAvailability.FEATURE_CUSTOM_FONT, true);
+        context.getApplicationInfo().metaData = meta;
+
+        GboardCustomFontSettings.writeEnabled(context, true);
+        GboardCustomFontSettingsFeature feature = new GboardCustomFontSettingsFeature(context);
+        GboardPatchesSettingsTestHost host = new GboardPatchesSettingsTestHost(context);
+        GboardPatchesSettingsContract.Screen screen = feature.buildScreen(host);
+
+        GboardPatchesSettingsContract.Row resetRow = screen.getSections().stream()
+                .flatMap(s -> s.getItems().stream())
+                .filter(r -> "恢復系統預設字型".equals(r.getTitle().toString()))
+                .findFirst()
+                .orElse(null);
+        Assert.assertNotNull("Reset row must exist", resetRow);
+        Assert.assertTrue(resetRow instanceof GboardPatchesSettingsContract.ActionRow);
+
+        ((GboardPatchesSettingsContract.ActionRow) resetRow).getAction().run();
+        Assert.assertEquals("Default System Font", feature.getEntrySummary());
+        Assert.assertFalse(GboardCustomFontSettings.readEnabled(context));
     }
 }

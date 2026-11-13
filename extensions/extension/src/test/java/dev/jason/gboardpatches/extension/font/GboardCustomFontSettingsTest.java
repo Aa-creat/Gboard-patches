@@ -72,4 +72,27 @@ public final class GboardCustomFontSettingsTest {
         Assert.assertFalse("Should reject corrupt font data", ok);
         Assert.assertFalse("Should not have emoji font file", GboardCustomFontSettings.hasEmojiFont(context));
     }
+
+    @Test
+    public void resetToDefaultFontCleansStateAndFiles() {
+        GboardCustomFontSettings.writeEnabled(context, true);
+        GboardCustomFontSettings.writeMode(context, GboardCustomFontSettings.MODE_GLOBAL);
+        GboardCustomFontSettings.preferences(context).edit()
+                .putString(GboardCustomFontSettings.KEY_EMOJI_FILENAME, "test.ttf")
+                .putString(GboardCustomFontSettings.KEY_FONT_PATH, "/data/local/tmp/test.ttf")
+                .apply();
+
+        boolean ok = GboardCustomFontSettings.resetToDefaultFont(context);
+        Assert.assertTrue(ok);
+        Assert.assertFalse(GboardCustomFontSettings.readEnabled(context));
+        Assert.assertEquals(GboardCustomFontSettings.MODE_EMOJI_ONLY, GboardCustomFontSettings.readMode(context));
+        Assert.assertEquals("", GboardCustomFontSettings.preferences(context).getString(GboardCustomFontSettings.KEY_FONT_PATH, ""));
+        Assert.assertEquals("Default System Font", GboardCustomFontSettings.getActiveFontSummary(context));
+    }
+
+    @Test
+    public void activeFontSummaryReflectsCurrentState() {
+        Assert.assertEquals("Default System Font", GboardCustomFontSettings.getActiveFontSummary(context));
+        Assert.assertEquals("Default System Font", GboardCustomFontSettings.getActiveFontSummary(null));
+    }
 }
